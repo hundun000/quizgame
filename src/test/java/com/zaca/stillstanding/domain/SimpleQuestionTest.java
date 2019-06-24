@@ -2,9 +2,14 @@ package com.zaca.stillstanding.domain;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Test;
+
+import com.zaca.stillstanding.domain.exception.SimpleQuestionFormatException;
+import com.zaca.stillstanding.domain.question.SimpleQuestion;
+import com.zaca.stillstanding.tool.QuestionTool;
 
 /**
  *
@@ -14,18 +19,8 @@ import org.junit.Test;
 public class SimpleQuestionTest {
 
 	@Test
-	public void test() {
-		// 默认构造方法
-		SimpleQuestion simpleQuestion1 = new SimpleQuestion();
-		
-		
-		/*
-		 * 
-		 * 为SimpleQuestion新增一种构造方法
-		 * 能传入id=1，题干为"1+1等于几"，四个答案为"1","2","3","4"构造SimpleQuestion。
-		 */
-		SimpleQuestion simpleQuestion2;
-		// TODO simpleQuestion2 = new SimpleQuestion(???);
+	public void test() throws IOException, SimpleQuestionFormatException {
+		System.out.println(QuestionTool.LoadQuestionFromFile("单机游戏.txt").size());
 		
 	}
 
