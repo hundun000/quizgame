@@ -7,8 +7,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import com.zaca.stillstanding.domain.exception.SimpleQuestionFormatException;
 import com.zaca.stillstanding.domain.question.SimpleQuestion;
+import com.zaca.stillstanding.domain.question.TagManager;
+import com.zaca.stillstanding.exception.SimpleQuestionFormatException;
 import com.zaca.stillstanding.tool.QuestionTool;
 
 /**
@@ -20,8 +21,8 @@ public class SimpleQuestionTest {
 
 	@Test
 	public void test() throws IOException, SimpleQuestionFormatException {
-		System.out.println(QuestionTool.LoadQuestionFromFile("单机游戏.txt").size());
-		
+		System.out.println(QuestionTool.LoadAllQuestions().size());
+		System.out.println(TagManager.getTags());
 	}
 
 }

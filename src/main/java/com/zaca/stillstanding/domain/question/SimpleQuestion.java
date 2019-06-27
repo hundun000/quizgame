@@ -1,7 +1,6 @@
 package com.zaca.stillstanding.domain.question;
 
-import com.zaca.stillstanding.domain.tag.Tag;
-import com.zaca.stillstanding.domain.tag.TagFactory;
+import java.util.Set;
 
 /**
  *
@@ -14,9 +13,9 @@ public class SimpleQuestion {
 	private final String option[];
 	private final int answer;
 	private final Resource resource;
-	private final Tag tags[];
+	private final Set<String> tags;
 	
-	public SimpleQuestion(String stem, String optionA, String optionB, String optionC, String optionD, String answerText, String resourceText, String singleTagName) {
+	public SimpleQuestion(String stem, String optionA, String optionB, String optionC, String optionD, String answerText, String resourceText, Set<String> tags) {
 		this.stem = stem;
 		this.option = new String[4];
 		this.option[0] = optionA;
@@ -24,8 +23,7 @@ public class SimpleQuestion {
 		this.option[2] = optionC;
 		this.option[3] = optionD;
 		this.answer = answerTextToInt(answerText);
-		this.tags = new Tag[1];
-		this.tags[0] = TagFactory.getTag(singleTagName);
+		this.tags = tags;
 		this.resource = new Resource(resourceText);
 	}
 	

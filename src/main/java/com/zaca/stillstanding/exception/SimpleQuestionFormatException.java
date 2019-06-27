@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.exception;
+package com.zaca.stillstanding.exception;
 
 import java.security.spec.ECField;
 
