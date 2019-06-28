@@ -13,29 +13,29 @@ import java.util.Set;
 
 import org.yaml.snakeyaml.nodes.Tag;
 
-import com.zaca.stillstanding.domain.question.SimpleQuestion;
+import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.question.TagManager;
-import com.zaca.stillstanding.exception.SimpleQuestionFormatException;
+import com.zaca.stillstanding.exception.QuestionFormatException;
 
 public class QuestionTool {
 	
 	private static String DATA_FOLDER = "data/";
 	private static String QUESTIONS_FOLDER = DATA_FOLDER + "questions/";
 	
-	private static List<SimpleQuestion> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, SimpleQuestionFormatException {
+	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());
         List<String> lines = Files.readAllLines(path);
         return parseTextToQuestions(lines, tagNames);
 	}
 	
-	public static List<SimpleQuestion> LoadAllQuestions() throws IOException, SimpleQuestionFormatException {
-		List<SimpleQuestion> questions = new ArrayList<>();
+	public static List<Question> LoadAllQuestions() throws IOException, QuestionFormatException {
+		List<Question> questions = new ArrayList<>();
 		File mainFolder = new File(QUESTIONS_FOLDER);
 		LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
 		return questions;
 	}
 	
-	public static List<SimpleQuestion> LoadQuestionsFromFolder(File folder, Set<String> parentTagNames, List<SimpleQuestion> questions) throws IOException, SimpleQuestionFormatException {
+	public static List<Question> LoadQuestionsFromFolder(File folder, Set<String> parentTagNames, List<Question> questions) throws IOException, QuestionFormatException {
 		File[] files = folder.listFiles();
 		for (File file:files) {
 			String thisTagName;
@@ -68,15 +68,15 @@ public class QuestionTool {
 	 * @param lines
 	 * @param singleTagName
 	 * @return
-	 * @throws SimpleQuestionFormatException
+	 * @throws QuestionFormatException
 	 */
-	private static List<SimpleQuestion> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws SimpleQuestionFormatException { int size = lines.size();
+	private static List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
 		String numText = lines.get(0);
 		if (numText.startsWith("")) {
 			numText = numText.substring(1);
 		}
 		int num = Integer.valueOf(numText);
-		List<SimpleQuestion> questions = new ArrayList<>(num);
+		List<Question> questions = new ArrayList<>(num);
 		
 		for (int i = 2; i < size; ) {
 			try {
@@ -97,14 +97,14 @@ public class QuestionTool {
 				}
 				
 				if (numBlankLine == 0 && i + numBlankLine < size) {
-					throw new SimpleQuestionFormatException(i + 1, questions.size() + 1, "空行");
+					throw new QuestionFormatException(i + 1, questions.size() + 1, "空行");
 				}
 				i += numBlankLine;
 				
-				SimpleQuestion question = new SimpleQuestion(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
+				Question question = new Question(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
 				questions.add(question);
 			} catch (IndexOutOfBoundsException e) {
-				throw new SimpleQuestionFormatException(i + 1, questions.size() + 1, "题目组成");
+				throw new QuestionFormatException(i + 1, questions.size() + 1, "题目组成");
 			}
 			
 		}

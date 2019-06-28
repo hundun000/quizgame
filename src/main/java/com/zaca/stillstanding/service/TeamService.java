@@ -25,11 +25,15 @@ public class TeamService {
 		teams.put(teamName, team);
 	}
 	
-	public void setTagsForTeam(String teamName, List<String> tagNames, boolean isPickUp) throws NotFoundException {
-		Team team = teams.get(teamName);
-		if (team == null) {
-			throw new NotFoundException(Team.class.getSimpleName(), teamName);
-		}
+	
+	public void setPickUpTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
+		setTagsForTeam(teamName, tagNames, true);
+	}
+	public void setBanTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
+		setTagsForTeam(teamName, tagNames, false);
+	}
+	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPickUp) throws NotFoundException {
+		Team team = getTeam(teamName);
 		for (String tagName:tagNames) {
 			if (!TagManager.tagExsist(tagName)) {
 				throw new NotFoundException("Tag", tagName);
@@ -40,6 +44,14 @@ public class TeamService {
 		} else {
 			team.setBanTags(tagNames);
 		}
+	}
+	
+	public Team getTeam(String name) throws NotFoundException {
+		Team team = teams.get(name);
+		if (team == null) {
+			throw new NotFoundException(Team.class.getSimpleName(), name);
+		}
+		return team;
 	}
 
 }

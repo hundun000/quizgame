@@ -7,7 +7,7 @@ import java.util.Set;
  * @author hundun
  * Created on 2019/03/19
  */
-public class SimpleQuestion {
+public class Question {
 	
 	private final String stem;
 	private final String option[];
@@ -15,7 +15,7 @@ public class SimpleQuestion {
 	private final Resource resource;
 	private final Set<String> tags;
 	
-	public SimpleQuestion(String stem, String optionA, String optionB, String optionC, String optionD, String answerText, String resourceText, Set<String> tags) {
+	public Question(String stem, String optionA, String optionB, String optionC, String optionD, String answerText, String resourceText, Set<String> tags) {
 		this.stem = stem;
 		this.option = new String[4];
 		this.option[0] = optionA;
@@ -46,5 +46,17 @@ public class SimpleQuestion {
 				return -1;
 		}
 		
+	}
+	
+	public boolean isCorrect(String answerText) {
+		return answerTextToInt(answerText) == this.answer;
+	}
+	
+	public Set<String> getTags() {
+		return tags;
+	}
+	
+	public String getStem() {
+		return stem;
 	}
 }

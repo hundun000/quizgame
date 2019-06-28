@@ -2,7 +2,7 @@ package com.zaca.stillstanding.exception;
 
 import java.security.spec.ECField;
 
-public class SimpleQuestionFormatException extends Exception {
+public class QuestionFormatException extends Exception {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class SimpleQuestionFormatException extends Exception {
 	private final int index;
 	private final String expect;
 	
-	public SimpleQuestionFormatException(int line, int index, String expect) {
+	public QuestionFormatException(int line, int index, String expect) {
 		this.line = line;
 		this.index = index;
 		this.expect = expect;
