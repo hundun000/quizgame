@@ -24,9 +24,37 @@ public class QuestionTool {
 	
 	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());
-        List<String> lines = Files.readAllLines(path);
-        return parseTextToQuestions(lines, tagNames);
+        List<String> lines = Files.readAllLines(path);  
+        try {
+        	return parseTextToQuestions(lines, tagNames);
+		} catch (QuestionFormatException e) {
+			e.setFileName(file.getName());
+			throw e;
+		}
 	}
+	
+	/**
+	 * 将指定文件夹中所有文件的文件名进行指定替换的重命名。
+	 * @param folderPath
+	 * @param regex
+	 * @param replacement
+	 * @return
+	 */
+	public static String replaceFileNamesInFolder(String folderPath, String regex, String replacement){
+		int renameNum = 0;
+		File folder = new File(folderPath);
+		File[] files = folder.listFiles();
+		for (File file:files) {
+			if(!file.isDirectory()) {
+				String newName = file.getName().replaceFirst(regex, replacement);
+				File newFile = new File(file.getParentFile(), newName);
+				file.renameTo(newFile);
+				renameNum++;
+			}
+		}
+		return "文件夹共有：" + files.length + "个文件,重命名了" + renameNum + "个文件。";
+	}
+	
 	
 	public static List<Question> LoadAllQuestions() throws IOException, QuestionFormatException {
 		List<Question> questions = new ArrayList<>();
@@ -79,7 +107,9 @@ public class QuestionTool {
 		List<Question> questions = new ArrayList<>(num);
 		
 		for (int i = 2; i < size; ) {
+			int i0 = i;
 			try {
+				
 				String stem = lines.get(i++);
 				String optionA = lines.get(i++);
 				String optionB = lines.get(i++);
@@ -87,6 +117,18 @@ public class QuestionTool {
 				String optionD = lines.get(i++);
 				String answer = lines.get(i++);
 				String resourceText = lines.get(i++);
+				
+				boolean elementLost = stem.length() == 0 
+						|| optionA.length() == 0
+						|| optionB.length() == 0
+						|| optionC.length() == 0
+						|| optionD.length() == 0
+						|| answer.length() == 0
+						|| resourceText.length() == 0
+						;
+				if(elementLost) {
+					throw new QuestionFormatException(i0, i+1, questions.size() + 1, "题目组成");
+				}
 				
 				int numBlankLine;
 				for (numBlankLine = 0; i + numBlankLine < size; numBlankLine++) {
@@ -97,14 +139,14 @@ public class QuestionTool {
 				}
 				
 				if (numBlankLine == 0 && i + numBlankLine < size) {
-					throw new QuestionFormatException(i + 1, questions.size() + 1, "空行");
+					throw new QuestionFormatException(i + 1, i + 1, questions.size() + 1, "空行");
 				}
 				i += numBlankLine;
 				
 				Question question = new Question(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
 				questions.add(question);
 			} catch (IndexOutOfBoundsException e) {
-				throw new QuestionFormatException(i + 1, questions.size() + 1, "题目组成");
+				throw new QuestionFormatException(i + 1, i + 1, questions.size() + 1, "题目组成");
 			}
 			
 		}

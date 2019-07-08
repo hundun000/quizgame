@@ -32,24 +32,27 @@ public class SimpleQuestionTest {
 	
 	QuestionService questionService = new QuestionService();
 	TeamService teamService = new TeamService();
-
+	String  testTeamName = "砍口垒同好组";
+	
 	@Test
 	public void test() throws IOException, QuestionFormatException, ConflictException, NotFoundException {
 		
+		
+		
 		questionService.initQuestions();
-		teamService.creatTeam("砍口垒同好组");
+		teamService.creatTeam(testTeamName);
 		
 		List<String> pickUpTagNames = new ArrayList<>();
 		pickUpTagNames.add("单机游戏");
-		teamService.setPickUpTagsForTeam("砍口垒同好组", pickUpTagNames);
+		teamService.setPickUpTagsForTeam(testTeamName, pickUpTagNames);
 		
 		List<String> banTagNames = new ArrayList<>();
 		banTagNames.add("动画");
-		teamService.setBanTagsForTeam("砍口垒同好组", banTagNames);
+		teamService.setBanTagsForTeam(testTeamName, banTagNames);
 		
 		questionService.initQuestions();
 		
-		Team team = teamService.getTeam("砍口垒同好组");
+		Team team = teamService.getTeam(testTeamName);
 		for (int i = 1; i < 20; i++) {
 			Question question = questionService.getNewQuestionForTeam(team);
 			System.out.println("第"+i+"题"+question.getTags()+"："+question.getStem());

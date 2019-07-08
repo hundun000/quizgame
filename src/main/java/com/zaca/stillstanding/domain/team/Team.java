@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONObject;
+
 
 public class Team {
 	
@@ -66,5 +68,11 @@ public class Team {
 		this.hitPickUpRate = Math.min(hitPickUpRate + HIT_PICK_UP_RATE_INCREASE_STEP, 1);
 	}
 	
+	public JSONObject getMatchData() {
+		JSONObject data = new JSONObject();
+		data.put("name", name);
+		data.put("score", matchScore);
+		return data;
+	}
 	
 }

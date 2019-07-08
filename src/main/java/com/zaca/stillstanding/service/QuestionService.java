@@ -20,12 +20,13 @@ public class QuestionService {
 	
 	private List<Question> questions;
 	private List<Question> dirtyQuestions;
-	private Random random = new Random();
+	private Random hitRandom = new Random(1);
+	private Random shuffleRandom = new Random(1);
 	
 	public void initQuestions() {
 		try {
 			this.questions = new LinkedList<>(QuestionTool.LoadAllQuestions());
-			Collections.shuffle(questions);
+			Collections.shuffle(questions, shuffleRandom);
 			this.dirtyQuestions = new LinkedList<>();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -38,7 +39,7 @@ public class QuestionService {
 	
 	public Question getNewQuestionForTeam(Team team) {
 		int index;
-		boolean hitPickUp = random.nextDouble() < team.getHitPickUpRate();
+		boolean hitPickUp = hitRandom.nextDouble() < team.getHitPickUpRate();
 		if (hitPickUp) {
 			index = getFirstPickUpQuestionIndex(team);
 			team.resetHitPickUpRate();
@@ -56,10 +57,11 @@ public class QuestionService {
 		Question question = null;
 		int i = 0;	
 		while (question == null && i < questions.size()) {
-			question = questions.get(i++);
+			question = questions.get(i);
 			
 			if (!team.isPickUpAndNotBan(question.getTags())) {
 				question = null;
+				i++;
 			}
 		}
 		return i;
@@ -69,10 +71,11 @@ public class QuestionService {
 		Question question = null;
 		int i = 0;	
 		while (question == null && i < questions.size()) {
-			question = questions.get(i++);
+			question = questions.get(i);
 			
 			if (!team.isNotBan(question.getTags())) {
 				question = null;
+				i++;
 			}
 		}
 		return i;
