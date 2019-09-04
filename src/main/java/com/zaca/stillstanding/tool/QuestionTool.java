@@ -1,7 +1,10 @@
 package com.zaca.stillstanding.tool;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +23,12 @@ import com.zaca.stillstanding.exception.QuestionFormatException;
 public class QuestionTool {
 	
 	private static String DATA_FOLDER = "data/";
-	private static String QUESTIONS_FOLDER = DATA_FOLDER + "questions/";
+	private static String BUSINESS_QUESTIONS_FOLDER = DATA_FOLDER + "questions/";
+	private static String TEST_QUESTIONS_FOLDER = DATA_FOLDER + "questions_test/";
+	/**
+	 * switch
+	 */
+	private static String QUESTIONS_FOLDER = TEST_QUESTIONS_FOLDER;
 	
 	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());
@@ -63,6 +71,44 @@ public class QuestionTool {
 		return questions;
 	}
 	
+	public static String obfuscateFolder(String originFolderPath, String outputFolderPath) {
+	    String error = "";
+	    
+	    File originFolder = new File(originFolderPath);
+	    File outputFolder = new File(outputFolderPath);
+	    if (!outputFolder.exists()) {
+	        outputFolder.mkdir();
+        }
+	    
+	    File[] files = originFolder.listFiles();
+        for (File file:files) {
+            //String thisTagName;
+            //Set<String> newParentTagNames = new HashSet<>(parentTagNames);
+            String outputFilePath = outputFolder.getPath() + File.separator + file.getName();
+            if(file.isDirectory()) {
+                //thisTagName = file.getName();
+                //newParentTagNames.add(thisTagName);
+                File nestOriginFolder = file;
+                File nestOutputFolder = new File(outputFilePath);
+                if (!nestOutputFolder.exists()) {
+                    nestOutputFolder.mkdir();
+                }
+                error += obfuscateFolder(nestOriginFolder.getPath(), nestOutputFolder.getPath());
+            } else {
+                List<Question> questions;
+                try {
+                    questions = LoadQuestionsFromFile(file, null);
+                    parseQuestionsToFile(questions, outputFilePath, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    error += outputFilePath + " error:" + e.getMessage() + ";";
+                    continue;
+                }
+            }
+        }
+        return error;
+    }
+	
 	public static List<Question> LoadQuestionsFromFolder(File folder, Set<String> parentTagNames, List<Question> questions) throws IOException, QuestionFormatException {
 		File[] files = folder.listFiles();
 		for (File file:files) {
@@ -100,6 +146,7 @@ public class QuestionTool {
 	 */
 	private static List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
 		String numText = lines.get(0);
+		// 不知为何有时读入的首字符是无效字符
 		if (numText.startsWith("")) {
 			numText = numText.substring(1);
 		}
@@ -152,5 +199,46 @@ public class QuestionTool {
 		}
 		return questions;
 	}
-
+	
+	private static void parseQuestionsToFile(List<Question> questions, String filePath, boolean obfuscate) throws Exception  { 
+	    int size = questions.size();
+    	PrintWriter writer = new PrintWriter(filePath, "UTF-8");
+    	
+        writer.println(size);
+        writer.println();
+        for (Question question : questions) {
+            String stem = obfuscate?obfuscate(question.getStem()):question.getStem();
+            String optionA = obfuscate?obfuscate(question.getOptions()[0]):question.getOptions()[0];
+            String optionB = obfuscate?obfuscate(question.getOptions()[1]):question.getOptions()[1];
+            String optionC = obfuscate?obfuscate(question.getOptions()[2]):question.getOptions()[2];
+            String optionD = obfuscate?obfuscate(question.getOptions()[3]):question.getOptions()[3];
+            String answer = question.getAnswerChar();
+            String resourceText = question.getResource().getData();
+            
+            if (obfuscate) {
+                stem += " " + answer;
+            }
+            
+            writer.println(stem);
+            writer.println(optionA);
+            writer.println(optionB);
+            writer.println(optionC);
+            writer.println(optionD);
+            writer.println(answer);
+            writer.println(resourceText);
+            writer.println();
+        }
+        writer.close();
+    }
+	
+	/**
+	 * 混淆一个字符串的内容
+	 * @param origin
+	 * @return
+	 */
+	private static String obfuscate(String origin) {
+        return String.valueOf(origin.hashCode());
+    }
+	
+	
 }

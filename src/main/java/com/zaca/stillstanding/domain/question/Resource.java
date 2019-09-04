@@ -8,4 +8,8 @@ public class Resource {
 		this.type = ResourceType.getByLocalFileExtension(localFilePathName);
 		this.data = localFilePathName;
 	}
+	
+	public String getData() {
+        return data;
+    }
 }
