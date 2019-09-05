@@ -23,9 +23,9 @@ public class QuestionService {
 	private Random hitRandom = new Random(1);
 	private Random shuffleRandom = new Random(1);
 	
-	public void initQuestions() {
+	public void initQuestions(String questionPackageName) {
 		try {
-			this.questions = new LinkedList<>(QuestionTool.LoadAllQuestions());
+			this.questions = new LinkedList<>(QuestionTool.LoadAllQuestions(questionPackageName));
 			Collections.shuffle(questions, shuffleRandom);
 			this.dirtyQuestions = new LinkedList<>();
 		} catch (IOException e) {

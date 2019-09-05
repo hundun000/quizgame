@@ -23,12 +23,9 @@ import com.zaca.stillstanding.exception.QuestionFormatException;
 public class QuestionTool {
 	
 	private static String DATA_FOLDER = "data/";
-	private static String BUSINESS_QUESTIONS_FOLDER = DATA_FOLDER + "questions/";
-	private static String TEST_QUESTIONS_FOLDER = DATA_FOLDER + "questions_test/";
-	/**
-	 * switch
-	 */
-	private static String QUESTIONS_FOLDER = TEST_QUESTIONS_FOLDER;
+	public static String BUSINESS_PACKAGE_NAME = "questions";
+	public static String TEST_PACKAGE_NAME = "questions_test";
+
 	
 	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());
@@ -64,9 +61,9 @@ public class QuestionTool {
 	}
 	
 	
-	public static List<Question> LoadAllQuestions() throws IOException, QuestionFormatException {
+	public static List<Question> LoadAllQuestions(String packageName) throws IOException, QuestionFormatException {
 		List<Question> questions = new ArrayList<>();
-		File mainFolder = new File(QUESTIONS_FOLDER);
+		File mainFolder = new File(DATA_FOLDER + packageName);
 		LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
 		return questions;
 	}
@@ -146,10 +143,7 @@ public class QuestionTool {
 	 */
 	private static List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
 		String numText = lines.get(0);
-		// 不知为何有时读入的首字符是无效字符
-		if (numText.startsWith("")) {
-			numText = numText.substring(1);
-		}
+		
 		int num = Integer.valueOf(numText);
 		List<Question> questions = new ArrayList<>(num);
 		

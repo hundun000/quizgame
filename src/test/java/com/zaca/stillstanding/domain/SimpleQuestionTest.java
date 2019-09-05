@@ -39,7 +39,7 @@ public class SimpleQuestionTest {
 		
 		
 		
-		questionService.initQuestions();
+		questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
 		teamService.creatTeam(testTeamName);
 		
 		List<String> pickUpTagNames = new ArrayList<>();
@@ -49,8 +49,6 @@ public class SimpleQuestionTest {
 		List<String> banTagNames = new ArrayList<>();
 		banTagNames.add("动画");
 		teamService.setBanTagsForTeam(testTeamName, banTagNames);
-		
-		questionService.initQuestions();
 		
 		Team team = teamService.getTeam(testTeamName);
 		for (int i = 1; i < 20; i++) {
