@@ -68,7 +68,7 @@ public class QuestionTool {
 		return questions;
 	}
 	
-	public static String obfuscateFolder(String originFolderPath, String outputFolderPath) {
+	public static String obfuscateFolder(String originFolderPath, String outputFolderPath, Set<String> parentTagNames) {
 	    String error = "";
 	    
 	    File originFolder = new File(originFolderPath);
@@ -79,22 +79,26 @@ public class QuestionTool {
 	    
 	    File[] files = originFolder.listFiles();
         for (File file:files) {
-            //String thisTagName;
-            //Set<String> newParentTagNames = new HashSet<>(parentTagNames);
+            String thisTagName;
+            Set<String> newParentTagNames = new HashSet<>(parentTagNames);
             String outputFilePath = outputFolder.getPath() + File.separator + file.getName();
+           
             if(file.isDirectory()) {
-                //thisTagName = file.getName();
-                //newParentTagNames.add(thisTagName);
+                thisTagName = file.getName();
+                newParentTagNames.add(thisTagName);
+                
                 File nestOriginFolder = file;
                 File nestOutputFolder = new File(outputFilePath);
                 if (!nestOutputFolder.exists()) {
                     nestOutputFolder.mkdir();
                 }
-                error += obfuscateFolder(nestOriginFolder.getPath(), nestOutputFolder.getPath());
+                error += obfuscateFolder(nestOriginFolder.getPath(), nestOutputFolder.getPath(), newParentTagNames);
             } else {
+                thisTagName = file.getName().substring(0, file.getName().indexOf("."));
+                newParentTagNames.add(thisTagName);
                 List<Question> questions;
                 try {
-                    questions = LoadQuestionsFromFile(file, null);
+                    questions = LoadQuestionsFromFile(file, newParentTagNames);
                     parseQuestionsToFile(questions, outputFilePath, true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -134,6 +138,9 @@ public class QuestionTool {
 		}
 	}
 	
+	
+	// FEFF because this is the Unicode char represented by the UTF-8 byte order mark (EF BB BF).
+    public static final String UTF8_BOM = "\uFEFF";
 	/**
 	 * 每一题后通过至少一个空白行分割；最后一题后可以无空行
 	 * @param lines
@@ -144,6 +151,9 @@ public class QuestionTool {
 	private static List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
 		String numText = lines.get(0);
 		
+		if (numText.startsWith(UTF8_BOM)) {
+		    numText = numText.substring(1);
+		}
 		int num = Integer.valueOf(numText);
 		List<Question> questions = new ArrayList<>(num);
 		
@@ -210,7 +220,7 @@ public class QuestionTool {
             String resourceText = question.getResource().getData();
             
             if (obfuscate) {
-                stem += " " + answer;
+                stem = question.getTags() + " " + stem + " " + answer;
             }
             
             writer.println(stem);

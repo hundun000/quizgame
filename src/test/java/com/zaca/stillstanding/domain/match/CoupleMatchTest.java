@@ -73,6 +73,12 @@ public class CoupleMatchTest {
     public void test() throws NotFoundException {
         coupleMatch.start();
         System.out.println(FormatTool.coupleMatchTOJSON(coupleMatch));
+        
+        coupleMatch.teamAnswer("A");
+        System.out.println(FormatTool.coupleMatchTOJSON(coupleMatch));
+        
+        coupleMatch.teamAnswer("A");
+        System.out.println(FormatTool.coupleMatchTOJSON(coupleMatch));
     }
 
 }

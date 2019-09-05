@@ -38,7 +38,8 @@ public class CoupleMatch {
 	}
 	
 	public void start() {
-        
+	    currentTeamIndex = teams.size() - 1;
+	    switchTeamAndNewQuestion();
     }
 	
 	public EventResult teamAnswer(String answer) {
