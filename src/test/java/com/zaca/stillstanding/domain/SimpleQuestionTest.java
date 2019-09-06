@@ -42,9 +42,9 @@ public class SimpleQuestionTest {
 		questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
 		teamService.creatTeam(testTeamName);
 		
-		List<String> pickUpTagNames = new ArrayList<>();
-		pickUpTagNames.add("单机游戏");
-		teamService.setPickUpTagsForTeam(testTeamName, pickUpTagNames);
+		List<String> pickTagNames = new ArrayList<>();
+		pickTagNames.add("单机游戏");
+		teamService.setPickTagsForTeam(testTeamName, pickTagNames);
 		
 		List<String> banTagNames = new ArrayList<>();
 		banTagNames.add("动画");

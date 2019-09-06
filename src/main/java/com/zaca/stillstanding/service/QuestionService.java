@@ -39,13 +39,13 @@ public class QuestionService {
 	
 	public Question getNewQuestionForTeam(Team team) {
 		int index;
-		boolean hitPickUp = hitRandom.nextDouble() < team.getHitPickUpRate();
-		if (hitPickUp) {
-			index = getFirstPickUpQuestionIndex(team);
-			team.resetHitPickUpRate();
+		boolean hitPick = hitRandom.nextDouble() < team.getHitPickRate();
+		if (hitPick) {
+			index = getFirstPickQuestionIndex(team);
+			team.resetHitPickRate();
 		} else {
 			index = getFirstNotBanQuestionIndex(team);
-			team.increaseHitPickUpRate();
+			team.increaseHitPickRate();
 		}
 		Question question = questions.remove(index);
 		dirtyQuestions.add(question);
@@ -53,13 +53,13 @@ public class QuestionService {
 	}
 	
 	
-	private int getFirstPickUpQuestionIndex(Team team) {
+	private int getFirstPickQuestionIndex(Team team) {
 		Question question = null;
 		int i = 0;	
 		while (question == null && i < questions.size()) {
 			question = questions.get(i);
 			
-			if (!team.isPickUpAndNotBan(question.getTags())) {
+			if (!team.isPickAndNotBan(question.getTags())) {
 				question = null;
 				i++;
 			}

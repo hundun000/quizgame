@@ -26,21 +26,21 @@ public class TeamService {
 	}
 	
 	
-	public void setPickUpTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
+	public void setPickTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
 		setTagsForTeam(teamName, tagNames, true);
 	}
 	public void setBanTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
 		setTagsForTeam(teamName, tagNames, false);
 	}
-	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPickUp) throws NotFoundException {
+	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPick) throws NotFoundException {
 		Team team = getTeam(teamName);
 		for (String tagName:tagNames) {
 			if (!TagManager.tagExsist(tagName)) {
 				throw new NotFoundException("Tag", tagName);
 			}
 		}
-		if (isPickUp) {
-			team.setPickUpTags(tagNames);
+		if (isPick) {
+			team.setPickTags(tagNames);
 		} else {
 			team.setBanTags(tagNames);
 		}

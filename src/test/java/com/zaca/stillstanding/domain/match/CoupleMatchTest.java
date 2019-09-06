@@ -49,18 +49,18 @@ public class CoupleMatchTest {
         questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
         
         teamService.creatTeam(teamKancolle); 
-        List<String> pickUpTagNames = new ArrayList<>();
-        pickUpTagNames.add("单机游戏");
-        teamService.setPickUpTagsForTeam(teamKancolle, pickUpTagNames);
+        List<String> pickTagNames = new ArrayList<>();
+        pickTagNames.add("单机游戏");
+        teamService.setPickTagsForTeam(teamKancolle, pickTagNames);
         
         List<String> banTagNames = new ArrayList<>();
         banTagNames.add("动画");
         teamService.setBanTagsForTeam(teamKancolle, banTagNames);
         
         teamService.creatTeam(teamPCR); 
-        pickUpTagNames = new ArrayList<>();
-        pickUpTagNames.add("单机游戏");
-        teamService.setPickUpTagsForTeam(teamPCR, pickUpTagNames);
+        pickTagNames = new ArrayList<>();
+        pickTagNames.add("单机游戏");
+        teamService.setPickTagsForTeam(teamPCR, pickTagNames);
         
         banTagNames = new ArrayList<>();
         banTagNames.add("动画");

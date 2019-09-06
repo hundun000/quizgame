@@ -30,9 +30,12 @@ public class FormatTool {
     }
     
     private static JSONArray teamsToJSON(List<Team> teams) {
-        JSONObject object = new JSONObject();
-        // TODO
-        return JSONArray.parseArray(JSON.toJSONString(teams));
+        JSONArray array = new JSONArray();
+        for (Team team : teams) {
+            array.add(team.getMatchData());
+        }
+        
+        return array;
     }
 
 }
