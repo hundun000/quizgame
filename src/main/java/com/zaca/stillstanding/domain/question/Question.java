@@ -10,7 +10,7 @@ import com.zaca.stillstanding.exception.QuestionFormatException;
  * Created on 2019/03/19
  */
 public class Question {
-	
+    private final String id;
 	private final String stem;
 	private final String[] options;
 	private final int answer;
@@ -27,6 +27,11 @@ public class Question {
 		this.answer = answerTextToInt(answerText);
 		this.tags = tags;
 		this.resource = new Resource(resourceText);
+		
+		StringBuilder builder = new StringBuilder();
+		tags.forEach(e -> builder.append(e.charAt(0)));
+		builder.append("-").append(stem.substring(0, Math.min(6, stem.length())));
+		this.id = builder.toString();
 	}
 	
 	
@@ -82,10 +87,14 @@ public class Question {
             return "D";
         default:
             throw new Exception("default int answer cannot to String.");
-    }
+	    }
     }
 	
 	public Resource getResource() {
         return resource;
+    }
+	
+	public String getId() {
+        return id;
     }
 }

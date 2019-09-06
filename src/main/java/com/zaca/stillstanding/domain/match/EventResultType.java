@@ -1,5 +1,7 @@
 package com.zaca.stillstanding.domain.match;
 
 public enum EventResultType {
-	SWITCH_TEAM
+	SWITCH_TEAM,
+	TEAM_DIE,
+	FINISH
 }

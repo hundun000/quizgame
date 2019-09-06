@@ -4,6 +4,7 @@ import java.awt.Event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,18 +17,22 @@ import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 
 @Component
-public class CoupleMatch {
+public abstract class CoupleMatch {
 	
-	private List<Team> teams = new ArrayList<>();
-	private Team currentTeam;
-	private int currentTeamIndex;
-	private Question currentQuestion;
-	
-	@Autowired
-	private QuestionService questionService;
+	protected List<Team> teams = new ArrayList<>();
+	protected Team currentTeam;
+	protected int currentTeamIndex;
+	protected Question currentQuestion;
 	
 	@Autowired
-    private TeamService teamService;
+	protected QuestionService questionService;
+	
+	@Autowired
+	protected TeamService teamService;
+	
+	AnswerRecorder recorder = new AnswerRecorder();
+	
+	List<MatchEvent> events = new ArrayList<>();
 	
 	public void init(String... teamNames) throws NotFoundException {
 		this.teams.clear();
@@ -42,21 +47,49 @@ public class CoupleMatch {
 	    switchTeamAndNewQuestion();
     }
 	
-	public EventResult teamAnswer(String answer) {
-		boolean correct = currentQuestion.isCorrect(answer);
-		if (correct) {
-			currentTeam.addScore(1);
-		}
-		Team lastTeam = currentTeam;
-		switchTeamAndNewQuestion();
-		return EventResult.getTypeSwitchTeam(correct, lastTeam, currentTeam);
+
+	public List<MatchEvent> teamAnswer(String answer) {
+	    events.clear();
+	    boolean correct = currentQuestion.isCorrect(answer);
+        // 1. 记录回答
+		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), correct);
+		// 2. 结算加分
+		addScore(correct);
+		// 3.判断队伍死亡
+        events.add(checkTeamDieEvent());
+		// 4.判断换队
+		events.add(checkSwitchTeamEvent());
+		// 5.判断比赛结束
+		events.add(checkTeamDieEvent());
+		// 移除空元素
+		events = events.stream().filter(s -> s != null).collect(Collectors.toList());
+		return events;
 	}
 	
-	public void teamTimeout() {
-		switchTeamAndNewQuestion();
-	}
+	/**
+	 * 为刚刚的答题加分。
+	 * 可实现为：固定加分；连续答对comb加分...
+	 * @param correct 
+	 */
+	abstract protected void addScore(boolean correct);
 	
-	private void switchTeamAndNewQuestion() {
+	/**
+	 * 判断队伍是否死亡。
+	 * 可实现为：累计答n题死亡；连续答错n题死亡；累计答错n题死亡...
+	 * @return
+	 */
+	abstract protected MatchEvent checkTeamDieEvent();
+
+	
+	/**
+	 * 判断是否切换队伍。
+     * 可实现为：答完一题切换；答错才切换...
+	 * @return
+	 */
+	abstract protected MatchEvent checkSwitchTeamEvent();
+
+	
+	protected void switchTeamAndNewQuestion() {
 		int nextTeamIndex = currentTeamIndex + 1;
 		if (nextTeamIndex == teams.size()) {
 			nextTeamIndex = 0;
