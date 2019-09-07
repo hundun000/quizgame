@@ -25,7 +25,7 @@ public class QuestionTool {
 	private static String DATA_FOLDER = "data/";
 	public static String BUSINESS_PACKAGE_NAME = "questions";
 	public static String TEST_PACKAGE_NAME = "questions_test";
-
+	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";
 	
 	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());

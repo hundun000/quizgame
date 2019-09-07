@@ -51,11 +51,11 @@ public class AnswerRecorder {
      * @return
      */
     public boolean isConsecutiveWrongAtLeastByTeam(String teamName, int num) {
-        return count(teamName, Boolean.FALSE, num, true) > num;
+        return count(teamName, Boolean.FALSE, num, true) >= num;
     }
     
     public boolean isSumAtLeastByTeam(String teamName, int num) {
-        return count(teamName, null, num, false) > num;
+        return count(teamName, null, num, false) >= num;
     }
     
 

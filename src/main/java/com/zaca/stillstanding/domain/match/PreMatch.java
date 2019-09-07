@@ -1,15 +1,19 @@
 package com.zaca.stillstanding.domain.match;
 
+import org.springframework.stereotype.Component;
+
 import com.zaca.stillstanding.domain.team.Team;
 
 /**
  * @author hundun
  * Created on 2019/09/06
  */
+@Component
 public class PreMatch extends CoupleMatch {
     
-    protected static final int LOSE_SUM = 10;
-
+    protected static final int LOSE_SUM = 5;
+  
+    
     /**
      * 累计答n题后死亡
      */
@@ -23,13 +27,11 @@ public class PreMatch extends CoupleMatch {
     }
 
     /**
-     * 答一题即切换（被调用则无条件切换）
+     * 一定不换队
      */
     @Override
     protected MatchEvent checkSwitchTeamEvent() {
-        Team lastTeam = currentTeam;
-        switchTeamAndNewQuestion();
-        return MatchEvent.getTypeSwitchTeam(lastTeam, currentTeam);
+        return null;
     }
 
     /**

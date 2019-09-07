@@ -44,7 +44,8 @@ public abstract class CoupleMatch {
 	
 	public void start() {
 	    currentTeamIndex = teams.size() - 1;
-	    switchTeamAndNewQuestion();
+	    switchToNextTeam();
+	    newQuestion();
     }
 	
 
@@ -57,10 +58,12 @@ public abstract class CoupleMatch {
 		addScore(correct);
 		// 3.判断队伍死亡
         events.add(checkTeamDieEvent());
-		// 4.判断换队
+        // 4.判断比赛结束
+        events.add(checkFinishEvent());
+		// 5.判断换队
 		events.add(checkSwitchTeamEvent());
-		// 5.判断比赛结束
-		events.add(checkTeamDieEvent());
+		// 6.换题
+        newQuestion();
 		// 移除空元素
 		events = events.stream().filter(s -> s != null).collect(Collectors.toList());
 		return events;
@@ -89,7 +92,22 @@ public abstract class CoupleMatch {
 	abstract protected MatchEvent checkSwitchTeamEvent();
 
 	
-	protected void switchTeamAndNewQuestion() {
+	protected MatchEvent checkFinishEvent() {
+	    boolean allDie = true;
+	    for (Team team : teams) {
+	        if (team.isAlive()) {
+	            allDie = false;
+	            break;
+	        }
+	    }
+	    if (allDie) {
+	        return MatchEvent.getTypeFinish();
+	    } else {
+	        return null;
+	    }
+	}
+	
+	protected void switchToNextTeam() {
 		int nextTeamIndex = currentTeamIndex + 1;
 		if (nextTeamIndex == teams.size()) {
 			nextTeamIndex = 0;
@@ -97,8 +115,12 @@ public abstract class CoupleMatch {
 		
 		currentTeam = teams.get(nextTeamIndex);
 		currentTeamIndex = nextTeamIndex;
-		currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
+		
 	}
+	
+	protected void newQuestion() {
+	    currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
+    }
 
     public List<Team> getTeams() {
         return teams;
@@ -118,6 +140,10 @@ public abstract class CoupleMatch {
 	
 	public int getCurrentTeamIndex() {
         return currentTeamIndex;
+    }
+	
+	public List<MatchEvent> getEvents() {
+        return events;
     }
 	
 }

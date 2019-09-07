@@ -20,6 +20,7 @@ public class FormatTool {
         object.put("question", questionToJSON(match.getCurrentQuestion()));
         object.put("teamIndex", match.getCurrentTeamIndex());
         object.put("teams", teamsToJSON(match.getTeams()));
+        object.put("events", match.getEvents());
         return object;
     }
     

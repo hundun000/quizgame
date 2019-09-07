@@ -1,5 +1,7 @@
 package com.zaca.stillstanding.domain.match;
 
+import java.util.Collection;
+
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.team.Team;
 
@@ -11,6 +13,15 @@ class MatchEvent{
 		this.type = type;
 		this.data = data;
 	}
+	
+	public static boolean isTypeInCollection(Collection<MatchEvent> events, EventResultType type) {
+        for (MatchEvent event : events) {
+            if (event.type == type) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 	public static MatchEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
 		JSONObject data = new JSONObject();
@@ -28,5 +39,13 @@ class MatchEvent{
 	public static MatchEvent getTypeFinish() {
         JSONObject data = new JSONObject();
         return new MatchEvent(EventResultType.FINISH, data);
+    }
+	
+	
+	public JSONObject getData() {
+        return data;
+    }
+	public EventResultType getType() {
+        return type;
     }
 }

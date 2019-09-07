@@ -86,4 +86,8 @@ public class Team {
 	public void setAlive(boolean alive) {
         this.alive = alive;
     }
+	
+	public boolean isAlive() {
+        return alive;
+    }
 }
