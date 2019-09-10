@@ -40,7 +40,7 @@ public class PreMatchTest {
     
     @Before
     public void init() throws ConflictException, NotFoundException {
-        questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
+        questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         
         teamService.creatTeam(teamKancolle); 
         List<String> pickTagNames = new ArrayList<>();

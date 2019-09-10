@@ -9,7 +9,7 @@ import com.zaca.stillstanding.domain.team.Team;
  * Created on 2019/09/06
  */
 @Component
-public class PreMatch extends CoupleMatch {
+public class PreMatch extends BaseMatch {
     
     protected static final int LOSE_SUM = 5;
   

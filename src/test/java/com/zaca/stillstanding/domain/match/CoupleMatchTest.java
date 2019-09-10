@@ -39,14 +39,14 @@ public class CoupleMatchTest {
     
     
     @Autowired
-    CoupleMatch coupleMatch;
+    BaseMatch coupleMatch;
     
     String  teamKancolle = "砍口垒同好组";
     String  teamPCR = "PCR同好组";
     
     @Before
     public void init() throws ConflictException, NotFoundException {
-        questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
+        questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         
         teamService.creatTeam(teamKancolle); 
         List<String> pickTagNames = new ArrayList<>();

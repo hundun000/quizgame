@@ -17,7 +17,7 @@ import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 
 @Component
-public abstract class CoupleMatch {
+public abstract class BaseMatch {
 	
 	protected List<Team> teams = new ArrayList<>();
 	protected Team currentTeam;
