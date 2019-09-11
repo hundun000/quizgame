@@ -2,6 +2,7 @@ package com.zaca.stillstanding.domain.match;
 
 import java.awt.Event;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +46,25 @@ public abstract class BaseMatch {
 	public void start() {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
-	    newQuestion();
+	    checkSwitchQuestionEvent();
+    }
+	
+	public void commandLineControl(String line) {
+        List<String> args = Arrays.asList(line.split(" "));
+        
+        String action = args.get(0);
+        String answerText;
+        
+        switch (action) {
+        case "ans":
+        case "answer":
+            answerText = args.get(1);
+            teamAnswer(answerText);
+            break;
+        default:
+            break;
+        }
+        
     }
 	
 
@@ -63,7 +82,7 @@ public abstract class BaseMatch {
 		// 5.判断换队
 		events.add(checkSwitchTeamEvent());
 		// 6.换题
-        newQuestion();
+		events.add(checkSwitchQuestionEvent());
 		// 移除空元素
 		events = events.stream().filter(s -> s != null).collect(Collectors.toList());
 		return events;
@@ -92,6 +111,15 @@ public abstract class BaseMatch {
 	abstract protected MatchEvent checkSwitchTeamEvent();
 
 	
+	/**
+	 * 换题时可指定不同时间
+	 * @return
+	 */
+	protected MatchEvent checkSwitchQuestionEvent() {
+	    currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
+	    return MatchEvent.getTypeSwitchQuestion(15);
+	}
+	
 	protected MatchEvent checkFinishEvent() {
 	    boolean allDie = true;
 	    for (Team team : teams) {
@@ -117,10 +145,6 @@ public abstract class BaseMatch {
 		currentTeamIndex = nextTeamIndex;
 		
 	}
-	
-	protected void newQuestion() {
-	    currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
-    }
 
     public List<Team> getTeams() {
         return teams;

@@ -14,6 +14,8 @@ class MatchEvent{
 		this.data = data;
 	}
 	
+	
+	
 	public static boolean isTypeInCollection(Collection<MatchEvent> events, EventResultType type) {
         for (MatchEvent event : events) {
             if (event.type == type) {
@@ -29,6 +31,12 @@ class MatchEvent{
 		data.put("current_team", currentTeam.getMatchData());
 		return new MatchEvent(EventResultType.SWITCH_TEAM, data);
 	}
+	
+	public static MatchEvent getTypeSwitchQuestion(int time) {
+        JSONObject data = new JSONObject();
+        data.put("time", time);
+        return new MatchEvent(EventResultType.SWITCH_QUESTION, data);
+    }
 	
 	public static MatchEvent getTypeTeamDie(Team team) {
         JSONObject data = new JSONObject();

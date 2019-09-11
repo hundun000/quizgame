@@ -1,5 +1,6 @@
 package com.zaca.stillstanding.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,17 @@ import com.zaca.stillstanding.exception.NotFoundException;
 public class TeamService {
 	
 	private Map<String, Team> teams = new HashMap<>();
+	
+	public void initForTest(String teamName) throws Exception {
+        creatTeam(teamName); 
+        List<String> pickTagNames = new ArrayList<>();
+        pickTagNames.add("单机游戏");
+        setPickTagsForTeam(teamName, pickTagNames);
+        
+        List<String> banTagNames = new ArrayList<>();
+        banTagNames.add("动画");
+        setBanTagsForTeam(teamName, banTagNames);
+    }
 	
 	public void creatTeam(String teamName) throws ConflictException {
 		if (teams.containsKey(teamName)) {
