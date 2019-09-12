@@ -43,10 +43,10 @@ public abstract class BaseMatch {
 		this.currentTeam = null;
 	}
 	
-	public void start() {
+	public MatchEvent start() {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
-	    checkSwitchQuestionEvent();
+	    return checkSwitchQuestionEvent();
     }
 	
 	public void commandLineControl(String line) {

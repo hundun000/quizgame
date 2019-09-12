@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.team.Team;
 
-class MatchEvent{
+public class MatchEvent{
 	private final EventResultType type;
 	private final JSONObject data;
 	
