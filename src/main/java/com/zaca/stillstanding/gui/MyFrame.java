@@ -28,43 +28,40 @@ import javax.swing.JTextField;
  * @author hundun
  * Created on 2019/09/11
  */
-@Component
-public class MyFrame extends JFrame implements CommandLineRunner{
+public class MyFrame extends JFrame {
 
-    @Autowired
     QuestionService questionService;
     
-    @Autowired
     TeamService teamService;
     
-    @Autowired
     PreMatch match;
     
     private JPanel contentPane;
     private JTextField input;
     private JTextArea output;
+
     
-    /**
-     * Launch the application.
-     */
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    MyFrame frame = new MyFrame();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+    
+    public void start() throws Exception {
+        setVisible(true);
+        initGame();
+        initUIBind();
+        initEventListener();
     }
 
     /**
      * Create the frame.
+     * @param match2 
+     * @param teamService2 
+     * @param questionService2 
      * @throws Exception 
      */
-    public MyFrame() {
+    public MyFrame(QuestionService questionService, TeamService teamService, PreMatch match) {
+        this.questionService = questionService;
+        this.teamService = teamService;
+        this.match = match;
+        
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 702, 723);
         contentPane = new JPanel();
@@ -80,7 +77,7 @@ public class MyFrame extends JFrame implements CommandLineRunner{
         input.setBounds(10, 645, 664, 29);
         contentPane.add(input);
         input.setColumns(10);
-        setVisible(true);
+
     }
     
     private void initGame() throws Exception {
@@ -107,10 +104,5 @@ public class MyFrame extends JFrame implements CommandLineRunner{
               });
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        initGame();
-        initUIBind();
-        initEventListener();
-    }
+    
 }

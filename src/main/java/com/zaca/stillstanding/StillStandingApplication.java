@@ -10,16 +10,14 @@ import com.zaca.stillstanding.gui.MyFrame;
 
 @SpringBootApplication
 public class StillStandingApplication {
-
-    @Autowired
-    MyFrame myFrame;
-    
+ 
 	public static void main(String[] args) {
 		//SpringApplication.run(StillStandingApplication.class, args);
 		
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(StillStandingApplication.class);
 	    builder.headless(false);
 	    builder.run(args);
+	    System.out.println("StillStandingApplication.main run.");
 	}
 	
 	
