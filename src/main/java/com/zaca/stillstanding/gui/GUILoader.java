@@ -21,6 +21,12 @@ public class GUILoader implements CommandLineRunner{
     @Value("${using-GUI}")
     boolean usingGUI;
     
+    @Value("${using-small-frame}")
+    boolean usingSmallFrame;
+    int SMALL_WIDTH = 460;
+    int BIG_WIDTH = 723;
+    
+    
     @Autowired
     QuestionService questionService;
     
@@ -40,6 +46,12 @@ public class GUILoader implements CommandLineRunner{
                     if (usingGUI) {
                         frame = new MyFrame(questionService, teamService, match);
                         frame.start();
+                        
+                        if (usingSmallFrame) {
+                            frame.setBounds(frame.getX(), frame.getY(), SMALL_WIDTH, frame.getHeight());
+                        } else {
+                            frame.setBounds(frame.getX(), frame.getY(), BIG_WIDTH, frame.getHeight());
+                        }
                     }
                     
 //                } catch (Exception e) {

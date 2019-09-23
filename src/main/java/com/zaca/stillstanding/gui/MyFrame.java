@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.zaca.stillstanding.domain.match.EventType;
 import com.zaca.stillstanding.domain.match.MatchEvent;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.service.QuestionService;
@@ -34,6 +36,9 @@ import javax.swing.JLabel;
  */
 public class MyFrame extends JFrame implements ISecondEventReceiver{
 
+    
+    
+    
     QuestionService questionService;
     
     TeamService teamService;
@@ -48,6 +53,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     int timerCount;
     Timer secondTimer;
+    boolean ignoreSecondTimer;
     
     public void start() throws Exception {
         setVisible(true);
@@ -70,23 +76,23 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 963, 723);
+        setBounds(100, 100, 832, 723);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
         
         dataOutput = new JTextArea();
-        dataOutput.setBounds(379, 23, 542, 629);
+        dataOutput.setBounds(22, 55, 403, 551);
         contentPane.add(dataOutput);
         
         input = new JTextField();
-        input.setBounds(22, 623, 329, 29);
+        input.setBounds(22, 623, 403, 29);
         contentPane.add(input);
         input.setColumns(10);
         
         viewOutput = new JTextArea();
-        viewOutput.setBounds(22, 62, 329, 551);
+        viewOutput.setBounds(452, 25, 347, 627);
         contentPane.add(viewOutput);
         
         lblTime = new JLabel("Time:");
@@ -125,16 +131,47 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                   if(e.getKeyCode()==KeyEvent.VK_ENTER){
                      String command = input.getText();
                      input.setText("");
-                     match.commandLineControl(command);
-                     dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchTOJSON(match), SerializerFeature.PrettyFormat) + "\n");
+                     
+                     if (!handleGUICommand(command)) {
+                         match.commandLineControl(command);
+                         dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchTOJSON(match), SerializerFeature.PrettyFormat) + "\n");
+                         
+                         MatchEvent event = match.getEventByType(EventType.SWITCH_QUESTION);
+                         if (event != null) {
+                             renewTimerCount(event.getData().getIntValue("time"));
+                         }
+                     }
+                     
                   }               
                 }
               });
     }
+    
+    private boolean handleGUICommand(String command) {
+        switch (command) {
+        case "the world":
+            ignoreSecondTimer = !ignoreSecondTimer;
+            break;
+        default:
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public void whenReceive() {
-        renewTimerCountByAdd(-1);
+        if (!ignoreSecondTimer) {
+            lblTime.setForeground(Color.BLACK);
+            renewTimerCountByAdd(-1);
+            
+            if (timerCount == 0) {
+                lblTime.setForeground(Color.RED);
+                ignoreSecondTimer = true;
+            }
+            
+        } else {
+            lblTime.setForeground(Color.BLUE);
+        }
     }
     
     
