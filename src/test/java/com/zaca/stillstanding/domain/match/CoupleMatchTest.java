@@ -29,6 +29,7 @@ import com.zaca.stillstanding.tool.QuestionTool;
  * Created on 2019/09/05
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles("test")
 @SpringBootTest
 public class CoupleMatchTest {
     
