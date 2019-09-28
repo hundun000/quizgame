@@ -57,22 +57,22 @@ public class PreMatchTest {
     @Test
     public void test() {
         match.start();
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
         match.teamAnswer("A");
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
         match.teamAnswer("B");
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
         match.teamAnswer("C");
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
         match.teamAnswer("D");
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
         match.teamAnswer("A");
-        System.out.println(FormatTool.coupleMatchTOJSON(match));
+        System.out.println(FormatTool.coupleMatchToJSON(match));
         
 
     }

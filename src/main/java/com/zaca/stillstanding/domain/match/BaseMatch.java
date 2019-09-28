@@ -179,4 +179,13 @@ public abstract class BaseMatch {
         return null;
     }
 	
+	public boolean containsEventByType(EventType type) {
+        for (MatchEvent event : events) {
+            if (event.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+	
 }

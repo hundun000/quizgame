@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.JFrame;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.EventType;
 import com.zaca.stillstanding.domain.match.MatchEvent;
 import com.zaca.stillstanding.domain.match.PreMatch;
@@ -110,6 +112,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void renewTimerCount(int value) {
+        ignoreSecondTimer = false;
         timerCount = value;
         lblTime.setText(String.valueOf(timerCount));
     }
@@ -119,32 +122,31 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void initUIData() {
-        dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchTOJSON(match), SerializerFeature.PrettyFormat) + "\n");
+        dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
     }
     
     private void initEvent() {
         secondTimer = new Timer();
         secondTimer.schedule(new SecondTimerTask(this), 1000, 1000);
         
-        input.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                  if(e.getKeyCode()==KeyEvent.VK_ENTER){
-                     String command = input.getText();
-                     input.setText("");
-                     
-                     if (!handleGUICommand(command)) {
-                         match.commandLineControl(command);
-                         dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchTOJSON(match), SerializerFeature.PrettyFormat) + "\n");
-                         
-                         MatchEvent event = match.getEventByType(EventType.SWITCH_QUESTION);
-                         if (event != null) {
-                             renewTimerCount(event.getData().getIntValue("time"));
-                         }
-                     }
-                     
-                  }               
-                }
-              });
+        input.addKeyListener(new MyKeyAdapter());
+    }
+    
+    class MyKeyAdapter extends KeyAdapter {
+
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode()==KeyEvent.VK_ENTER){
+               String command = input.getText();
+               input.setText("");
+               
+               if (!handleGUICommand(command)) {
+                   match.commandLineControl(command);
+                   
+                   handleEvent(match);
+               }
+
+            }
+          }
     }
     
     private boolean handleGUICommand(String command) {
@@ -167,6 +169,9 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
             if (timerCount == 0) {
                 lblTime.setForeground(Color.RED);
                 ignoreSecondTimer = true;
+                
+                match.teamAnswer(null);
+                handleEvent(match);
             }
             
         } else {
@@ -174,5 +179,24 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         }
     }
     
+    private void disableTimer() {
+        ignoreSecondTimer = true;
+        lblTime.setForeground(Color.BLUE);
+        lblTime.setText("unused");;
+    }
     
+    private void handleEvent(BaseMatch match) {
+        if (match.containsEventByType(EventType.FINISH)) {
+            dataOutput.setText("FINISH!");
+            disableTimer();
+            return;
+        }
+        
+        if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
+            renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getData().getIntValue("time"));
+            dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
+            return;
+        }
+        
+    }
 }

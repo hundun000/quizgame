@@ -17,6 +17,8 @@ public class Question {
 	private final Resource resource;
 	private final Set<String> tags;
 	
+	//public static final String TIMEOUT_ANSWER_TEXT = "timeout";
+	
 	public Question(String stem, String optionA, String optionB, String optionC, String optionD, String answerText, String resourceText, Set<String> tags) {
 		this.stem = stem;
 		this.options = new String[4];
@@ -56,6 +58,9 @@ public class Question {
 	}
 	
 	public boolean isCorrect(String answerText) {
+	    if (answerText == null) {
+	        return false;
+	    }
 		return answerTextToInt(answerText) == this.answer;
 	}
 	

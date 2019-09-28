@@ -36,7 +36,7 @@ public class PreMatch extends BaseMatch {
         init(teamKancolle);
     }
     
-    protected static final int LOSE_SUM = 5;
+    protected static final int LOSE_SUM = 3;
   
     
     /**
