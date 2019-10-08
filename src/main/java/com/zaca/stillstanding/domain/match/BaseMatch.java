@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -70,11 +71,11 @@ public abstract class BaseMatch {
 
 	public List<MatchEvent> teamAnswer(String answer) {
 	    events.clear();
-	    boolean correct = currentQuestion.isCorrect(answer);
+	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
-		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), correct);
+		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
 		// 2. 结算加分
-		addScore(correct);
+		addScore(answerType);
 		// 3.判断队伍死亡
         events.add(checkTeamDieEvent());
         // 4.判断比赛结束
@@ -91,9 +92,9 @@ public abstract class BaseMatch {
 	/**
 	 * 为刚刚的答题加分。
 	 * 可实现为：固定加分；连续答对comb加分...
-	 * @param correct 
+	 * @param answerType 
 	 */
-	abstract protected void addScore(boolean correct);
+	abstract protected void addScore(AnswerType answerType);
 	
 	/**
 	 * 判断队伍是否死亡。

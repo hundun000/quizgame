@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -63,8 +64,8 @@ public class PreMatch extends BaseMatch {
      * 固定加1分
      */
     @Override
-    protected void addScore(boolean correct) {
-        if (correct) {
+    protected void addScore(AnswerType answerType) {
+        if (answerType == AnswerType.CORRECT) {
             currentTeam.addScore(1);
         }
     }

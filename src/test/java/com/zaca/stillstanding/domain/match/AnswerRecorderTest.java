@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.zaca.stillstanding.domain.question.AnswerType;
+
 /**
  * @author hundun
  * Created on 2019/09/07
@@ -17,11 +19,11 @@ public class AnswerRecorderTest {
     
     @BeforeClass
     public static void beforeClass() {
-        recorderSingle.addRecord("t1", "", "", true);
-        recorderSingle.addRecord("t1", "", "", false);
-        recorderSingle.addRecord("t1", "", "", true);
-        recorderSingle.addRecord("t1", "", "", false);
-        recorderSingle.addRecord("t1", "", "", false);
+        recorderSingle.addRecord("t1", "", "", AnswerType.CORRECT);
+        recorderSingle.addRecord("t1", "", "", AnswerType.WRONG);
+        recorderSingle.addRecord("t1", "", "", AnswerType.CORRECT);
+        recorderSingle.addRecord("t1", "", "", AnswerType.WRONG);
+        recorderSingle.addRecord("t1", "", "", AnswerType.WRONG);
     }
     
     @Test

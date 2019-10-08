@@ -1,5 +1,6 @@
 package com.zaca.stillstanding.domain.match;
 
+import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.Team;
 
 /**
@@ -12,8 +13,8 @@ public class MainMatch extends BaseMatch {
      * 固定加1
      */
     @Override
-    protected void addScore(boolean correct) {
-        if (correct) {
+    protected void addScore(AnswerType answerType) {
+        if (answerType == AnswerType.CORRECT) {
             currentTeam.addScore(1);
         }
     }

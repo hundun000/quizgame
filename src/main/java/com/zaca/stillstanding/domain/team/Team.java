@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.skill.SkillSlot;
 
 
 public class Team {
@@ -12,6 +13,8 @@ public class Team {
 	private final String name;
 	private List<String> pickTags;
 	private List<String> banTags;
+	private List<SkillSlot> skillSlots;
+	
 	
 	private int matchScore;
 	
@@ -90,4 +93,14 @@ public class Team {
 	public boolean isAlive() {
         return alive;
     }
+
+    public List<SkillSlot> getSkillSlots() {
+        return skillSlots;
+    }
+
+    public void setSkillSlots(List<SkillSlot> skillSlots) {
+        this.skillSlots = skillSlots;
+    }
+	
+	
 }

@@ -57,7 +57,7 @@ public class Question {
 		
 	}
 	
-	public boolean isCorrect(String answerText) {
+	public boolean isCorrectOrSkipped(String answerText) {
 	    if (answerText == null) {
 	        return false;
 	    }
@@ -101,5 +101,11 @@ public class Question {
 	
 	public String getId() {
         return id;
+    }
+
+
+    public AnswerType calculateAnswerType(String answer2) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

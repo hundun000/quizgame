@@ -6,15 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.question.TagManager;
+import com.zaca.stillstanding.domain.skill.SkillManager;
+import com.zaca.stillstanding.domain.skill.SkillSlot;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 
 @Service
 public class TeamService {
+    
+    @Autowired
+    SkillManager skillManager;
 	
 	private Map<String, Team> teams = new HashMap<>();
 	
@@ -57,6 +63,19 @@ public class TeamService {
 			team.setBanTags(tagNames);
 		}
 	}
+	
+	public void setSkillsForTeam(String teamName, List<String> skillNames) throws NotFoundException {
+        Team team = getTeam(teamName);
+        List<SkillSlot> slots = new ArrayList<>();
+        for (String skillName : skillNames) {
+            if (!skillManager.skillExsist(skillName)) {
+                throw new NotFoundException("Skill", skillName);
+            }
+            slots.add(new SkillSlot(skillManager.get(skillName), 2));
+        }
+        team.setSkillSlots(slots);
+    }
+	
 	
 	public Team getTeam(String name) throws NotFoundException {
 		Team team = teams.get(name);

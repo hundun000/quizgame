@@ -7,19 +7,21 @@ package com.zaca.stillstanding.domain.match;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.zaca.stillstanding.domain.question.AnswerType;
+
 public class AnswerRecorder {
     
     class RecordNode{
         private String teamName;
         private String answer;
         private String questionId;
-        private boolean correct;
+        private AnswerType answerType;
         
-        public RecordNode(String teamName, String answer, String questionId, boolean correct) {
+        public RecordNode(String teamName, String answer, String questionId, AnswerType answerType) {
             this.teamName = teamName;
             this.answer = answer;
             this.questionId = questionId;
-            this.correct = correct;
+            this.answerType = answerType;
         }
         
         public boolean isMe(String teamName) {
@@ -27,7 +29,7 @@ public class AnswerRecorder {
         }
         
         public boolean isCorrect() {
-            return correct;
+            return answerType == AnswerType.CORRECT;
         }
     }
     
@@ -37,9 +39,9 @@ public class AnswerRecorder {
      */
     LinkedList<RecordNode> nodes = new LinkedList<>();
     
-    public void addRecord(String teamName, String answer, String questionId, boolean correct) {
+    public void addRecord(String teamName, String answer, String questionId, AnswerType answerType) {
         // 仿栈
-        nodes.addFirst(new RecordNode(teamName, answer, questionId, correct));
+        nodes.addFirst(new RecordNode(teamName, answer, questionId, answerType));
     }
     
     
