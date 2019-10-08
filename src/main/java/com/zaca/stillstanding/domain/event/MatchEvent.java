@@ -1,8 +1,9 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.domain.event;
 
 import java.util.Collection;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.team.Team;
 
 public class MatchEvent{
@@ -47,6 +48,13 @@ public class MatchEvent{
 	public static MatchEvent getTypeFinish() {
         JSONObject data = new JSONObject();
         return new MatchEvent(EventType.FINISH, data);
+    }
+	
+	public static MatchEvent getTypeSkillSuccess(Team team, BaseSkill skill) {
+        JSONObject data = new JSONObject();
+        data.put("team", team.getMatchData());
+        data.put("skill_name", skill.getName());
+        return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
 	
 	

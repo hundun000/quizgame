@@ -6,11 +6,29 @@ package com.zaca.stillstanding.domain.skill;
 public class SkillSlot {
     
     private final BaseSkill skill;
+    private final int fullCount;
     private int count;
     
-    public SkillSlot(BaseSkill skill, int count) {
+    public SkillSlot(BaseSkill skill, int fullCount) {
         this.skill = skill;
-        this.count = count;
+        this.fullCount = fullCount;
+        resetCount();
+    }
+
+    public BaseSkill useOnce() {
+        if (count > 0) {
+            count--;
+            return skill;
+        }
+        return null;
+    }
+
+    public BaseSkill getSkill() {
+        return skill;
+    }
+    
+    public void resetCount() {
+        count = fullCount;
     }
     
 }

@@ -11,8 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.event.EventType;
+import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.question.Question;
+import com.zaca.stillstanding.domain.skill.BaseRole;
+import com.zaca.stillstanding.domain.skill.BaseSkill;
+import com.zaca.stillstanding.domain.skill.SkillSlot;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.QuestionService;
@@ -67,6 +72,12 @@ public abstract class BaseMatch {
         }
         
     }
+	
+	public MatchEvent teamUseSkill(int index) {
+	    SkillSlot slot = currentTeam.getRole().getSkillSlots().get(index);
+	    slot.useOnce();
+	    return MatchEvent.getTypeSkillSuccess(currentTeam, slot.getSkill());
+	}
 	
 
 	public List<MatchEvent> teamAnswer(String answer) {

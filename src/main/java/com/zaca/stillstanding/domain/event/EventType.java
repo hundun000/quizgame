@@ -1,8 +1,10 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.domain.event;
 
 public enum EventType {
     SWITCH_QUESTION,
 	SWITCH_TEAM,
 	TEAM_DIE,
-	FINISH
+	FINISH,
+	SKILL_SUCCESS
+	;
 }

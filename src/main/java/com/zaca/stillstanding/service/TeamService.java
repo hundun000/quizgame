@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.question.TagManager;
+import com.zaca.stillstanding.domain.skill.RoleManager;
 import com.zaca.stillstanding.domain.skill.SkillManager;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 import com.zaca.stillstanding.domain.team.Team;
@@ -20,7 +21,7 @@ import com.zaca.stillstanding.exception.NotFoundException;
 public class TeamService {
     
     @Autowired
-    SkillManager skillManager;
+    RoleManager roleManager;
 	
 	private Map<String, Team> teams = new HashMap<>();
 	
@@ -33,6 +34,8 @@ public class TeamService {
         List<String> banTagNames = new ArrayList<>();
         banTagNames.add("动画");
         setBanTagsForTeam(teamName, banTagNames);
+        
+        setRoleForTeam(teamName, "ZACA娘");
     }
 	
 	public void creatTeam(String teamName) throws ConflictException {
@@ -64,16 +67,14 @@ public class TeamService {
 		}
 	}
 	
-	public void setSkillsForTeam(String teamName, List<String> skillNames) throws NotFoundException {
+	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
         Team team = getTeam(teamName);
-        List<SkillSlot> slots = new ArrayList<>();
-        for (String skillName : skillNames) {
-            if (!skillManager.skillExsist(skillName)) {
-                throw new NotFoundException("Skill", skillName);
-            }
-            slots.add(new SkillSlot(skillManager.get(skillName), 2));
+        
+        if (!roleManager.exsist(roleName)) {
+            throw new NotFoundException("Role", roleName);
         }
-        team.setSkillSlots(slots);
+        
+        team.setRole(roleManager.get(roleName));
     }
 	
 	
