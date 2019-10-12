@@ -25,17 +25,17 @@ public class TeamService {
 	
 	private Map<String, Team> teams = new HashMap<>();
 	
-	public void initForTest(String teamName) throws Exception {
+	public void quickRegisterTeam(String teamName, String pickTagName, String banTagName, String roleName) throws Exception {
         creatTeam(teamName); 
         List<String> pickTagNames = new ArrayList<>();
-        pickTagNames.add("单机游戏");
+        pickTagNames.add(pickTagName);
         setPickTagsForTeam(teamName, pickTagNames);
         
         List<String> banTagNames = new ArrayList<>();
-        banTagNames.add("动画");
+        banTagNames.add(banTagName);
         setBanTagsForTeam(teamName, banTagNames);
         
-        setRoleForTeam(teamName, "ZACA娘");
+        setRoleForTeam(teamName, roleName);
     }
 	
 	public void creatTeam(String teamName) throws ConflictException {

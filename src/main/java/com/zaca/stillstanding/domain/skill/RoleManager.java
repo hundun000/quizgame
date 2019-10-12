@@ -3,6 +3,8 @@ package com.zaca.stillstanding.domain.skill;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,11 @@ public class RoleManager {
     Map<String, BaseRole> roles = new HashMap<>();
     
     public RoleManager() {
+        
+    }
+    
+    @PostConstruct
+    private void post(){
         BaseRole role;
         role = new BaseRole("ZACA娘", "主人公。");
         role.getSkillSlots().add(new SkillSlot(skillManager.get("5050"), 2));

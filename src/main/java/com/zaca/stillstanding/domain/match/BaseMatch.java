@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
@@ -20,6 +22,8 @@ import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
+import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.exception.TeamDeadException;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 
@@ -41,7 +45,7 @@ public abstract class BaseMatch {
 	
 	List<MatchEvent> events = new ArrayList<>();
 	
-	public void init(String... teamNames) throws NotFoundException {
+	public void addTeams(String... teamNames) throws NotFoundException {
 		this.teams.clear();
 		for (String teamName : teamNames) {
 		    teams.add(teamService.getTeam(teamName));
@@ -49,13 +53,13 @@ public abstract class BaseMatch {
 		this.currentTeam = null;
 	}
 	
-	public MatchEvent start() {
+	public MatchEvent start() throws StillStandingException {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
 	    return checkSwitchQuestionEvent();
     }
 	
-	public void commandLineControl(String line) {
+	public void commandLineControl(String line) throws StillStandingException {
         List<String> args = Arrays.asList(line.split(" "));
         
         String action = args.get(0);
@@ -73,14 +77,43 @@ public abstract class BaseMatch {
         
     }
 	
-	public MatchEvent teamUseSkill(int index) {
-	    SkillSlot slot = currentTeam.getRole().getSkillSlots().get(index);
-	    slot.useOnce();
-	    return MatchEvent.getTypeSkillSuccess(currentTeam, slot.getSkill());
-	}
 	
-
-	public List<MatchEvent> teamAnswer(String answer) {
+	public MatchEvent teamUseSkill(String skillName) throws StillStandingException {
+	    for (SkillSlot slot : currentTeam.getRole().getSkillSlots()) {
+	        if (slot.getSkill().getName().equals(skillName)) {
+	            BaseSkill skill = slot.useOnce();
+	            if (skill != null) {
+	                return handleSkillSuccess(skill);
+	            } else {
+	                return MatchEvent.getTypeSkillUseOut(currentTeam, slot.getSkill());
+	            }
+	            
+	        }
+	    }
+        return null;
+    }
+	
+	private MatchEvent handleSkillSuccess(BaseSkill skill) throws StillStandingException {
+        switch (skill.getName()) {
+        case "跳过":
+            JSONArray eventsAfterSkip= JSONArray.parseArray(JSON.toJSONString(teamAnswerSkip()));
+            return MatchEvent.getTypeSkillSuccess(currentTeam, skill, eventsAfterSkip);
+        default:
+            return MatchEvent.getTypeSkillSuccess(currentTeam, skill, null);
+        }
+    }
+	
+	public List<MatchEvent> teamAnswerSkip() throws StillStandingException {
+        return teamAnswer(Question.SKIP_ANSWER_TEXT);
+    }
+	public List<MatchEvent> teamAnswerTimeout() throws StillStandingException {
+	    return teamAnswer(Question.TIMEOUT_ANSWER_TEXT);
+    }
+	public List<MatchEvent> teamAnswer(String answer) throws StillStandingException {
+	    if (!currentTeam.isAlive()) {
+	        throw new TeamDeadException(currentTeam.getName());
+	    }
+	     
 	    events.clear();
 	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
@@ -90,11 +123,14 @@ public abstract class BaseMatch {
 		// 3.判断队伍死亡
         events.add(checkTeamDieEvent());
         // 4.判断比赛结束
-        events.add(checkFinishEvent());
-		// 5.判断换队
-		events.add(checkSwitchTeamEvent());
-		// 6.换题
-		events.add(checkSwitchQuestionEvent());
+        MatchEvent finishEvent = checkFinishEvent();
+        if (finishEvent == null) {
+            events.add(finishEvent);
+            // 5.判断换队
+            events.add(checkSwitchTeamEvent());
+            // 6.换题
+            events.add(checkSwitchQuestionEvent());
+        }
 		// 移除空元素
 		events = events.stream().filter(s -> s != null).collect(Collectors.toList());
 		return events;
@@ -148,12 +184,22 @@ public abstract class BaseMatch {
 	}
 	
 	protected void switchToNextTeam() {
-		int nextTeamIndex = currentTeamIndex + 1;
-		if (nextTeamIndex == teams.size()) {
-			nextTeamIndex = 0;
-		}
-		
-		currentTeam = teams.get(nextTeamIndex);
+	    int nextTeamIndex;
+	    int tryTimes = 0;
+	    do {
+	        tryTimes++;
+            if (tryTimes > teams.size()) {
+                throw new RuntimeException("试图在所有队伍死亡情况下换队");
+            }
+            
+    		nextTeamIndex = currentTeamIndex + 1;
+    		if (nextTeamIndex == teams.size()) {
+    			nextTeamIndex = 0;
+    		}
+    		
+    		currentTeam = teams.get(nextTeamIndex);
+	    } while (!currentTeam.isAlive());
+	    
 		currentTeamIndex = nextTeamIndex;
 		
 	}
@@ -182,6 +228,11 @@ public abstract class BaseMatch {
         return events;
     }
 	
+	/**
+	 * 直接取出需要的类型
+	 * @param type
+	 * @return
+	 */
 	public MatchEvent getEventByType(EventType type) {
         for (MatchEvent event : events) {
             if (event.getType() == type) {

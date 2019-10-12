@@ -5,6 +5,7 @@ public enum EventType {
 	SWITCH_TEAM,
 	TEAM_DIE,
 	FINISH,
-	SKILL_SUCCESS
+	SKILL_SUCCESS,
+	SKILL_USE_OUT
 	;
 }

@@ -1,6 +1,6 @@
 package com.zaca.stillstanding.exception;
 
-public class NotFoundException extends Exception {
+public class NotFoundException extends StillStandingException {
 
 	/**
 	 * 

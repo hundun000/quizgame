@@ -28,8 +28,8 @@ public class AnswerRecorder {
             return this.teamName.equals(teamName);
         }
         
-        public boolean isCorrect() {
-            return answerType == AnswerType.CORRECT;
+        public AnswerType getAnswerType() {
+            return answerType;
         }
     }
     
@@ -53,7 +53,7 @@ public class AnswerRecorder {
      * @return
      */
     public boolean isConsecutiveWrongAtLeastByTeam(String teamName, int num) {
-        return count(teamName, Boolean.FALSE, num, true) >= num;
+        return count(teamName, AnswerType.WRONG, num, true) >= num;
     }
     
     public boolean isSumAtLeastByTeam(String teamName, int num) {
@@ -64,24 +64,30 @@ public class AnswerRecorder {
     /**
      * 可用统计某队[连续/累计][正确/错误/全部]回答的个数
      * @param teamName
-     * @param check TRUE:仅计数正确回答；FALSE:仅计数错误回答；null:仅计数任意回答
+     * @param check 计数的类型；null:仅计数任意回答
      * @param max 计数等于max时停止
      * @param consecutive true:统计全部记录；false:当check不满足时停止；
      * @return
      */
-    public int count(String teamName, Boolean check, int max, boolean consecutive) {
+    public int count(String teamName, AnswerType check, int max, boolean consecutive) {
         int num = 0;
         for (RecordNode node : nodes) {
             if(!node.isMe(teamName)) {
                 continue;
             }
-            if(check == null || node.isCorrect() == check) {
-                num++;
+            
+            if (node.getAnswerType() == AnswerType.SKIPPED) {
+                continue;
             } else {
-                if (consecutive) {
-                   break; 
+                if(check == null || node.getAnswerType() == check) {
+                    num++;
+                } else {
+                    if (consecutive) {
+                       break; 
+                    }
                 }
             }
+            
             if (num == max) {
                 break;
             }

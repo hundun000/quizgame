@@ -22,6 +22,7 @@ import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
+import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.FormatTool;
@@ -104,8 +105,8 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     private void initGame() throws Exception {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
-        teamService.initForTest("砍口垒同好组");
-        match.init("砍口垒同好组");
+        teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
+        match.addTeams("砍口垒同好组");
         
         MatchEvent event = match.start();
         renewTimerCount(event.getData().getIntValue("time"));
@@ -122,7 +123,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void initUIData() {
-        dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
+        dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
     }
     
     private void initEvent() {
@@ -140,9 +141,15 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                input.setText("");
                
                if (!handleGUICommand(command)) {
-                   match.commandLineControl(command);
+                   try {
+                    match.commandLineControl(command);
+                    handleEvent(match);
+                } catch (StillStandingException e1) {
+                    dataOutput.setText("StillStandingException:" + e1.getMessage());
+                    disableTimer();
+                }
                    
-                   handleEvent(match);
+                   
                }
 
             }
@@ -170,8 +177,13 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                 lblTime.setForeground(Color.RED);
                 ignoreSecondTimer = true;
                 
-                match.teamAnswer(null);
-                handleEvent(match);
+                try {
+                    match.teamAnswerTimeout();
+                    handleEvent(match);
+                } catch (StillStandingException e) {
+                    e.printStackTrace();
+                }
+                
             }
             
         } else {
@@ -194,7 +206,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         
         if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
             renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getData().getIntValue("time"));
-            dataOutput.setText(JSON.toJSONString(FormatTool.coupleMatchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
+            dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
             return;
         }
         

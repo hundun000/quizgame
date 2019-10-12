@@ -1,5 +1,6 @@
 package com.zaca.stillstanding.tool;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
@@ -16,7 +17,7 @@ import com.zaca.stillstanding.domain.team.Team;
  */
 public class FormatTool {
     
-    public static JSONObject coupleMatchToJSON(BaseMatch match) {
+    public static JSONObject matchToJSON(BaseMatch match) {
         JSONObject object = new JSONObject();
         object.put("question", questionToShortJSON(match.getCurrentQuestion()));
         object.put("teamIndex", match.getCurrentTeamIndex());
@@ -25,7 +26,7 @@ public class FormatTool {
         return object;
     }
     
-    public static JSONObject coupleMatchToShortJSON(BaseMatch match) {
+    public static JSONObject matchToShortJSON(BaseMatch match) {
         JSONObject object = new JSONObject();
         object.put("question", questionToJSON(match.getCurrentQuestion()));
         object.put("teamIndex", match.getCurrentTeamIndex());
@@ -34,21 +35,21 @@ public class FormatTool {
         return object;
     }
     
-    private static JSONObject questionToShortJSON(Question question) {
+    public static JSONObject questionToShortJSON(Question question) {
         JSONObject object = new JSONObject();
         object.put("stem&ans", question.getStem() + "=" + question.getAnswer());
-        object.put("options", question.getOptions().toString());
+        object.put("options", Arrays.toString(question.getOptions()));
         object.put("resource.data", question.getResource().getData());
         return object;
     }
     
-    private static JSONObject questionToJSON(Question question) {
+    public static JSONObject questionToJSON(Question question) {
         JSONObject object = new JSONObject();
         // TODO
         return JSONObject.parseObject(JSON.toJSONString(question));
     }
     
-    private static JSONArray teamsToJSON(List<Team> teams) {
+    public static JSONArray teamsToJSON(List<Team> teams) {
         JSONArray array = new JSONArray();
         for (Team team : teams) {
             array.add(team.getMatchData());
@@ -57,7 +58,7 @@ public class FormatTool {
         return array;
     }
     
-    private static JSONArray teamsToShortJSON(List<Team> teams) {
+    public static JSONArray teamsToShortJSON(List<Team> teams) {
         JSONArray array = new JSONArray();
         for (Team team : teams) {
             array.add(team.getName());
@@ -66,7 +67,7 @@ public class FormatTool {
         return array;
     }
     
-    private static JSONArray eventsToShortJSON(List<MatchEvent> events) {
+    public static JSONArray eventsToShortJSON(List<MatchEvent> events) {
         JSONArray array = new JSONArray();
         for (MatchEvent event : events) {
             array.add(JSON.toJSONString(event));

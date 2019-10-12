@@ -10,6 +10,9 @@ import com.zaca.stillstanding.exception.QuestionFormatException;
  * Created on 2019/03/19
  */
 public class Question {
+    public static final String SKIP_ANSWER_TEXT = "skip";
+    public static final String TIMEOUT_ANSWER_TEXT = "timeout";
+    
     private final String id;
 	private final String stem;
 	private final String[] options;
@@ -104,8 +107,18 @@ public class Question {
     }
 
 
-    public AnswerType calculateAnswerType(String answer2) {
-        // TODO Auto-generated method stub
-        return null;
+    public AnswerType calculateAnswerType(String answerText) {
+        if (answerText.equals(SKIP_ANSWER_TEXT)) {
+            return AnswerType.SKIPPED;
+        } else if (answerText.equals(TIMEOUT_ANSWER_TEXT)) {
+            return AnswerType.WRONG;
+        } else {
+            // 正常回答A、B、C、D
+            if (answerTextToInt(answerText) == this.answer) {
+                return AnswerType.CORRECT;
+            } else {
+                return AnswerType.WRONG;
+            }
+        }
     }
 }

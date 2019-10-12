@@ -12,8 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.alibaba.fastjson.JSON;
+import com.zaca.stillstanding.domain.event.EventType;
+import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
+import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.exception.TeamDeadException;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.FormatTool;
@@ -39,42 +44,65 @@ public class PreMatchTest {
     String  teamKancolle = "砍口垒同好组";
     
     @Before
-    public void init() throws ConflictException, NotFoundException {
+    public void init() throws Exception {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         
-        teamService.creatTeam(teamKancolle); 
-        List<String> pickTagNames = new ArrayList<>();
-        pickTagNames.add("单机游戏");
-        teamService.setPickTagsForTeam(teamKancolle, pickTagNames);
+        teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
         
-        List<String> banTagNames = new ArrayList<>();
-        banTagNames.add("动画");
-        teamService.setBanTagsForTeam(teamKancolle, banTagNames);
-        
-        match.init(teamKancolle);
+        match.addTeams(teamKancolle);
     }
     
     @Test
-    public void test() {
+    public void test() throws StillStandingException {
+        MatchEvent skillEvent;
+        List<MatchEvent> answerEvents;
         match.start();
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        System.out.println(FormatTool.matchToJSON(match));
         
-        match.teamAnswer("A");
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        answerEvents = match.teamAnswer("A");
+        System.out.println(FormatTool.eventsToShortJSON(answerEvents));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        match.teamAnswer("B");
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        skillEvent = match.teamUseSkill("5050");
+        System.out.println(JSON.toJSONString(skillEvent));
+        assertEquals("5050", skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
         
-        match.teamAnswer("C");
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        skillEvent = match.teamUseSkill("跳过");
+        System.out.println(JSON.toJSONString(skillEvent));
+        assertEquals("跳过", skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        match.teamAnswer("D");
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        skillEvent = match.teamUseSkill("5050");
+        System.out.println(JSON.toJSONString(skillEvent));
+        assertEquals("5050", skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        match.teamAnswer("A");
-        System.out.println(FormatTool.coupleMatchToJSON(match));
+        skillEvent = match.teamUseSkill("5050");
+        System.out.println(JSON.toJSONString(skillEvent));
+        assertEquals(EventType.SKILL_USE_OUT, skillEvent.getType());
         
-
+        answerEvents = match.teamAnswer("A");
+        System.out.println(FormatTool.eventsToShortJSON(answerEvents));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
+        
+        answerEvents = match.teamAnswer("B");
+        System.out.println(FormatTool.eventsToShortJSON(answerEvents));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
+        
+        answerEvents = match.teamAnswer("C");
+        System.out.println(FormatTool.eventsToShortJSON(answerEvents));
+        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
+        
+        answerEvents = match.teamAnswer("D");
+        System.out.println(FormatTool.eventsToShortJSON(answerEvents));
+        assertTrue(match.containsEventByType(EventType.TEAM_DIE));
+        
+        try {
+            match.teamAnswer("A");
+            fail();
+        } catch (TeamDeadException e) {
+            // pass if has expectant Exception
+        }
     }
 
 }

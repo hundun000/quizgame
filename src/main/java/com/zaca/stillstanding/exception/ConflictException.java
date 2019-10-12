@@ -1,6 +1,6 @@
 package com.zaca.stillstanding.exception;
 
-public class ConflictException extends Exception {
+public class ConflictException extends StillStandingException {
 	
 	/**
 	 * 

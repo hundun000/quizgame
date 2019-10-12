@@ -21,24 +21,8 @@ import com.zaca.stillstanding.service.TeamService;
 @Component
 public class PreMatch extends BaseMatch {
     
-    
-    
-    public void initForTest() throws Exception {
-        String  teamKancolle = "砍口垒同好组";
-        
-        teamService.creatTeam(teamKancolle); 
-        List<String> pickTagNames = new ArrayList<>();
-        pickTagNames.add("单机游戏");
-        teamService.setPickTagsForTeam(teamKancolle, pickTagNames);
-        
-        List<String> banTagNames = new ArrayList<>();
-        banTagNames.add("动画");
-        teamService.setBanTagsForTeam(teamKancolle, banTagNames);
-        
-        init(teamKancolle);
-    }
-    
-    protected static final int LOSE_SUM = 3;
+
+    protected static final int LOSE_SUM = 5;
   
     
     /**

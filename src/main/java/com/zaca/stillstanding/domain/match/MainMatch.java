@@ -3,6 +3,7 @@ package com.zaca.stillstanding.domain.match;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.exception.TeamDeadException;
 
 /**
  * @author hundun
