@@ -7,7 +7,7 @@ import java.util.List;
  * @author hundun
  * Created on 2019/10/08
  */
-public class BaseRole {
+public class BaseRole implements Cloneable{
     
     private final String name;
     private final String description;
@@ -30,4 +30,13 @@ public class BaseRole {
     public List<SkillSlot> getSkillSlots() {
         return skillSlots;
     }
+    
+    @Override
+    public BaseRole clone() {
+            BaseRole cloneRole = new BaseRole(name, description);
+            for (SkillSlot skillSlot : skillSlots) {
+                cloneRole.skillSlots.add(skillSlot.clone());
+            }
+            return cloneRole;
+        }
 }

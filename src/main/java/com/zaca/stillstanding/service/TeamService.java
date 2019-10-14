@@ -10,22 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.question.TagManager;
-import com.zaca.stillstanding.domain.skill.RoleManager;
-import com.zaca.stillstanding.domain.skill.SkillManager;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
+import com.zaca.stillstanding.exception.StillStandingException;
 
 @Service
 public class TeamService {
     
     @Autowired
-    RoleManager roleManager;
-	
+    RoleSkillService roleSkillServic;
+    
 	private Map<String, Team> teams = new HashMap<>();
 	
-	public void quickRegisterTeam(String teamName, String pickTagName, String banTagName, String roleName) throws Exception {
+	public void quickRegisterTeam(String teamName, String pickTagName, String banTagName, String roleName) throws StillStandingException {
         creatTeam(teamName); 
         List<String> pickTagNames = new ArrayList<>();
         pickTagNames.add(pickTagName);
@@ -70,11 +69,11 @@ public class TeamService {
 	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
         Team team = getTeam(teamName);
         
-        if (!roleManager.exsist(roleName)) {
+        if (!roleSkillServic.exsistRole(roleName)) {
             throw new NotFoundException("Role", roleName);
         }
         
-        team.setRole(roleManager.get(roleName));
+        team.setRole(roleSkillServic.createRole(roleName));
     }
 	
 	
