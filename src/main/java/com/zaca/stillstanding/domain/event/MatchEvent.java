@@ -56,7 +56,12 @@ public class MatchEvent{
         JSONObject data = new JSONObject();
         data.put("team", team.getMatchData());
         data.put(KEY_SKILL_NAME, skill.getName());
-        data.put("skill_effect", skillEffect);
+        if (skillEffect != null) {
+            data.put("skill_effect", skillEffect);
+        }
+        if (skill.getStaticData() != null) {
+            data.put("static_data", skill.getStaticData());
+        }
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
 	

@@ -90,14 +90,16 @@ public abstract class BaseMatch {
 	            
 	        }
 	    }
-        return null;
+	    throw new NotFoundException("当前队伍的技能中", skillName);
     }
 	
 	private MatchEvent handleSkillSuccess(BaseSkill skill) throws StillStandingException {
-        switch (skill.getName()) {
+	    events.clear();
+	    switch (skill.getName()) {
         case "跳过":
-            JSONArray eventsAfterSkip= JSONArray.parseArray(JSON.toJSONString(teamAnswerSkip()));
-            return MatchEvent.getTypeSkillSuccess(currentTeam, skill, eventsAfterSkip);
+            List<MatchEvent> eventsAfterSkip = teamAnswerSkip();
+            JSONArray array = JSONArray.parseArray(JSON.toJSONString(eventsAfterSkip));
+            return MatchEvent.getTypeSkillSuccess(currentTeam, skill, array);
         default:
             return MatchEvent.getTypeSkillSuccess(currentTeam, skill, null);
         }
@@ -110,11 +112,11 @@ public abstract class BaseMatch {
 	    return teamAnswer(Question.TIMEOUT_ANSWER_TEXT);
     }
 	public List<MatchEvent> teamAnswer(String answer) throws StillStandingException {
+	    events.clear();
 	    if (!currentTeam.isAlive()) {
 	        throw new TeamDeadException(currentTeam.getName());
 	    }
 	     
-	    events.clear();
 	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
 		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
