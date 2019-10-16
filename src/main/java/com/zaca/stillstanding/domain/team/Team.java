@@ -82,6 +82,14 @@ public class Team {
 		return data;
 	}
 	
+	public JSONObject getAllData() {
+        JSONObject data = getMatchData();
+        data.put("pickTags", pickTags);
+        data.put("banTags", banTags);
+        data.put("role", role);
+        return data;
+    }
+	
 	public String getName() {
         return name;
     }

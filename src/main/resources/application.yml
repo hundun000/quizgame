@@ -1,2 +1,5 @@
-using-GUI : false
-using-small-frame : true
+server:
+    port: 10099
+
+using-GUI: false
+using-small-frame: true

@@ -1,5 +1,6 @@
 package com.zaca.stillstanding.service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,6 @@ public class RoleSkillService {
         skills.put(skill.getName(), skill);
     }
     
-    
     public BaseSkill getSkill(String skillName) {
         return skills.get(skillName);
     }
@@ -53,5 +53,9 @@ public class RoleSkillService {
     
     public boolean exsistRole(String name) {
         return roles.containsKey(name);
+    }
+    
+    public Collection<BaseRole> listRoles() {
+        return roles.values();
     }
 }
