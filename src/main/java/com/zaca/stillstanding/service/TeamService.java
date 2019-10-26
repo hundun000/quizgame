@@ -74,7 +74,7 @@ public class TeamService {
             throw new NotFoundException("Role", roleName);
         }
         
-        team.setRole(roleSkillServic.createRole(roleName));
+        team.setRole(roleSkillServic.getRole(roleName));
     }
 	
 	

@@ -47,8 +47,8 @@ public class RoleSkillService {
         return skills.containsKey(skillName);
     }
 
-    public BaseRole createRole(String name) {
-        return roles.get(name).clone();
+    public BaseRole getRole(String name) {
+        return roles.get(name);
     }
     
     public boolean exsistRole(String name) {

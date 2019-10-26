@@ -25,6 +25,7 @@ import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.exception.TeamDeadException;
 import com.zaca.stillstanding.service.QuestionService;
+import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
 
 @Component
@@ -40,6 +41,9 @@ public abstract class BaseMatch {
 	
 	@Autowired
 	protected TeamService teamService;
+	
+	@Autowired
+    protected RoleSkillService roleSkillService;
 	
 	AnswerRecorder recorder = new AnswerRecorder();
 	
@@ -79,16 +83,15 @@ public abstract class BaseMatch {
 	
 	
 	public MatchEvent teamUseSkill(String skillName) throws StillStandingException {
-	    for (SkillSlot slot : currentTeam.getRole().getSkillSlots()) {
-	        if (slot.getSkill().getName().equals(skillName)) {
-	            BaseSkill skill = slot.useOnce();
-	            if (skill != null) {
-	                return handleSkillSuccess(skill);
-	            } else {
-	                return MatchEvent.getTypeSkillUseOut(currentTeam, slot.getSkill());
-	            }
-	            
-	        }
+	    if (currentTeam.getRoleRunTimeData().getSkillCounters().containsKey(skillName)) {
+	        boolean successful = currentTeam.getRoleRunTimeData().useOnce(skillName);
+	        BaseRole role = roleSkillService.getRole(currentTeam.getRoleName());
+	        BaseSkill skill = role.getSkillSlots().stream().filter(skillSlot -> skillSlot.getSkill().getName().equals(skillName)).findFirst().get().getSkill();
+	        if (successful) {
+                return handleSkillSuccess(skill);
+            } else {
+                return MatchEvent.getTypeSkillUseOut(currentTeam, skill);
+            }
 	    }
 	    throw new NotFoundException("当前队伍的技能中", skillName);
     }

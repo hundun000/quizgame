@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.skill.BaseRole;
+import com.zaca.stillstanding.domain.skill.RoleRunTimeData;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 
 
@@ -14,7 +15,9 @@ public class Team {
 	private final String name;
 	private List<String> pickTags;
 	private List<String> banTags;
-	private BaseRole role;
+	
+	private String roleName;
+	private RoleRunTimeData roleRunTimeData;
 	
 	private int matchScore;
 	
@@ -79,6 +82,7 @@ public class Team {
 		data.put("alive", alive);
 		data.put("name", name);
 		data.put("score", matchScore);
+		data.put("roleRunTimeData", roleRunTimeData);
 		return data;
 	}
 	
@@ -86,7 +90,7 @@ public class Team {
         JSONObject data = getMatchData();
         data.put("pickTags", pickTags);
         data.put("banTags", banTags);
-        data.put("role", role);
+        data.put("roleName", roleName);
         return data;
     }
 	
@@ -102,14 +106,18 @@ public class Team {
         return alive;
     }
 
-    public BaseRole getRole() {
-        return role;
+    public String getRoleName() {
+        return roleName;
     }
 
     public void setRole(BaseRole role) {
-        this.role = role;
+        this.roleName = role.getName();
+        this.roleRunTimeData = new RoleRunTimeData(role);
     }
 
+    public RoleRunTimeData getRoleRunTimeData() {
+        return roleRunTimeData;
+    }
     
 	
 	

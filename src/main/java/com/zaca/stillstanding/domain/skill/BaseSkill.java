@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
 /**
+ * 原型类
  * @author hundun
  * Created on 2019/10/08
  */

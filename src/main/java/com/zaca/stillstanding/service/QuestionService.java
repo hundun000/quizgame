@@ -2,9 +2,11 @@ package com.zaca.stillstanding.service;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -20,14 +22,18 @@ public class QuestionService {
 	
 	private List<Question> questions;
 	private List<Question> dirtyQuestions;
+	private Set<String> tags;
 	private Random hitRandom = new Random(1);
 	private Random shuffleRandom = new Random(1);
 	
 	public void initQuestions(String questionPackageName) {
 		try {
-			this.questions = new LinkedList<>(QuestionTool.LoadAllQuestions(questionPackageName));
+			this.questions = QuestionTool.LoadAllQuestions(questionPackageName);
 			Collections.shuffle(questions, shuffleRandom);
 			this.dirtyQuestions = new LinkedList<>();
+			this.tags = new HashSet<>();
+			
+			questions.forEach(question -> tags.addAll(question.getTags()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,5 +86,9 @@ public class QuestionService {
 		}
 		return i;
 	}
+	
+	public Set<String> getTags() {
+        return tags;
+    }
 
 }

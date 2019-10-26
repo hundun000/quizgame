@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -62,7 +63,7 @@ public class QuestionTool {
 	
 	
 	public static List<Question> LoadAllQuestions(String packageName) throws IOException, QuestionFormatException {
-		List<Question> questions = new ArrayList<>();
+		List<Question> questions = new LinkedList<>();
 		File mainFolder = new File(DATA_FOLDER + packageName);
 		LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
 		return questions;
