@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
+import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 
@@ -28,13 +29,10 @@ public class GUILoader implements CommandLineRunner{
     
     
     @Autowired
-    QuestionService questionService;
-    
-    @Autowired
-    TeamService teamService;
-    
-    @Autowired
     PreMatch match;
+    
+    @Autowired
+    GameService gameService;
     
     MyFrame frame;
     
@@ -44,7 +42,8 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        frame = new MyFrame(questionService, teamService, match);
+                        gameService.initOtherServiceForTest();
+                        frame = new MyFrame(match);
                         frame.start();
                         
                         if (usingSmallFrame) {

@@ -19,6 +19,7 @@ import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.exception.TeamDeadException;
+import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.FormatTool;
@@ -31,25 +32,20 @@ import com.zaca.stillstanding.tool.QuestionTool;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class PreMatchTest {
-
+    @Autowired
+    GameService gameService;
+    
     @Autowired
     QuestionService questionService;
     @Autowired
     TeamService teamService;
     
-    
     @Autowired
     PreMatch match;
     
-    String  teamKancolle = "砍口垒同好组";
-    
     @Before
     public void init() throws Exception {
-        questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
-        
-        teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
-        
-        match.addTeams(teamKancolle);
+        gameService.initOtherServiceForTest();
     }
     
     @Test

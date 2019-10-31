@@ -23,6 +23,7 @@ import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.FormatTool;
@@ -41,10 +42,6 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
 
     
     
-    
-    QuestionService questionService;
-    
-    TeamService teamService;
     
     PreMatch match;
     
@@ -72,9 +69,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
      * @param questionService2 
      * @throws Exception 
      */
-    public MyFrame(QuestionService questionService, TeamService teamService, PreMatch match) {
-        this.questionService = questionService;
-        this.teamService = teamService;
+    public MyFrame(PreMatch match) {
         this.match = match;
         
         
@@ -104,10 +99,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void initGame() throws Exception {
-        questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
-        teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
-        match.addTeams("砍口垒同好组");
-        
+
         MatchEvent event = match.start();
         renewTimerCount(event.getData().getIntValue("time"));
     }

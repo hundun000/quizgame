@@ -46,6 +46,13 @@ public class TeamService {
 		teams.put(teamName, team);
 	}
 	
+	public void updateTeam(Team team) throws NotFoundException {
+	    if (!teams.containsKey(team.getName())) {
+            throw new NotFoundException(Team.class.getSimpleName(), team.getName());
+        }
+	    teams.put(team.getName(), team);
+    }
+	
 	
 	public void setPickTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
 		setTagsForTeam(teamName, tagNames, true);

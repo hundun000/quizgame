@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.TeamService;
 
 /**
@@ -33,10 +36,19 @@ public class TeamController {
     
     @RequestMapping(value="", method=RequestMethod.POST)
     public Object test(
-            @RequestParam(value = "teamName") String teamName
+            @RequestParam(value = "team") String teamString
             ) {
-        System.out.println(teamName);
-        return null;
+        
+        try {
+            JSONObject teamObject = JSONObject.parseObject(teamString);
+            String teamName = teamObject.getString("name");
+            teamService.setPickTagsForTeam(teamName, teamObject.getJSONArray("pickTags").toJavaList(String.class));
+            teamService.setBanTagsForTeam(teamName, teamObject.getJSONArray("banTags").toJavaList(String.class));
+            teamService.setRoleForTeam(teamName, teamObject.getString("roleName"));
+        } catch (NotFoundException e) {
+            return e.getMessage();
+        }
+        return "success";
     }
 
 }
