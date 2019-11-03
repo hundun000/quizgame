@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,17 +31,18 @@ public class QuestionService {
 		try {
 			this.questions = QuestionTool.LoadAllQuestions(questionPackageName);
 			Collections.shuffle(questions, shuffleRandom);
-			this.dirtyQuestions = new LinkedList<>();
-			this.tags = new HashSet<>();
-			
-			questions.forEach(question -> tags.addAll(question.getTags()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			this.questions = new ArrayList<>();
 		} catch (QuestionFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			this.questions = new ArrayList<>();
 		}
+		
+		this.dirtyQuestions = new LinkedList<>();
+		this.tags = new HashSet<>();
+		
+		questions.forEach(question -> tags.addAll(question.getTags()));
 	}
 	
 	public Question getNewQuestionForTeam(Team team) {

@@ -42,7 +42,7 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        gameService.initOtherServiceForTest();
+                        //gameService.initOtherServiceForTest();
                         frame = new MyFrame(match);
                         frame.start();
                         
