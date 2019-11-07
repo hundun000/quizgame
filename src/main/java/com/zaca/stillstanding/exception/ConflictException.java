@@ -11,13 +11,9 @@ public class ConflictException extends StillStandingException {
 	private final String key;
 	
 	public ConflictException(String type, String key) {
-		this.type = type;
+		super(type + ":" + key + "已存在。", 1);
+	    this.type = type;
 		this.key = key;
-	}
-	
-	@Override
-	public String getMessage() {
-		return type + ":" + key + "已存在。";
 	}
 
 }

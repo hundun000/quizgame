@@ -11,13 +11,9 @@ public class NotFoundException extends StillStandingException {
 	private final String key;
 	
 	public NotFoundException(String type, String key) {
+	    super(type + ":" + key + "未找到。", 404);
 		this.type = type;
 		this.key = key;
-	}
-	
-	@Override
-	public String getMessage() {
-		return type + ":" + key + "未找到。";
 	}
 
 }

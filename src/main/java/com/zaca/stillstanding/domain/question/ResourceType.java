@@ -1,20 +1,22 @@
 package com.zaca.stillstanding.domain.question;
 
 public enum ResourceType {
-	LOCAL_IMAGE,
-	LOCAL_VOICE,
+	IMAGE,
+	VOICE,
 	NONE;
 	
 	public static ResourceType getByLocalFileExtension(String name) {
 		if (name.endsWith(".jpg") || name.endsWith(".png")) {
-			return ResourceType.LOCAL_IMAGE;
+			return ResourceType.IMAGE;
 		}
 		
 		if (name.endsWith(".Ogg")) {
-			return ResourceType.LOCAL_VOICE;
+			return ResourceType.VOICE;
 		}
 		
 		return ResourceType.NONE;
 	}
+	
+	
 
 }

@@ -34,8 +34,7 @@ public class QuestionTool {
         try {
         	return parseTextToQuestions(lines, tagNames);
 		} catch (QuestionFormatException e) {
-			e.setFileName(file.getName());
-			throw e;
+			throw new QuestionFormatException(e, file.getName());
 		}
 	}
 	

@@ -6,7 +6,7 @@ package com.zaca.stillstanding.exception;
 public class TeamDeadException extends StillStandingException {
     
     public TeamDeadException(String teamName) {
-        super(teamName + "已经死了");
+        super(teamName + "已经死了", 1);
     }
 
 }
