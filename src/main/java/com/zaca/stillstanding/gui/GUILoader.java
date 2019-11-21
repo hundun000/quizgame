@@ -28,8 +28,8 @@ public class GUILoader implements CommandLineRunner{
     int BIG_WIDTH = 723;
     
     
-    @Autowired
-    PreMatch match;
+    
+    BaseMatch match;
     
     @Autowired
     GameService gameService;
@@ -43,6 +43,7 @@ public class GUILoader implements CommandLineRunner{
 //                try {
                     if (usingGUI) {
                         //gameService.initOtherServiceForTest();
+                        match = gameService.getMatch();
                         frame = new MyFrame(match);
                         frame.start();
                         

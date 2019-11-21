@@ -43,7 +43,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     
     
-    PreMatch match;
+    BaseMatch match;
     
     private JPanel contentPane;
     private JTextField input;
@@ -69,7 +69,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
      * @param questionService2 
      * @throws Exception 
      */
-    public MyFrame(PreMatch match) {
+    public MyFrame(BaseMatch match) {
         this.match = match;
         
         

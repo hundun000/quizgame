@@ -28,26 +28,30 @@ import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
 
-@Component
 public abstract class BaseMatch {
 	
+    protected final QuestionService questionService;
+    protected final TeamService teamService;
+    protected final RoleSkillService roleSkillService;
+    
 	protected List<Team> teams = new ArrayList<>();
 	protected Team currentTeam;
 	protected int currentTeamIndex;
 	protected Question currentQuestion;
 	
-	@Autowired
-	protected QuestionService questionService;
-	
-	@Autowired
-	protected TeamService teamService;
-	
-	@Autowired
-    protected RoleSkillService roleSkillService;
-	
 	AnswerRecorder recorder = new AnswerRecorder();
 	
 	List<MatchEvent> events = new ArrayList<>();
+	
+	public BaseMatch(
+	        QuestionService questionService,
+	        TeamService teamService,
+	        RoleSkillService roleSkillService
+	        ) {
+        this.questionService = questionService;
+        this.teamService = teamService;
+        this.roleSkillService = roleSkillService;
+    }
 	
 	public void addTeams(String... teamNames) throws NotFoundException {
 		this.teams.clear();

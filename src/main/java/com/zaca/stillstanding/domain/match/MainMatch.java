@@ -4,12 +4,19 @@ import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.TeamDeadException;
+import com.zaca.stillstanding.service.QuestionService;
+import com.zaca.stillstanding.service.RoleSkillService;
+import com.zaca.stillstanding.service.TeamService;
 
 /**
  * @author hundun
  * Created on 2019/09/10
  */
 public class MainMatch extends BaseMatch {
+
+    public MainMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
+        super(questionService, teamService, roleSkillService);
+    }
 
     /**
      * 固定加1

@@ -12,6 +12,7 @@ import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.service.GameService;
 
 /**
  *
@@ -23,13 +24,13 @@ import com.zaca.stillstanding.exception.StillStandingException;
 public class GameController {
     
     @Autowired
-    PreMatch preMatch;
+    GameService gameService;
     
     @RequestMapping(value="", method=RequestMethod.GET)
     public Object listTeams() {
         MatchEvent event;
         try {
-            event = preMatch.start();
+            event = gameService.getMatch().start();
         } catch (StillStandingException e) {
             e.printStackTrace();
             return null;

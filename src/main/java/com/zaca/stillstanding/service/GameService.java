@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.tool.QuestionTool;
@@ -19,20 +20,23 @@ import com.zaca.stillstanding.tool.QuestionTool;
 public class GameService {
 	
     @Autowired
-    QuestionService questionService;
-    
+    private QuestionService questionService;
     @Autowired
-    TeamService teamService;
-    
+    private TeamService teamService;
     @Autowired
-    PreMatch match;
+    private RoleSkillService roleSkillService;
+    
+    
+    BaseMatch match;
     
     public GameService() {
-        
-    }
+        }
     
     @PostConstruct
     private void post() {
+        
+        this.match = new PreMatch(questionService, teamService, roleSkillService);
+        
         try {
             initOtherServiceForTest();
         } catch (StillStandingException e) {
@@ -40,13 +44,13 @@ public class GameService {
         }
     }
 
-    public void initOtherServiceForTest() throws StillStandingException {
+    private void initOtherServiceForTest() throws StillStandingException {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
         match.addTeams("砍口垒同好组");
     }
     
-    public PreMatch getMatch() {
+    public BaseMatch getMatch() {
         return match;
     }
 	

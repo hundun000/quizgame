@@ -35,17 +35,11 @@ public class PreMatchTest {
     @Autowired
     GameService gameService;
     
-    @Autowired
-    QuestionService questionService;
-    @Autowired
-    TeamService teamService;
-    
-    @Autowired
-    PreMatch match;
+    BaseMatch match;
     
     @Before
     public void init() throws Exception {
-        gameService.initOtherServiceForTest();
+        match = gameService.getMatch();
     }
     
     @Test

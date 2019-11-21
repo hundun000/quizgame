@@ -12,15 +12,19 @@ import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.QuestionService;
+import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
 
 /**
  * @author hundun
  * Created on 2019/09/06
  */
-@Component
 public class PreMatch extends BaseMatch {
     
+
+    public PreMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
+        super(questionService, teamService, roleSkillService);
+    }
 
     protected static final int LOSE_SUM = 5;
   
