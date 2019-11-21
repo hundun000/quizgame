@@ -8,6 +8,8 @@ import com.zaca.stillstanding.domain.IApiResult;
  */
 public class StillStandingException extends Exception implements IApiResult{
     
+    private static final long serialVersionUID = 6572553799656923229L;
+    
     private final int code;
     
     public StillStandingException(int code) {
@@ -31,7 +33,7 @@ public class StillStandingException extends Exception implements IApiResult{
 
     @Override
     public String getPayload() {
-        return null;
+        return getMessage();
     };
 
 }

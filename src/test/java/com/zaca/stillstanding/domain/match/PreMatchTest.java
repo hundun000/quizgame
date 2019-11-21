@@ -37,9 +37,11 @@ public class PreMatchTest {
     
     BaseMatch match;
     
+    String matchId =  "1111";
+    
     @Before
     public void init() throws Exception {
-        match = gameService.getMatch();
+        match = gameService.getMatch(matchId);
     }
     
     @Test
@@ -58,30 +60,30 @@ public class PreMatchTest {
         skillName = "5050";
         skillEvent = match.teamUseSkill(skillName);
         System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(2, skillEvent.getData().getJSONObject("static_data").getIntValue("x"));
+        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(2, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "求助";
         skillEvent = match.teamUseSkill(skillName);
         System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(30, skillEvent.getData().getJSONObject("static_data").getIntValue("x"));
+        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(30, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "加时";
         skillEvent = match.teamUseSkill(skillName);
         System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(15, skillEvent.getData().getJSONObject("static_data").getIntValue("x"));
+        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(15, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "跳过";
         skillEvent = match.teamUseSkill(skillName);
         System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
         assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
         skillEvent = match.teamUseSkill("5050");
         System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals("5050", skillEvent.getData().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals("5050", skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
         
         skillEvent = match.teamUseSkill("5050");
         System.out.println(JSON.toJSONString(skillEvent));

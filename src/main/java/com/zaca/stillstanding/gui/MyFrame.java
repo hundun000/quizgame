@@ -101,7 +101,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     private void initGame() throws Exception {
 
         MatchEvent event = match.start();
-        renewTimerCount(event.getData().getIntValue("time"));
+        renewTimerCount(event.getPayload().getIntValue("time"));
     }
     
     private void renewTimerCount(int value) {
@@ -197,7 +197,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         }
         
         if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
-            renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getData().getIntValue("time"));
+            renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getPayload().getIntValue("time"));
             dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
             return;
         }

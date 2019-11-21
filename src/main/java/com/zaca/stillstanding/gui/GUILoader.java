@@ -42,8 +42,8 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        //gameService.initOtherServiceForTest();
-                        match = gameService.getMatch();
+                        String matchId = gameService.initOtherServiceForTest();
+                        match = gameService.getMatch(matchId);
                         frame = new MyFrame(match);
                         frame.start();
                         

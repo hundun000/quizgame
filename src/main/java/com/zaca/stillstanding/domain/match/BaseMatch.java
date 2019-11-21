@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
 
 public abstract class BaseMatch {
+    
+    protected final String id;
 	
     protected final QuestionService questionService;
     protected final TeamService teamService;
@@ -51,9 +54,11 @@ public abstract class BaseMatch {
         this.questionService = questionService;
         this.teamService = teamService;
         this.roleSkillService = roleSkillService;
+        
+        this.id = UUID.randomUUID().toString();
     }
 	
-	public void addTeams(String... teamNames) throws NotFoundException {
+	public void setTeamsByNames(String... teamNames) throws NotFoundException {
 		this.teams.clear();
 		for (String teamName : teamNames) {
 		    teams.add(teamService.getTeam(teamName));
@@ -212,6 +217,10 @@ public abstract class BaseMatch {
 		currentTeamIndex = nextTeamIndex;
 		
 	}
+	
+	public String getId() {
+        return id;
+    }
 
     public List<Team> getTeams() {
         return teams;

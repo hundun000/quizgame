@@ -29,7 +29,7 @@ public class TeamController {
     TeamService teamService;
     
     @RequestMapping(value="", method=RequestMethod.GET)
-    public ApiResult listTeams() {
+    public IApiResult listTeams() {
         Collection<Team> teams = teamService.listTeams();
         JSONArray array = new JSONArray(teams.size());
         teams.forEach(team -> array.add(team.getAllData()));

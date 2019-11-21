@@ -19,6 +19,7 @@ public class FormatTool {
     
     public static JSONObject matchToJSON(BaseMatch match) {
         JSONObject object = new JSONObject();
+        object.put("id", match.getId());
         object.put("question", questionToShortJSON(match.getCurrentQuestion()));
         object.put("teamIndex", match.getCurrentTeamIndex());
         object.put("teams", teamsToJSON(match.getTeams()));

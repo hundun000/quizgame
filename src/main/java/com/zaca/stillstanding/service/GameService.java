@@ -1,5 +1,8 @@
 package com.zaca.stillstanding.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
+import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.tool.QuestionTool;
 
@@ -26,31 +30,32 @@ public class GameService {
     @Autowired
     private RoleSkillService roleSkillService;
     
-    
-    BaseMatch match;
+    Map<String, BaseMatch> matches = new HashMap<>();
     
     public GameService() {
-        }
-    
-    @PostConstruct
-    private void post() {
-        
-        this.match = new PreMatch(questionService, teamService, roleSkillService);
-        
-        try {
-            initOtherServiceForTest();
-        } catch (StillStandingException e) {
-            e.printStackTrace();
-        }
     }
+    
 
-    private void initOtherServiceForTest() throws StillStandingException {
+    public String initOtherServiceForTest() throws StillStandingException {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
-        match.addTeams("砍口垒同好组");
+        
+        BaseMatch match = createMatch();
+        match.setTeamsByNames("砍口垒同好组");
+        return match.getId();
     }
     
-    public BaseMatch getMatch() {
+    public BaseMatch createMatch() {
+        BaseMatch match = new PreMatch(questionService, teamService, roleSkillService);
+        matches.put(match.getId(), match);
+        return match;
+    }
+    
+    public BaseMatch getMatch(String matchId) throws StillStandingException {
+        BaseMatch match = matches.get(matchId);
+        if (match == null) {
+            throw new NotFoundException(matchId, matchId);
+        }
         return match;
     }
 	
