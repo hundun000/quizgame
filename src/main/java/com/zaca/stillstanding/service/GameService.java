@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -58,7 +59,17 @@ public class GameService {
         }
         return match;
     }
+    
+    public List<MatchEvent> teamAnswer(String matchId, String answer) throws StillStandingException {
+        BaseMatch match = getMatch(matchId);
+        List<MatchEvent> events = match.teamAnswer(answer);
+        return events;
+    }
 	
-
+    public MatchEvent teamUseSkill(String matchId, String skillName) throws StillStandingException {
+        BaseMatch match = getMatch(matchId);
+        MatchEvent event = match.teamUseSkill(skillName);
+        return event;
+    }
 
 }

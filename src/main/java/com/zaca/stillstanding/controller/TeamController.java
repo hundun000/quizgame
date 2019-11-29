@@ -41,9 +41,10 @@ public class TeamController {
             @RequestParam(value = "team") String teamString
             ) {
         // TODO 中途失败回滚
+        
+        JSONObject teamObject = JSONObject.parseObject(teamString);
+        String teamName = teamObject.getString("name");
         try {
-            JSONObject teamObject = JSONObject.parseObject(teamString);
-            String teamName = teamObject.getString("name");
             teamService.setPickTagsForTeam(teamName, teamObject.getJSONArray("pickTags").toJavaList(String.class));
             teamService.setBanTagsForTeam(teamName, teamObject.getJSONArray("banTags").toJavaList(String.class));
             teamService.setRoleForTeam(teamName, teamObject.getString("roleName"));

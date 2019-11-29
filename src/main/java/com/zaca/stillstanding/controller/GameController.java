@@ -41,7 +41,7 @@ public class GameController {
             match.setTeamsByNames(teamNames);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return e;
+            return new ApiResult(e);
         }
         return new ApiResult(match.getId());
     }
@@ -55,12 +55,38 @@ public class GameController {
             event = gameService.getMatch(matchId).start();
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return e;
+            return new ApiResult(e);
         }
         return new ApiResult(event);
     }
     
+    @RequestMapping(value="/answer", method=RequestMethod.POST)
+    public IApiResult teamAnswer(
+            @RequestParam(value = "matchId") String matchId,
+            @RequestParam(value = "answer") String answer
+            ) {
+        List<MatchEvent> events;
+        try {
+            events = gameService.teamAnswer(matchId, answer);
+        } catch (StillStandingException e) {
+            e.printStackTrace();
+            return new ApiResult(e);
+        }
+        return new ApiResult(events);
+    }
     
-    
-
+    @RequestMapping(value="/use-skill", method=RequestMethod.POST)
+    public IApiResult start(
+            @RequestParam(value = "matchId") String matchId,
+            @RequestParam(value = "skillName") String skillName
+            ) {
+        MatchEvent event;
+        try {
+            event = gameService.teamUseSkill(matchId, skillName);
+        } catch (StillStandingException e) {
+            e.printStackTrace();
+            return new ApiResult(e);
+        }
+        return new ApiResult(event);
+    }
 }

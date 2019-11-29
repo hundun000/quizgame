@@ -21,6 +21,13 @@ public class ApiResult implements IApiResult {
         this((String) null);
     }
     
+    public ApiResult(IApiResult apiResult) {
+        this.message = apiResult.getMessage();
+        this.status = apiResult.getStatus();
+        this.payload = apiResult.getPayload();
+        this.retcode = apiResult.getRetcode();
+    }
+    
     public ApiResult(String payload) {
         this.message = SUCCESS_MESSAGE;
         this.status = SUCCESS_STATUS;
