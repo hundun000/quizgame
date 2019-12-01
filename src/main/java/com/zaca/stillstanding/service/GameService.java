@@ -34,15 +34,27 @@ public class GameService {
     Map<String, BaseMatch> matches = new HashMap<>();
     
     public GameService() {
+    	
     }
+    
+    @PostConstruct
+    public void post() {
+    	try {
+			initOtherServiceForTest();
+		} catch (StillStandingException e) {
+			e.printStackTrace();
+		}
+	}
     
 
     public String initOtherServiceForTest() throws StillStandingException {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
+        teamService.quickRegisterTeam("方舟同好组", "动画", "单机游戏", "ZACA娘");
+        
         
         BaseMatch match = createMatch();
-        match.setTeamsByNames("砍口垒同好组");
+        match.setTeamsByNames("砍口垒同好组", "方舟同好组");
         return match.getId();
     }
     
