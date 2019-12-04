@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -81,6 +82,15 @@ public class MatchEvent{
 	
 	public EventType getType() {
         return type;
+    }
+
+
+
+    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore) {
+        JSONObject data = new JSONObject();
+        data.put("result", answerType);
+        data.put("add_score", addScore);
+        return new MatchEvent(EventType.ANSWER_RESULT, data);
     }
 
 }

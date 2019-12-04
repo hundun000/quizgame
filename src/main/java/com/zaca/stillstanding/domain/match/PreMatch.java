@@ -53,10 +53,13 @@ public class PreMatch extends BaseMatch {
      * 固定加1分
      */
     @Override
-    protected void addScore(AnswerType answerType) {
+    protected MatchEvent addScore(AnswerType answerType) {
+        int addScore = 0;
         if (answerType == AnswerType.CORRECT) {
+            addScore= 1;
             currentTeam.addScore(1);
         }
+        return MatchEvent.getTypeAnswerResult(answerType, addScore);
     }
 
     

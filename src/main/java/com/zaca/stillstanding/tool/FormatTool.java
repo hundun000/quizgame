@@ -20,8 +20,8 @@ public class FormatTool {
     public static JSONObject matchToJSON(BaseMatch match) {
         JSONObject object = new JSONObject();
         object.put("id", match.getId());
-        object.put("question", questionToShortJSON(match.getCurrentQuestion()));
-        object.put("teamIndex", match.getCurrentTeamIndex());
+        object.put("question", questionToJSON(match.getCurrentQuestion()));
+        object.put("currentTeamIndex", match.getCurrentTeamIndex());
         object.put("teams", teamsToJSON(match.getTeams()));
         object.put("events", match.getEvents());
         return object;
@@ -29,8 +29,8 @@ public class FormatTool {
     
     public static JSONObject matchToShortJSON(BaseMatch match) {
         JSONObject object = new JSONObject();
-        object.put("question", questionToJSON(match.getCurrentQuestion()));
-        object.put("teamIndex", match.getCurrentTeamIndex());
+        object.put("question", questionToShortJSON(match.getCurrentQuestion()));
+        object.put("currentTeamIndex", match.getCurrentTeamIndex());
         object.put("teams", teamsToShortJSON(match.getTeams()).toJSONString());
         object.put("events", eventsToShortJSON(match.getEvents()));
         return object;

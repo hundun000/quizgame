@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.domain;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.exception.StillStandingException;
 
 /**
@@ -11,6 +12,7 @@ public class ApiResult implements IApiResult {
     
     private static final String SUCCESS_MESSAGE = "SUCCESS";
     private static final int SUCCESS_STATUS = 200;
+    private static final int FAIL_STATUS = 400;
     
     private final String message;
     private final int status;
@@ -23,7 +25,7 @@ public class ApiResult implements IApiResult {
     
     public ApiResult(IApiResult apiResult) {
         this.message = apiResult.getMessage();
-        this.status = apiResult.getStatus();
+        this.status = FAIL_STATUS;
         this.payload = apiResult.getPayload();
         this.retcode = apiResult.getRetcode();
     }
@@ -35,6 +37,11 @@ public class ApiResult implements IApiResult {
         this.retcode = 0;
     }
     
+    public ApiResult(JSON payload) {
+        this(payload.toString());
+    }
+    
+    @Deprecated
     public ApiResult(Object payload) {
         this(JSON.toJSONString(payload));
     }

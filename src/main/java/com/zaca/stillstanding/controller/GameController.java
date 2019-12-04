@@ -50,14 +50,14 @@ public class GameController {
     public IApiResult start(
             @RequestParam(value = "matchId") String matchId
             ) {
-        MatchEvent event;
+        BaseMatch match;
         try {
-            event = gameService.getMatch(matchId).start();
+            match = gameService.startMatch(matchId);
         } catch (StillStandingException e) {
             e.printStackTrace();
             return new ApiResult(e);
         }
-        return new ApiResult(event);
+        return new ApiResult(FormatTool.matchToJSON(match));
     }
     
     @RequestMapping(value="/answer", method=RequestMethod.POST)
@@ -65,28 +65,28 @@ public class GameController {
             @RequestParam(value = "matchId") String matchId,
             @RequestParam(value = "answer") String answer
             ) {
-        List<MatchEvent> events;
+        BaseMatch match;
         try {
-            events = gameService.teamAnswer(matchId, answer);
+            match = gameService.teamAnswer(matchId, answer);
         } catch (StillStandingException e) {
             e.printStackTrace();
             return new ApiResult(e);
         }
-        return new ApiResult(events);
+        return new ApiResult(FormatTool.matchToJSON(match));
     }
     
     @RequestMapping(value="/use-skill", method=RequestMethod.POST)
-    public IApiResult start(
+    public IApiResult teamUseSkill(
             @RequestParam(value = "matchId") String matchId,
             @RequestParam(value = "skillName") String skillName
             ) {
-        MatchEvent event;
+        BaseMatch match;
         try {
-            event = gameService.teamUseSkill(matchId, skillName);
+            match = gameService.teamUseSkill(matchId, skillName);
         } catch (StillStandingException e) {
             e.printStackTrace();
             return new ApiResult(e);
         }
-        return new ApiResult(event);
+        return new ApiResult(FormatTool.matchToJSON(match));
     }
 }

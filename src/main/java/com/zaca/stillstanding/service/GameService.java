@@ -64,6 +64,12 @@ public class GameService {
         return match;
     }
     
+    public BaseMatch startMatch(String matchId) throws StillStandingException {
+        BaseMatch match = getMatch(matchId);
+        match.start();
+        return match;
+    }
+    
     public BaseMatch getMatch(String matchId) throws StillStandingException {
         BaseMatch match = matches.get(matchId);
         if (match == null) {
@@ -72,16 +78,16 @@ public class GameService {
         return match;
     }
     
-    public List<MatchEvent> teamAnswer(String matchId, String answer) throws StillStandingException {
+    public BaseMatch teamAnswer(String matchId, String answer) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        List<MatchEvent> events = match.teamAnswer(answer);
-        return events;
+        match.teamAnswer(answer);
+        return match;
     }
 	
-    public MatchEvent teamUseSkill(String matchId, String skillName) throws StillStandingException {
+    public BaseMatch teamUseSkill(String matchId, String skillName) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        MatchEvent event = match.teamUseSkill(skillName);
-        return event;
+        match.teamUseSkill(skillName);
+        return match;
     }
 
 }

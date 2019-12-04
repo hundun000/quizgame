@@ -31,6 +31,8 @@ import com.zaca.stillstanding.service.TeamService;
 
 public abstract class BaseMatch {
     
+    private static int currentId;
+    
     protected final String id;
 	
     protected final QuestionService questionService;
@@ -54,8 +56,9 @@ public abstract class BaseMatch {
         this.questionService = questionService;
         this.teamService = teamService;
         this.roleSkillService = roleSkillService;
-        
-        this.id = UUID.randomUUID().toString();
+        // TODO 测试阶段固定
+        //this.id = UUID.randomUUID().toString();
+        this.id = String.valueOf(currentId++);
     }
 	
 	public void setTeamsByNames(String... teamNames) throws NotFoundException {
@@ -133,7 +136,7 @@ public abstract class BaseMatch {
         // 1. 记录回答
 		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
 		// 2. 结算加分
-		addScore(answerType);
+		events.add(addScore(answerType));
 		// 3.判断队伍死亡
         events.add(checkTeamDieEvent());
         // 4.判断比赛结束
@@ -155,7 +158,7 @@ public abstract class BaseMatch {
 	 * 可实现为：固定加分；连续答对comb加分...
 	 * @param answerType 
 	 */
-	abstract protected void addScore(AnswerType answerType);
+	abstract protected MatchEvent addScore(AnswerType answerType);
 	
 	/**
 	 * 判断队伍是否死亡。
