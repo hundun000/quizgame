@@ -1,5 +1,6 @@
 package com.zaca.stillstanding.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,15 +48,10 @@ public class GameService {
 	}
     
 
-    public String initOtherServiceForTest() throws StillStandingException {
+    public void initOtherServiceForTest() throws StillStandingException {
         questionService.initQuestions(QuestionTool.TEST_SMALL_PACKAGE_NAME);
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", "动画", "单机游戏", "ZACA娘");
-        
-        
-        BaseMatch match = createMatch();
-        match.setTeamsByNames("砍口垒同好组", "方舟同好组");
-        return match.getId();
     }
     
     public BaseMatch createMatch() {
@@ -80,13 +76,16 @@ public class GameService {
     
     public BaseMatch teamAnswer(String matchId, String answer) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        match.teamAnswer(answer);
+        List<MatchEvent> events = match.teamAnswer(answer);
+        match.deepSetEvents(events);
         return match;
     }
 	
     public BaseMatch teamUseSkill(String matchId, String skillName) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        match.teamUseSkill(skillName);
+        List<MatchEvent> events = new ArrayList<>();
+        events.add(match.teamUseSkill(skillName));
+        match.deepSetEvents(events);
         return match;
     }
 

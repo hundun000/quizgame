@@ -37,11 +37,10 @@ public class PreMatchTest {
     
     BaseMatch match;
     
-    String matchId =  "1111";
     
     @Before
     public void init() throws Exception {
-        match = gameService.getMatch(matchId);
+        match = gameService.createMatch();
     }
     
     @Test

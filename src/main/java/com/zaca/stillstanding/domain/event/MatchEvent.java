@@ -55,9 +55,9 @@ public class MatchEvent{
 	
 	public static final String KEY_SKILL_NAME = "skill_name";
 
-	public static MatchEvent getTypeSkillSuccess(Team team, BaseSkill skill, JSON skillEffect) {
+	public static MatchEvent getTypeSkillSuccess(String teamName, BaseSkill skill, JSON skillEffect) {
         JSONObject data = new JSONObject();
-        data.put("team", team.getMatchData());
+        data.put("team_name", teamName);
         data.put(KEY_SKILL_NAME, skill.getName());
         if (skillEffect != null) {
             data.put("skill_effect", skillEffect);
@@ -68,9 +68,9 @@ public class MatchEvent{
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
 	
-	public static MatchEvent getTypeSkillUseOut(Team team, BaseSkill skill) {
+	public static MatchEvent getTypeSkillUseOut(String teamName, BaseSkill skill) {
         JSONObject data = new JSONObject();
-        data.put("team", team.getMatchData());
+        data.put("team_name", teamName);
         data.put("skill_name", skill.getName());
         return new MatchEvent(EventType.SKILL_USE_OUT, data);
     }

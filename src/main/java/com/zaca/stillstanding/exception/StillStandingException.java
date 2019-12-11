@@ -33,7 +33,12 @@ public class StillStandingException extends Exception implements IApiResult{
 
     @Override
     public String getPayload() {
-        return getMessage();
+        return null;
     };
+    
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
 
 }

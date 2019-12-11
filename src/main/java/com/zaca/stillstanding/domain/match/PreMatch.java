@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.domain.match;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,13 @@ public class PreMatch extends BaseMatch {
 
     public PreMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
         super(questionService, teamService, roleSkillService);
+    }
+    
+    @Override
+    public void setTeamsByNames(String... teamNames) throws NotFoundException {
+        if (teamNames != null && teamNames.length > 0) {
+            super.setTeamsByNames(Arrays.copyOf(teamNames, 1));
+        }
     }
 
     protected static final int LOSE_SUM = 5;
