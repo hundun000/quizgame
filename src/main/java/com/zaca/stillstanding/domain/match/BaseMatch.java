@@ -94,7 +94,7 @@ public abstract class BaseMatch {
     }
 	
 	
-	public MatchEvent teamUseSkill(String skillName) throws StillStandingException {
+	public void teamUseSkill(String skillName) throws StillStandingException {
 	    if (currentTeam.getRoleRunTimeData().getSkillCounters().containsKey(skillName)) {
 	        boolean successful = currentTeam.getRoleRunTimeData().useOnce(skillName);
 	        BaseRole role = roleSkillService.getRole(currentTeam.getRoleName());
@@ -105,29 +105,32 @@ public abstract class BaseMatch {
             } else {
                 event = MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill);
             }
-	        return event;
+	        
+	        events.clear();
+	        events.add(event);
+	    } else {
+	        throw new NotFoundException("当前队伍的技能中", skillName);
 	    }
-	    throw new NotFoundException("当前队伍的技能中", skillName);
     }
 	
 	private MatchEvent getSkillSuccessMatchEvent(BaseSkill skill) throws StillStandingException {
 	    switch (skill.getName()) {
-        case "跳过":
-            List<MatchEvent> eventsAfterSkip = teamAnswerSkip();
-            // 重置events成员
-            
-            JSONArray array = JSONArray.parseArray(JSON.toJSONString(eventsAfterSkip));
-            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill, array);
+//        case "跳过":
+//            List<MatchEvent> eventsAfterSkip = teamAnswerSkip();
+//            // 重置events成员
+//            
+//            JSONArray array = JSONArray.parseArray(JSON.toJSONString(eventsAfterSkip));
+//            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill, array);
         default:
-            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill, null);
+            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill);
         }
     }
 	
-	private List<MatchEvent> teamAnswerSkip() throws StillStandingException {
-        return teamAnswer(Question.SKIP_ANSWER_TEXT);
-    }
-	public List<MatchEvent> teamAnswerTimeout() throws StillStandingException {
-	    return teamAnswer(Question.TIMEOUT_ANSWER_TEXT);
+//	private List<MatchEvent> teamAnswerSkip() throws StillStandingException {
+//        return teamAnswer(Question.SKIP_ANSWER_TEXT);
+//    }
+	public void teamAnswerTimeout() throws StillStandingException {
+	   teamAnswer(Question.TIMEOUT_ANSWER_TEXT);
     }
 	/**
 	 * 返回并更新进events
@@ -135,7 +138,7 @@ public abstract class BaseMatch {
 	 * @return
 	 * @throws StillStandingException
 	 */
-	public List<MatchEvent> teamAnswer(String answer) throws StillStandingException {
+	public void teamAnswer(String answer) throws StillStandingException {
 	    if (!currentTeam.isAlive()) {
 	        throw new TeamDeadException(currentTeam.getName());
 	    }
@@ -157,15 +160,11 @@ public abstract class BaseMatch {
             // 6.换题
             events.add(checkSwitchQuestionEvent());
         }
-        return events;
+        
+        this.events.clear();
+        this.events = events.stream().filter(s -> s != null).collect(Collectors.toList());
 	}
-	
-	public void deepSetEvents(List<MatchEvent> events) {
-	    events.clear();
-	    events.addAll(events);
-	    // 移除空元素
-        events = events.stream().filter(s -> s != null).collect(Collectors.toList());
-    }
+
 	
 	/**
 	 * 为刚刚的答题加分。

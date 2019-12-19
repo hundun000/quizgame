@@ -41,66 +41,78 @@ public class PreMatchTest {
     @Before
     public void init() throws Exception {
         match = gameService.createMatch();
+        match.setTeamsByNames("砍口垒同好组");
+        match.start();
+        System.out.println(FormatTool.matchToJSON(match));
     }
     
     @Test
     public void test() throws StillStandingException {
-        MatchEvent skillEvent;
+
         List<MatchEvent> answerEvents;
         String skillName;
         
-        match.start();
-        System.out.println(FormatTool.matchToJSON(match));
-        
-        answerEvents = match.teamAnswer("A");
+        match.teamAnswer("A");
+        answerEvents = match.getEvents();
         System.out.println(FormatTool.eventsToShortJSON(answerEvents));
         assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
         skillName = "5050";
-        skillEvent = match.teamUseSkill(skillName);
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(2, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(skillName, answerEvents.get(0).getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(2, answerEvents.get(0).getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "求助";
-        skillEvent = match.teamUseSkill(skillName);
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(30, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(skillName, answerEvents.get(0).getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(30, answerEvents.get(0).getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "加时";
-        skillEvent = match.teamUseSkill(skillName);
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
-        assertEquals(15, skillEvent.getPayload().getJSONObject("static_data").getIntValue("x"));
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(skillName, answerEvents.get(0).getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        assertEquals(15, answerEvents.get(0).getPayload().getJSONObject("static_data").getIntValue("x"));
         
         skillName = "跳过";
-        skillEvent = match.teamUseSkill(skillName);
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(skillName, skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
-        assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(skillName, answerEvents.get(0).getPayload().getString(MatchEvent.KEY_SKILL_NAME));
         
-        skillEvent = match.teamUseSkill("5050");
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals("5050", skillEvent.getPayload().getString(MatchEvent.KEY_SKILL_NAME));
+        skillName = "5050";
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(skillName, answerEvents.get(0).getPayload().getString(MatchEvent.KEY_SKILL_NAME));
         
-        skillEvent = match.teamUseSkill("5050");
-        System.out.println(JSON.toJSONString(skillEvent));
-        assertEquals(EventType.SKILL_USE_OUT, skillEvent.getType());
+        skillName = "5050";
+        match.teamUseSkill(skillName);
+        answerEvents = match.getEvents();
+        System.out.println(JSON.toJSONString(answerEvents));
+        assertEquals(EventType.SKILL_USE_OUT, answerEvents.get(0).getType());
         
-        answerEvents = match.teamAnswer("A");
+        match.teamAnswer("A");
+        answerEvents = match.getEvents();
         System.out.println(FormatTool.eventsToShortJSON(answerEvents));
         assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        answerEvents = match.teamAnswer("B");
+        match.teamAnswer("B");
+        answerEvents = match.getEvents();
         System.out.println(FormatTool.eventsToShortJSON(answerEvents));
         assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        answerEvents = match.teamAnswer("C");
+        match.teamAnswer("C");
+        answerEvents = match.getEvents();
         System.out.println(FormatTool.eventsToShortJSON(answerEvents));
         assertTrue(match.containsEventByType(EventType.SWITCH_QUESTION));
         
-        answerEvents = match.teamAnswer("D");
+        match.teamAnswer("D");
+        answerEvents = match.getEvents();
         System.out.println(FormatTool.eventsToShortJSON(answerEvents));
         assertTrue(match.containsEventByType(EventType.TEAM_DIE));
         

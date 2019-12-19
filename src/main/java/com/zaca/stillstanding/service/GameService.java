@@ -76,16 +76,13 @@ public class GameService {
     
     public BaseMatch teamAnswer(String matchId, String answer) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        List<MatchEvent> events = match.teamAnswer(answer);
-        match.deepSetEvents(events);
+        match.teamAnswer(answer);
         return match;
     }
 	
     public BaseMatch teamUseSkill(String matchId, String skillName) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
-        List<MatchEvent> events = new ArrayList<>();
-        events.add(match.teamUseSkill(skillName));
-        match.deepSetEvents(events);
+        match.teamUseSkill(skillName);
         return match;
     }
 

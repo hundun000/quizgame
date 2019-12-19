@@ -55,16 +55,11 @@ public class MatchEvent{
 	
 	public static final String KEY_SKILL_NAME = "skill_name";
 
-	public static MatchEvent getTypeSkillSuccess(String teamName, BaseSkill skill, JSON skillEffect) {
+	public static MatchEvent getTypeSkillSuccess(String teamName, BaseSkill skill) {
         JSONObject data = new JSONObject();
         data.put("team_name", teamName);
         data.put(KEY_SKILL_NAME, skill.getName());
-        if (skillEffect != null) {
-            data.put("skill_effect", skillEffect);
-        }
-        if (skill.getStaticData() != null) {
-            data.put("static_data", skill.getStaticData());
-        }
+        data.put("static_data", skill.getStaticData());
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
 	
