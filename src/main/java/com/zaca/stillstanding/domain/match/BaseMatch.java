@@ -69,10 +69,11 @@ public abstract class BaseMatch {
 		this.currentTeam = null;
 	}
 	
-	public MatchEvent start() throws StillStandingException {
+	public void start() throws StillStandingException {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
-	    return checkSwitchQuestionEvent();
+	    events.clear();
+        events.add(checkSwitchQuestionEvent());
     }
 	
 	public void commandLineControl(String line) throws StillStandingException {
