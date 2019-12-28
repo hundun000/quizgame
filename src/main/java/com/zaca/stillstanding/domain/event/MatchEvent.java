@@ -29,6 +29,12 @@ public class MatchEvent{
         return false;
     }
 	
+	public static MatchEvent getTypeStartTeam(Team team) {
+		JSONObject data = new JSONObject();
+		data.put("team", team.getMatchData());
+		return new MatchEvent(EventType.START_TEAM, data);
+	}
+	
 	public static MatchEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
 		JSONObject data = new JSONObject();
 		data.put("last_team", lastTeam.getMatchData());

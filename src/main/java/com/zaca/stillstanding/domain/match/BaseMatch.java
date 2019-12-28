@@ -73,6 +73,7 @@ public abstract class BaseMatch {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
 	    events.clear();
+	    events.add(MatchEvent.getTypeStartTeam(currentTeam));
         events.add(checkSwitchQuestionEvent());
     }
 	
