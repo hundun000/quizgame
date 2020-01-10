@@ -30,5 +30,14 @@ public class BaseRole {
     public List<SkillSlot> getSkillSlots() {
         return skillSlots;
     }
+    
+    public BaseSkill getSkill(String skillName) {
+        for (SkillSlot skillSlot : skillSlots) {
+            if (skillSlot.getSkill().getName().equals(skillName)) {
+                return skillSlot.getSkill();
+            }
+        }
+        return null;
+    }
 
 }

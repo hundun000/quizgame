@@ -51,7 +51,7 @@ public class RoleSkillService {
         return roles.get(name);
     }
     
-    public boolean exsistRole(String name) {
+    public boolean existRole(String name) {
         return roles.containsKey(name);
     }
     

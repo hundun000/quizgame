@@ -39,7 +39,7 @@ public class TeamService {
     }
 	
 	public void creatTeam(String teamName) throws ConflictException {
-		if (teams.containsKey(teamName)) {
+		if (existTeam(teamName)) {
 			throw new ConflictException(Team.class.getSimpleName(), teamName);
 		}
 		Team team = new Team(teamName);
@@ -47,7 +47,7 @@ public class TeamService {
 	}
 	
 	public void updateTeam(Team team) throws NotFoundException {
-	    if (!teams.containsKey(team.getName())) {
+	    if (!existTeam(team.getName())) {
             throw new NotFoundException(Team.class.getSimpleName(), team.getName());
         }
 	    teams.put(team.getName(), team);
@@ -75,9 +75,10 @@ public class TeamService {
 	}
 	
 	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
-        Team team = getTeam(teamName);
         
-        if (!roleSkillServic.exsistRole(roleName)) {
+	    Team team = getTeam(teamName);
+	    
+        if (!roleSkillServic.existRole(roleName)) {
             throw new NotFoundException("Role", roleName);
         }
         
@@ -86,15 +87,19 @@ public class TeamService {
 	
 	
 	public Team getTeam(String name) throws NotFoundException {
-		Team team = teams.get(name);
-		if (team == null) {
+
+		if (!existTeam(name)) {
 			throw new NotFoundException(Team.class.getSimpleName(), name);
 		}
-		return team;
+		return teams.get(name);
 	}
 	
 	public Collection<Team> listTeams() {
         return teams.values();
+    }
+	
+	public boolean existTeam(String name) {
+        return teams.containsKey(name);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.domain.skill;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,26 +10,25 @@ import java.util.Map;
  */
 public class RoleRunTimeData {
     
-    Map<String, Integer> skillCounters = new HashMap<>();
+    private Map<String, Integer> skillFull = new HashMap<>();
+    private Map<String, Integer> skillRemain = new HashMap<>();
 
     public RoleRunTimeData(BaseRole role) {
-        role.getSkillSlots().forEach(skillSlot -> skillCounters.put(skillSlot.getSkill().getName(), skillSlot.getFullCount()));
+        role.getSkillSlots().forEach(skillSlot -> skillFull.put(skillSlot.getSkill().getName(), skillSlot.getFullCount()));
+        resetRemain();
     }
     
-    public void resetCount() {
-        skillCounters.replaceAll((k, v) -> 0);
+    public void resetRemain() {
+        skillRemain.putAll(skillFull);
     }
     
     public boolean useOnce(String skillName) {
-        if (skillCounters.containsKey(skillName) && skillCounters.get(skillName) > 0) {
-            skillCounters.compute(skillName, (k,v) -> v-1);
+        if (skillRemain.containsKey(skillName) && skillRemain.get(skillName) > 0) {
+            skillRemain.compute(skillName, (k,v) -> v-1);
             return true;
         }
         return false;
     }
     
-    public Map<String, Integer> getSkillCounters() {
-        return skillCounters;
-    }
-
+    
 }

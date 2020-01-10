@@ -44,9 +44,9 @@ public abstract class BaseMatch {
 	protected int currentTeamIndex;
 	protected Question currentQuestion;
 	
-	AnswerRecorder recorder = new AnswerRecorder();
+	protected AnswerRecorder recorder = new AnswerRecorder();
 	
-	List<MatchEvent> events = new ArrayList<>();
+	protected List<MatchEvent> events = new ArrayList<>();
 	
 	public BaseMatch(
 	        QuestionService questionService,
@@ -70,6 +70,7 @@ public abstract class BaseMatch {
 	}
 	
 	public MatchEvent start() throws StillStandingException {
+	    teams.forEach(team -> team.resetForMatch());
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
 	    return checkSwitchQuestionEvent();
@@ -95,10 +96,12 @@ public abstract class BaseMatch {
 	
 	
 	public void teamUseSkill(String skillName) throws StillStandingException {
-	    if (currentTeam.getRoleRunTimeData().getSkillCounters().containsKey(skillName)) {
+	    BaseRole role = roleSkillService.getRole(currentTeam.getRoleName());
+	    BaseSkill skill = role.getSkill(skillName);
+        
+	    if (skill != null) {
 	        boolean successful = currentTeam.getRoleRunTimeData().useOnce(skillName);
-	        BaseRole role = roleSkillService.getRole(currentTeam.getRoleName());
-	        BaseSkill skill = role.getSkillSlots().stream().filter(skillSlot -> skillSlot.getSkill().getName().equals(skillName)).findFirst().get().getSkill();
+	        
 	        MatchEvent event;
 	        if (successful) {
 	            event = getSkillSuccessMatchEvent(skill);
@@ -142,27 +145,27 @@ public abstract class BaseMatch {
 	    if (!currentTeam.isAlive()) {
 	        throw new TeamDeadException(currentTeam.getName());
 	    }
-	    List<MatchEvent> events = new ArrayList<>(); 
+	    List<MatchEvent> tempEvents = new ArrayList<>(); 
 	    
 	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
 		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
 		// 2. 结算加分
-		events.add(addScore(answerType));
+		tempEvents.add(addScore(answerType));
 		// 3.判断队伍死亡
-        events.add(checkTeamDieEvent());
+        tempEvents.add(checkTeamDieEvent());
         // 4.判断比赛结束
         MatchEvent finishEvent = checkFinishEvent();
         if (finishEvent == null) {
-            events.add(finishEvent);
+            tempEvents.add(finishEvent);
             // 5.判断换队
-            events.add(checkSwitchTeamEvent());
+            tempEvents.add(checkSwitchTeamEvent());
             // 6.换题
-            events.add(checkSwitchQuestionEvent());
+            tempEvents.add(checkSwitchQuestionEvent());
         }
         
         this.events.clear();
-        this.events = events.stream().filter(s -> s != null).collect(Collectors.toList());
+        this.events = tempEvents.stream().filter(s -> s != null).collect(Collectors.toList());
 	}
 
 	

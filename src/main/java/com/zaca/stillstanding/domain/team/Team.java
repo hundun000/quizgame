@@ -16,10 +16,10 @@ public class Team {
 	private List<String> pickTags;
 	private List<String> banTags;
 	
-	private String roleName;
 	private RoleRunTimeData roleRunTimeData;
 	
 	private int matchScore;
+	private BaseRole role;
 	
 	private double hitPickRate;
 	private static double DEFAULT_HIT_PICK_RATE = 0.4;
@@ -30,9 +30,13 @@ public class Team {
 	
 	public Team(String name) {
 		this.name = name;
-		this.matchScore = 0;
-		this.alive = true;
-		resetHitPickRate();
+		resetForMatch();
+	}
+	
+	public void resetForMatch() {
+	    this.matchScore = 0;
+        this.alive = true;
+        resetHitPickRate();
 	}
 	
 	public void setPickTags(List<String> pickTags) {
@@ -90,7 +94,7 @@ public class Team {
         JSONObject data = getMatchData();
         data.put("pickTags", pickTags);
         data.put("banTags", banTags);
-        data.put("roleName", roleName);
+        data.put("roleName", getRoleName());
         return data;
     }
 	
@@ -107,17 +111,19 @@ public class Team {
     }
 
     public String getRoleName() {
-        return roleName;
+        return role.getName();
     }
 
     public void setRole(BaseRole role) {
-        this.roleName = role.getName();
+        this.role = role;
         this.roleRunTimeData = new RoleRunTimeData(role);
     }
 
     public RoleRunTimeData getRoleRunTimeData() {
         return roleRunTimeData;
     }
+    
+    
     
 	
 	
