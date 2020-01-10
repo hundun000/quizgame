@@ -71,12 +71,13 @@ public class PreMatch extends BaseMatch {
             addScore= 1;
             currentTeam.addScore(1);
         }
-        return MatchEvent.getTypeAnswerResult(answerType, addScore);
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore());
     }
     
     @Override
     public void start() throws StillStandingException {
         teams.forEach(team -> team.getRoleRunTimeData().resetRemain());
+        super.start();
     }
 
     

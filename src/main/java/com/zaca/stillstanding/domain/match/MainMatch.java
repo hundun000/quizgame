@@ -29,7 +29,7 @@ public class MainMatch extends BaseMatch {
             addScore= 1;
             currentTeam.addScore(1);
         }
-        return MatchEvent.getTypeAnswerResult(answerType, addScore);
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore());
     }
 
     

@@ -87,10 +87,11 @@ public class MatchEvent{
 
 
 
-    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore) {
+    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore) {
         JSONObject data = new JSONObject();
         data.put("result", answerType);
         data.put("add_score", addScore);
+        data.put("current_score", currentScore);
         return new MatchEvent(EventType.ANSWER_RESULT, data);
     }
 
