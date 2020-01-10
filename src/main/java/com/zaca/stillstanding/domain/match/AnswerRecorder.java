@@ -64,9 +64,9 @@ public class AnswerRecorder {
     /**
      * 可用统计某队[连续/累计][正确/错误/全部]回答的个数
      * @param teamName
-     * @param check 计数的类型；null:仅计数任意回答
+     * @param check 计数的类型；null:计数任意回答
      * @param max 计数等于max时停止
-     * @param consecutive true:统计全部记录；false:当check不满足时停止；
+     * @param consecutive 是否要求连续满足计数的类型；
      * @return
      */
     public int count(String teamName, AnswerType check, int max, boolean consecutive) {
@@ -80,9 +80,11 @@ public class AnswerRecorder {
                 continue;
             } else {
                 if(check == null || node.getAnswerType() == check) {
+                    // 类型符合
                     num++;
                 } else {
                     if (consecutive) {
+                       // 类型不符合，且要求连续符合，故跳出
                        break; 
                     }
                 }

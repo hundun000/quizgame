@@ -10,8 +10,10 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
+import com.zaca.stillstanding.domain.match.MatchRecord;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -33,6 +35,8 @@ public class GameService {
     private RoleSkillService roleSkillService;
     
     Map<String, BaseMatch> matches = new HashMap<>();
+    
+    List<MatchRecord> matchRecords = new ArrayList<>();
     
     public GameService() {
     	
@@ -66,6 +70,11 @@ public class GameService {
         return match;
     }
     
+    private void finishMatch(BaseMatch match) throws StillStandingException {
+        matchRecords.add(new MatchRecord(match));
+        matches.remove(match.getId());
+    }
+    
     public BaseMatch getMatch(String matchId) throws StillStandingException {
         BaseMatch match = matches.get(matchId);
         if (match == null) {
@@ -77,6 +86,9 @@ public class GameService {
     public BaseMatch teamAnswer(String matchId, String answer) throws StillStandingException {
         BaseMatch match = getMatch(matchId);
         match.teamAnswer(answer);
+        if (match.containsEventByType(EventType.FINISH)) {
+            finishMatch(match);
+        }
         return match;
     }
 	
@@ -84,6 +96,10 @@ public class GameService {
         BaseMatch match = getMatch(matchId);
         match.teamUseSkill(skillName);
         return match;
+    }
+    
+    public List<MatchRecord> getMatchRecords() {
+        return matchRecords;
     }
 
 }

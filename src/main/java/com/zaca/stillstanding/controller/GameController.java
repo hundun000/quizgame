@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.zaca.stillstanding.domain.ApiResult;
 import com.zaca.stillstanding.domain.IApiResult;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
+import com.zaca.stillstanding.domain.match.MatchRecord;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -44,6 +46,12 @@ public class GameController {
             return new ApiResult(e);
         }
         return new ApiResult(match.getId());
+    }
+    
+    @RequestMapping(value="/match-records", method=RequestMethod.POST)
+    public IApiResult getMatchRecords() {
+        List<MatchRecord> matchRecords = gameService.getMatchRecords();
+        return new ApiResult(JSON.toJSONString(matchRecords));
     }
     
     @RequestMapping(value="/start", method=RequestMethod.POST)

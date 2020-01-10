@@ -85,7 +85,7 @@ public class Team {
 		JSONObject data = new JSONObject();
 		data.put("alive", alive);
 		data.put("name", name);
-		data.put("score", matchScore);
+		data.put("score", getMatchScore());
 		data.put("roleRunTimeData", roleRunTimeData);
 		return data;
 	}
@@ -123,7 +123,9 @@ public class Team {
         return roleRunTimeData;
     }
     
-    
+    public int getMatchScore() {
+        return matchScore;
+    }
     
 	
 	
