@@ -100,8 +100,8 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     private void initGame() throws Exception {
 
-        MatchEvent event = match.start();
-        renewTimerCount(event.getPayload().getIntValue("time"));
+        match.start();
+        renewTimerCount(match.getEvents().get(0).getPayload().getIntValue("time"));
     }
     
     private void renewTimerCount(int value) {

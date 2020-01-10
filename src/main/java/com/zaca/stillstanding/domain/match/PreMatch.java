@@ -75,9 +75,8 @@ public class PreMatch extends BaseMatch {
     }
     
     @Override
-    public MatchEvent start() throws StillStandingException {
+    public void start() throws StillStandingException {
         teams.forEach(team -> team.getRoleRunTimeData().resetRemain());
-        return super.start();
     }
 
     

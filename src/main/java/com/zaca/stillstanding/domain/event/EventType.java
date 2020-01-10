@@ -10,5 +10,6 @@ public enum EventType {
 	GENERAL_SUCCESS, 
 	GENERAL_FAIL, 
 	ANSWER_RESULT,
+	START_TEAM
 	;
 }

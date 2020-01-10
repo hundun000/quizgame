@@ -69,11 +69,14 @@ public abstract class BaseMatch {
 		this.currentTeam = null;
 	}
 	
-	public MatchEvent start() throws StillStandingException {
-	    teams.forEach(team -> team.resetForMatch());
+
+	public void start() throws StillStandingException {
+        teams.forEach(team -> team.resetForMatch());
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
-	    return checkSwitchQuestionEvent();
+	    events.clear();
+	    events.add(MatchEvent.getTypeStartTeam(currentTeam));
+        events.add(checkSwitchQuestionEvent());
     }
 	
 	public void commandLineControl(String line) throws StillStandingException {
