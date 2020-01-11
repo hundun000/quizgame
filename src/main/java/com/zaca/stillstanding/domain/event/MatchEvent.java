@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
+import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
 
@@ -48,10 +49,24 @@ public class MatchEvent{
         return new MatchEvent(EventType.SWITCH_QUESTION, data);
     }
 	
+	/**
+	 * use type teamHealth
+	 * @param team
+	 * @return
+	 */
+	@Deprecated
 	public static MatchEvent getTypeTeamDie(Team team) {
         JSONObject data = new JSONObject();
         data.put("team", team.getMatchData());
         return new MatchEvent(EventType.TEAM_DIE, data);
+    }
+	
+	public static MatchEvent getTypeTeamHealth(HealthType healthType, int minusHealth, int currentHealth) {
+        JSONObject data = new JSONObject();
+        data.put("type_code", healthType.ordinal());
+        data.put("minus", minusHealth);
+        data.put("current", currentHealth);
+        return new MatchEvent(EventType.TEAM_HEALTH, data);
     }
 	
 	public static MatchEvent getTypeFinish() {
