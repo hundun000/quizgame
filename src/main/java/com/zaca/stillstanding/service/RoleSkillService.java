@@ -27,17 +27,21 @@ public class RoleSkillService {
         registerSkill(new BaseSkill("求助", "答题时间增加x，并且本题期间可与毒奶团交流。", "{\"x\":30}"));
         registerSkill(new BaseSkill("加时", "答题时间增加x。", "{\"x\":15}"));
         
-        BaseRole role;
-        role = new BaseRole("ZACA娘", "主人公。");
-        role.getSkillSlots().add(new SkillSlot(getSkill("5050"), 2));
-        role.getSkillSlots().add(new SkillSlot(getSkill("求助"), 2));
-        role.getSkillSlots().add(new SkillSlot(getSkill("跳过"), 2));
-        role.getSkillSlots().add(new SkillSlot(getSkill("加时"), 2));
-        
-        roles.put(role.getName(), role);
+        registerRole(new BaseRole("ZACA娘", "主人公。",
+                new SkillSlot(getSkill("5050"), 2),
+                new SkillSlot(getSkill("求助"), 2),
+                new SkillSlot(getSkill("跳过"), 2),
+                new SkillSlot(getSkill("加时"), 2)
+                )
+        );
+
     }
     private void registerSkill(BaseSkill skill) {
         skills.put(skill.getName(), skill);
+    }
+    
+    private void registerRole(BaseRole role) {
+        roles.put(role.getName(), role);
     }
     
     public BaseSkill getSkill(String skillName) {

@@ -2,6 +2,7 @@ package com.zaca.stillstanding.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class GameService {
     
     Map<String, BaseMatch> matches = new HashMap<>();
     
-    List<MatchRecord> matchRecords = new ArrayList<>();
+    LinkedHashMap<String, MatchRecord> matchRecords = new LinkedHashMap<>();
     
     public GameService() {
     	
@@ -71,7 +72,7 @@ public class GameService {
     }
     
     private void finishMatch(BaseMatch match) throws StillStandingException {
-        matchRecords.add(new MatchRecord(match));
+        matchRecords.put(match.getId(), new MatchRecord(match));
         matches.remove(match.getId());
     }
     
@@ -99,7 +100,11 @@ public class GameService {
     }
     
     public List<MatchRecord> getMatchRecords() {
-        return matchRecords;
+        return new ArrayList<>(matchRecords.values());
+    }
+    
+    public MatchRecord getOneMatchRecord(String id) {
+        return matchRecords.get(id);
     }
 
 }

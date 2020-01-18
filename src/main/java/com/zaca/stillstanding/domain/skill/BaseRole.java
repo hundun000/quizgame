@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.domain.skill;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -11,12 +12,13 @@ public class BaseRole {
     
     private final String name;
     private final String description;
-    private List<SkillSlot> skillSlots = new ArrayList<>();
+    private List<SkillSlot> skillSlots;
     
     
-    public BaseRole(String name, String description) {
+    public BaseRole(String name, String description, SkillSlot... skillSlots) {
         this.name = name;
         this.description = description;
+        this.skillSlots = Arrays.asList(skillSlots);
     }
     
     public String getName() {

@@ -5,12 +5,13 @@ package com.zaca.stillstanding.domain.match;
  */
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MatchRecord {
     
     private String matchId;
-    private Map<String, Integer> scores = new HashMap<>();
+    private Map<String, Integer> scores = new LinkedHashMap<>();
     
     public MatchRecord(BaseMatch match) {
         this.matchId = match.getId();

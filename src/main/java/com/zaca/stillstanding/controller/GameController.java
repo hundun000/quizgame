@@ -48,10 +48,18 @@ public class GameController {
         return new ApiResult(match.getId());
     }
     
-    @RequestMapping(value="/match-records", method=RequestMethod.POST)
+    @RequestMapping(value="/match-records/all", method=RequestMethod.GET)
     public IApiResult getMatchRecords() {
         List<MatchRecord> matchRecords = gameService.getMatchRecords();
         return new ApiResult(JSON.toJSONString(matchRecords));
+    }
+    
+    @RequestMapping(value="/match-records", method=RequestMethod.GET)
+    public IApiResult getOneMatchRecord(
+            @RequestParam(value = "matchId") String matchId
+            ) {
+        MatchRecord matchRecord = gameService.getOneMatchRecord(matchId);
+        return new ApiResult(JSON.toJSONString(matchRecord));
     }
     
     @RequestMapping(value="/start", method=RequestMethod.POST)
