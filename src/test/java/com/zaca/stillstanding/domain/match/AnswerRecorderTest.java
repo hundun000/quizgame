@@ -28,16 +28,16 @@ public class AnswerRecorderTest {
     
     @Test
     public void isSumAtLeastByTeam() {
-        assertEquals(true, recorderSingle.isSumAtLeastByTeam("t1", 4));
-        assertEquals(true, recorderSingle.isSumAtLeastByTeam("t1", 5));
-        assertEquals(false, recorderSingle.isSumAtLeastByTeam("t1", 6));
+        assertEquals(true, recorderSingle.isSumAtLeast("t1", 4));
+        assertEquals(true, recorderSingle.isSumAtLeast("t1", 5));
+        assertEquals(false, recorderSingle.isSumAtLeast("t1", 6));
     }
     
     @Test
     public void isConsecutiveWrongAtLeastByTeam() {
-        assertEquals(true, recorderSingle.isConsecutiveWrongAtLeastByTeam("t1", 1));
-        assertEquals(true, recorderSingle.isConsecutiveWrongAtLeastByTeam("t1", 2));
-        assertEquals(false, recorderSingle.isConsecutiveWrongAtLeastByTeam("t1", 3));
+        assertEquals(true, recorderSingle.isConsecutiveWrongAtLeast("t1", 1));
+        assertEquals(true, recorderSingle.isConsecutiveWrongAtLeast("t1", 2));
+        assertEquals(false, recorderSingle.isConsecutiveWrongAtLeast("t1", 3));
     }
 
 }

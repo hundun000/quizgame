@@ -3,3 +3,7 @@ server:
 
 using-GUI: false
 using-small-frame: false
+
+logging:
+    level:
+        com.zaca.stillstanding: "DEBUG"

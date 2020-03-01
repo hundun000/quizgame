@@ -40,8 +40,7 @@ public class PreMatchTest {
     
     @Before
     public void init() throws Exception {
-        match = gameService.createMatch();
-        match.setTeamsByNames("砍口垒同好组");
+        match = gameService.createMatch(new String[] {"砍口垒同好组"});
         match.start();
         System.out.println(FormatTool.matchToJSON(match));
     }

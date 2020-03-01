@@ -38,14 +38,14 @@ public class GameController {
     public IApiResult createMatch(
             @RequestParam(value = "teamNames") String[] teamNames
             ) {
-        BaseMatch match = gameService.createMatch();
         try {
-            match.setTeamsByNames(teamNames);
+            BaseMatch match = gameService.createMatch(teamNames);
+            return new ApiResult(match.getId());
         } catch (StillStandingException e) {
             e.printStackTrace();
             return new ApiResult(e);
         }
-        return new ApiResult(match.getId());
+        
     }
     
     @RequestMapping(value="/match-records/all", method=RequestMethod.GET)

@@ -52,14 +52,21 @@ public class AnswerRecorder {
      * @param num
      * @return
      */
-    public boolean isConsecutiveWrongAtLeastByTeam(String teamName, int num) {
-        return count(teamName, AnswerType.WRONG, num, true) >= num;
+    public boolean isConsecutiveWrongAtLeast(String teamName, int num) {
+        return countConsecutiveWrong(teamName, num) >= num;
     }
     
-    public boolean isSumAtLeastByTeam(String teamName, int num) {
+    public boolean isSumAtLeast(String teamName, int num) {
         return count(teamName, null, num, false) >= num;
     }
     
+    public int countConsecutiveWrong(String teamName, int num) {
+        return count(teamName, AnswerType.WRONG, num, true);
+    }
+    
+    public int countSum(String teamName, int num) {
+        return count(teamName, null, num, false);
+    }
 
     /**
      * 可用统计某队[连续/累计][正确/错误/全部]回答的个数

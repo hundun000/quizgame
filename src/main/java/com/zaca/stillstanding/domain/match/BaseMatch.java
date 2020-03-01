@@ -107,7 +107,7 @@ public abstract class BaseMatch {
 	        
 	        MatchEvent event;
 	        if (successful) {
-	            event = getSkillSuccessMatchEvent(skill);
+	            event = getSkillSuccessMatchEvent(currentTeam, skill);
             } else {
                 event = MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill);
             }
@@ -119,7 +119,7 @@ public abstract class BaseMatch {
 	    }
     }
 	
-	private MatchEvent getSkillSuccessMatchEvent(BaseSkill skill) throws StillStandingException {
+	private MatchEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
 	    switch (skill.getName()) {
 //        case "跳过":
 //            List<MatchEvent> eventsAfterSkip = teamAnswerSkip();
@@ -128,7 +128,7 @@ public abstract class BaseMatch {
 //            JSONArray array = JSONArray.parseArray(JSON.toJSONString(eventsAfterSkip));
 //            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill, array);
         default:
-            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill);
+            return MatchEvent.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill);
         }
     }
 	
@@ -153,10 +153,8 @@ public abstract class BaseMatch {
 	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
 		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
-		// 2. 结算加分
-		tempEvents.add(addScore(answerType));
-		// 3.判断队伍死亡
-        tempEvents.add(checkTeamDieEvent());
+		// 2. 结算加分与生命值
+		tempEvents.add(addScoreAndCountHealth(answerType));
         // 4.判断比赛结束
         MatchEvent finishEvent = checkFinishEvent();
         if (finishEvent == null) {
@@ -175,16 +173,12 @@ public abstract class BaseMatch {
 	/**
 	 * 为刚刚的答题加分。
 	 * 可实现为：固定加分；连续答对comb加分...
+	 * 
+	 * 为刚刚的答题结算剩余健康值
+	 * 可实现为：累计答n题死亡；连续答错n题死亡；累计答错n题死亡...
 	 * @param answerType 
 	 */
-	abstract protected MatchEvent addScore(AnswerType answerType);
-	
-	/**
-	 * 判断队伍是否死亡。
-	 * 可实现为：累计答n题死亡；连续答错n题死亡；累计答错n题死亡...
-	 * @return
-	 */
-	abstract protected MatchEvent checkTeamDieEvent();
+	abstract protected MatchEvent addScoreAndCountHealth(AnswerType answerType);
 
 	
 	/**

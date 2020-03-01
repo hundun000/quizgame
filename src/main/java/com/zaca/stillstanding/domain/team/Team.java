@@ -22,7 +22,7 @@ public class Team {
 	private BaseRole role;
 	
 	private double hitPickRate;
-	private static double DEFAULT_HIT_PICK_RATE = 0.4;
+	private static double DEFAULT_HIT_PICK_RATE = 0.2;
 	private static double HIT_PICK_RATE_INCREASE_STEP = 0.05;
 	
 	boolean alive;
@@ -36,6 +36,9 @@ public class Team {
 	public void resetForMatch() {
 	    this.matchScore = 0;
         this.alive = true;
+        if (role != null) {
+            this.roleRunTimeData = new RoleRunTimeData(role);
+        }
         resetHitPickRate();
 	}
 	

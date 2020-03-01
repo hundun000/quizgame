@@ -11,6 +11,5 @@ public enum EventType {
 	GENERAL_FAIL, 
 	ANSWER_RESULT,
 	START_TEAM,
-	TEAM_HEALTH,
 	;
 }

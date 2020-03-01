@@ -42,8 +42,7 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        match = gameService.createMatch();
-                        match.setTeamsByNames("砍口垒同好组", "方舟同好组");
+                        match = gameService.createMatch(new String[] {"砍口垒同好组", "方舟同好组"});
                         
                         frame = new MyFrame(match);
                         frame.start();

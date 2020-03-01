@@ -2,6 +2,7 @@ package com.zaca.stillstanding.domain.match;
 
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
+import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.TeamDeadException;
 import com.zaca.stillstanding.service.QuestionService;
@@ -20,7 +21,7 @@ public class MainMatch extends BaseMatch {
 
     
     @Override
-    protected MatchEvent addScore(AnswerType answerType) {
+    protected MatchEvent addScoreAndCountHealth(AnswerType answerType) {
         /*
          * 固定加1
          */
@@ -29,20 +30,18 @@ public class MainMatch extends BaseMatch {
             addScore= 1;
             currentTeam.addScore(1);
         }
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore());
-    }
-
-    
-    @Override
-    protected MatchEvent checkTeamDieEvent() {
+        
         /*
-         * 连续答错1题则死亡
+         * 连续答错数, 即为健康度的减少量。
          */
-        if (recorder.isConsecutiveWrongAtLeastByTeam(currentTeam.getName(), 1)) {
+        int fullHealth = 1;
+        int currentHealth = fullHealth - recorder.countConsecutiveWrong(currentTeam.getName(), fullHealth);
+        
+        if (currentHealth == 0) {
             currentTeam.setAlive(false);
-            return MatchEvent.getTypeTeamDie(currentTeam);
         }
-        return null;
+        
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), HealthType.CONSECUTIVE_WRONG_AT_LEAST, currentHealth);
     }
 
     

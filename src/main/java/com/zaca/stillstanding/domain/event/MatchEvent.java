@@ -61,14 +61,6 @@ public class MatchEvent{
         return new MatchEvent(EventType.TEAM_DIE, data);
     }
 	
-	public static MatchEvent getTypeTeamHealth(HealthType healthType, int minusHealth, int currentHealth) {
-        JSONObject data = new JSONObject();
-        data.put("type_code", healthType.ordinal());
-        data.put("minus", minusHealth);
-        data.put("current", currentHealth);
-        return new MatchEvent(EventType.TEAM_HEALTH, data);
-    }
-	
 	public static MatchEvent getTypeFinish() {
         JSONObject data = new JSONObject();
         return new MatchEvent(EventType.FINISH, data);
@@ -76,9 +68,10 @@ public class MatchEvent{
 	
 	public static final String KEY_SKILL_NAME = "skill_name";
 
-	public static MatchEvent getTypeSkillSuccess(String teamName, BaseSkill skill) {
+	public static MatchEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill) {
         JSONObject data = new JSONObject();
         data.put("team_name", teamName);
+        data.put("role_name", roleName);
         data.put(KEY_SKILL_NAME, skill.getName());
         data.put("static_data", skill.getStaticData());
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
@@ -102,11 +95,13 @@ public class MatchEvent{
 
 
 
-    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore) {
+    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore, HealthType healthType, int currentHealth) {
         JSONObject data = new JSONObject();
         data.put("result", answerType);
         data.put("add_score", addScore);
         data.put("current_score", currentScore);
+        data.put("health_type_code", healthType.getCode());
+        data.put("current_health", currentHealth);
         return new MatchEvent(EventType.ANSWER_RESULT, data);
     }
 

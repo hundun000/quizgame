@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.question.Question;
@@ -19,7 +21,7 @@ import com.zaca.stillstanding.tool.QuestionTool;
 @Service
 public class QuestionService {
 	
-	
+    private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
 	
 	private List<Question> questions;
 	private List<Question> dirtyQuestions;
@@ -46,14 +48,21 @@ public class QuestionService {
 	}
 	
 	public Question getNewQuestionForTeam(Team team) {
-		int index;
+		
+	    int index;
 		boolean hitPick = hitRandom.nextDouble() < team.getHitPickRate();
 		if (hitPick) {
 			index = getFirstPickQuestionIndex(team);
 			team.resetHitPickRate();
+			logger.debug("FirstPickQuestionIndex = {}", index);
 		} else {
 			index = getFirstNotBanQuestionIndex(team);
 			team.increaseHitPickRate();
+			logger.debug("FirstNotBanQuestionIndex = {}", index);
+		}
+		if (index < 0) {
+		    index = 0;
+		    logger.warn("没有合适的题目。hitPick={}, team={}", hitPick, team.getAllData().toString());
 		}
 		Question question = questions.remove(index);
 		dirtyQuestions.add(question);
@@ -72,6 +81,9 @@ public class QuestionService {
 				i++;
 			}
 		}
+		if (i == questions.size()) {
+            i = -1;
+        }
 		return i;
 	}
 	
@@ -85,6 +97,9 @@ public class QuestionService {
 				question = null;
 				i++;
 			}
+		}
+		if (i == questions.size()) {
+		    i = -1;
 		}
 		return i;
 	}

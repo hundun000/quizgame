@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
+import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -35,22 +36,6 @@ public class PreMatch extends BaseMatch {
         }
     }
 
-    protected static final int LOSE_SUM = 5;
-  
-    
-    
-    @Override
-    protected MatchEvent checkTeamDieEvent() {
-        /*
-         * 累计答n题后死亡
-         */
-        if (recorder.isSumAtLeastByTeam(currentTeam.getName(), LOSE_SUM)) {
-            currentTeam.setAlive(false);
-            return MatchEvent.getTypeTeamDie(currentTeam);
-        }
-        return null;
-    }
-
     
     @Override
     protected MatchEvent checkSwitchTeamEvent() {
@@ -62,7 +47,7 @@ public class PreMatch extends BaseMatch {
 
     
     @Override
-    protected MatchEvent addScore(AnswerType answerType) {
+    protected MatchEvent addScoreAndCountHealth(AnswerType answerType) {
         /*
          * 固定加1分
          */
@@ -71,7 +56,18 @@ public class PreMatch extends BaseMatch {
             addScore= 1;
             currentTeam.addScore(1);
         }
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore());
+        
+        /*
+         * 累计答n题后死亡
+         */
+        int fullHealth = 5;
+        int currentHealth = fullHealth - recorder.countSum(currentTeam.getName(), fullHealth);
+        
+        if (currentHealth == 0) {
+            currentTeam.setAlive(false);
+        }
+        
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), HealthType.CONSECUTIVE_WRONG_AT_LEAST, currentHealth);
     }
     
     @Override
