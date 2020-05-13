@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.domain.skill.BaseRole;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
+import com.zaca.stillstanding.domain.skill.BaseSkillFactory;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 
 /**
@@ -22,10 +23,10 @@ public class RoleSkillService {
     
     
     public RoleSkillService() {
-        registerSkill(new BaseSkill("5050", "揭示x个错误选项。", "{\"x\":2}"));
-        registerSkill(new BaseSkill("跳过", "结束本题。本题不计入得分、答对数、答错数。"));
-        registerSkill(new BaseSkill("求助", "答题时间增加x，并且本题期间可与毒奶团交流。", "{\"x\":30}"));
-        registerSkill(new BaseSkill("加时", "答题时间增加x。", "{\"x\":15}"));
+        registerSkill(BaseSkillFactory.getSkill("5050"));
+        registerSkill(BaseSkillFactory.getSkill("跳过"));
+        registerSkill(BaseSkillFactory.getSkill("求助"));
+        registerSkill(BaseSkillFactory.getSkill("加时"));
         
         registerRole(new BaseRole("ZACA娘", "主人公。",
                 new SkillSlot(getSkill("5050"), 2),

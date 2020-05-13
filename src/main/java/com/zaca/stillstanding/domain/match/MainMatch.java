@@ -16,7 +16,9 @@ import com.zaca.stillstanding.service.TeamService;
 public class MainMatch extends BaseMatch {
 
     public MainMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
-        super(questionService, teamService, roleSkillService);
+        super(questionService, teamService, roleSkillService,
+                HealthType.CONSECUTIVE_WRONG_AT_LEAST
+                );
     }
 
     
@@ -41,9 +43,8 @@ public class MainMatch extends BaseMatch {
             currentTeam.setAlive(false);
         }
         
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), HealthType.CONSECUTIVE_WRONG_AT_LEAST, currentHealth);
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
     }
-
     
     @Override
     protected MatchEvent checkSwitchTeamEvent() {
@@ -53,6 +54,17 @@ public class MainMatch extends BaseMatch {
         Team lastTeam = currentTeam;
         switchToNextTeam();
         return MatchEvent.getTypeSwitchTeam(lastTeam, currentTeam);
+    }
+
+
+    @Override
+    protected int calculateCurrentHealth() {
+        int fullHealth = 1;
+        /*
+         * 连续答错数, 即为健康度的减少量。
+         */
+        int currentHealth = fullHealth - recorder.countConsecutiveWrong(currentTeam.getName(), fullHealth);
+        return currentHealth;
     }
 
 }

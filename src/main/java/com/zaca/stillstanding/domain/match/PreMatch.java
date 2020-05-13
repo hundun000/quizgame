@@ -26,7 +26,9 @@ public class PreMatch extends BaseMatch {
     
 
     public PreMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
-        super(questionService, teamService, roleSkillService);
+        super(questionService, teamService, roleSkillService,
+                HealthType.SUM
+                );
     }
     
     @Override
@@ -57,23 +59,26 @@ public class PreMatch extends BaseMatch {
             currentTeam.addScore(1);
         }
         
+        int currentHealth = calculateCurrentHealth();
+        
+        if (currentHealth == 0) {
+            currentTeam.setAlive(false);
+        }
+        
+        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
+    }
+    
+
+
+    @Override
+    protected int calculateCurrentHealth() {
         /*
          * 累计答n题后死亡
          */
         int fullHealth = 5;
         int currentHealth = fullHealth - recorder.countSum(currentTeam.getName(), fullHealth);
         
-        if (currentHealth == 0) {
-            currentTeam.setAlive(false);
-        }
-        
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), HealthType.CONSECUTIVE_WRONG_AT_LEAST, currentHealth);
-    }
-    
-    @Override
-    public void start() throws StillStandingException {
-        teams.forEach(team -> team.getRoleRunTimeData().resetRemain());
-        super.start();
+        return currentHealth;
     }
 
     

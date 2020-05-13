@@ -6,9 +6,14 @@ package com.zaca.stillstanding.domain.team;
 public enum HealthType {
     
     /**
-     * 剩余可连续大错数
+     * 生命值即为剩余可连续答错数
      */
-    CONSECUTIVE_WRONG_AT_LEAST(0),
+    CONSECUTIVE_WRONG_AT_LEAST(0), 
+    /**
+     * 生命值即为已答题目总数
+     */
+    SUM(1),
+    
     ;
     
     

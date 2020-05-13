@@ -1,11 +1,13 @@
 package com.zaca.stillstanding.domain.event;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
+import com.zaca.stillstanding.domain.skill.RoleRuntimeData;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -30,9 +32,12 @@ public class MatchEvent{
         return false;
     }
 	
-	public static MatchEvent getTypeStartTeam(Team team) {
+	public static MatchEvent getTypeStartTeam(Team team, int currentScore, HealthType healthType, int currentHealth, Map<String, Integer> skillRemainTimes) {
 		JSONObject data = new JSONObject();
-		data.put("team", team.getMatchData());
+		data.put("team_match_data", team.getMatchData());
+		data.put("current_score", currentScore);
+        data.put("health_type_code", healthType.getCode());
+        data.put("current_health", currentHealth);
 		return new MatchEvent(EventType.START_TEAM, data);
 	}
 	
@@ -68,12 +73,13 @@ public class MatchEvent{
 	
 	public static final String KEY_SKILL_NAME = "skill_name";
 
-	public static MatchEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill) {
+	public static MatchEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill, int skillRemainTime) {
         JSONObject data = new JSONObject();
         data.put("team_name", teamName);
         data.put("role_name", roleName);
         data.put(KEY_SKILL_NAME, skill.getName());
         data.put("static_data", skill.getStaticData());
+        data.put("skill_remain_time", skillRemainTime);
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
 	

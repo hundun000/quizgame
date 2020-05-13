@@ -14,10 +14,10 @@ public class BaseSkill {
     private final String description;
     private final JSONObject staticData;
     
-    public BaseSkill(String name, String description) {
+    BaseSkill(String name, String description) {
         this(name, description, null);
     }
-    public BaseSkill(String name, String description, String staticDataString) {
+    BaseSkill(String name, String description, String staticDataString) {
         this.name = name;
         this.description = description;
         

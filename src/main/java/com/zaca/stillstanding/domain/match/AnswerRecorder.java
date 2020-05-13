@@ -60,12 +60,12 @@ public class AnswerRecorder {
         return count(teamName, null, num, false) >= num;
     }
     
-    public int countConsecutiveWrong(String teamName, int num) {
-        return count(teamName, AnswerType.WRONG, num, true);
+    public int countConsecutiveWrong(String teamName, int max) {
+        return count(teamName, AnswerType.WRONG, max, true);
     }
     
-    public int countSum(String teamName, int num) {
-        return count(teamName, null, num, false);
+    public int countSum(String teamName, int max) {
+        return count(teamName, null, max, false);
     }
 
     /**

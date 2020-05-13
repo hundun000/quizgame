@@ -59,7 +59,7 @@ public class GameService {
     
 
     public void initOtherServiceForTest() throws StillStandingException {
-        questionService.initQuestions(QuestionTool.PRELAESE_PACKAGE_NAME);
+        questionService.initQuestions(QuestionTool.PRELEASE_PACKAGE_NAME);
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", "动画", "单机游戏", "ZACA娘");
     }

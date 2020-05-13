@@ -1,7 +1,10 @@
 package com.zaca.stillstanding.controller;
 
+import java.util.Arrays;
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,6 +28,8 @@ import com.zaca.stillstanding.service.TeamService;
 @RequestMapping("/api/teams")
 public class TeamController {
     
+    private static final Logger logger = LoggerFactory.getLogger(TeamController.class);
+    
     @Autowired
     TeamService teamService;
     
@@ -40,6 +45,7 @@ public class TeamController {
     public IApiResult updateTeam(
             @RequestParam(value = "team") String teamString
             ) {
+        logger.info("===== \"\" {} =====", teamString);
         // TODO 中途失败回滚
         
         JSONObject teamObject = JSONObject.parseObject(teamString);

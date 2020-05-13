@@ -21,6 +21,7 @@ import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.skill.BaseRole;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
+import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -34,7 +35,8 @@ public abstract class BaseMatch {
     private static int currentId;
     
     protected final String id;
-	
+    protected final HealthType healthType;
+    
     protected final QuestionService questionService;
     protected final TeamService teamService;
     protected final RoleSkillService roleSkillService;
@@ -51,7 +53,8 @@ public abstract class BaseMatch {
 	public BaseMatch(
 	        QuestionService questionService,
 	        TeamService teamService,
-	        RoleSkillService roleSkillService
+	        RoleSkillService roleSkillService,
+	        HealthType healthType
 	        ) {
         this.questionService = questionService;
         this.teamService = teamService;
@@ -59,6 +62,7 @@ public abstract class BaseMatch {
         // TODO 测试阶段固定
         //this.id = UUID.randomUUID().toString();
         this.id = String.valueOf(currentId++);
+        this.healthType = healthType;
     }
 	
 	public void setTeamsByNames(String... teamNames) throws NotFoundException {
@@ -75,9 +79,11 @@ public abstract class BaseMatch {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
 	    events.clear();
-	    events.add(MatchEvent.getTypeStartTeam(currentTeam));
+	    events.add(MatchEvent.getTypeStartTeam(currentTeam, currentTeam.getMatchScore(), healthType, calculateCurrentHealth(), currentTeam.getRoleRunTimeData().getSkillRemainTimes()));
         events.add(checkSwitchQuestionEvent());
     }
+	
+	protected abstract int calculateCurrentHealth();
 	
 	public void commandLineControl(String line) throws StillStandingException {
         List<String> args = Arrays.asList(line.split(" "));
@@ -120,16 +126,8 @@ public abstract class BaseMatch {
     }
 	
 	private MatchEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
-	    switch (skill.getName()) {
-//        case "跳过":
-//            List<MatchEvent> eventsAfterSkip = teamAnswerSkip();
-//            // 重置events成员
-//            
-//            JSONArray array = JSONArray.parseArray(JSON.toJSONString(eventsAfterSkip));
-//            return MatchEvent.getTypeSkillSuccess(currentTeam.getName(), skill, array);
-        default:
-            return MatchEvent.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill);
-        }
+	    int skillRemainTime = team.getRoleRunTimeData().getSkillRemainTimes().get(skill.getName());
+	    return MatchEvent.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill, skillRemainTime);
     }
 	
 //	private List<MatchEvent> teamAnswerSkip() throws StillStandingException {
