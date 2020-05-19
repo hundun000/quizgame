@@ -21,8 +21,12 @@ public class RoleRuntimeData {
         role.getSkillSlots().forEach(skillSlot -> skillRemainTimes.put(skillSlot.getSkill().getName(), skillSlot.getFullCount()));
     }
     
+    public boolean canUseOnce(String skillName) {
+        return skillRemainTimes.containsKey(skillName) && skillRemainTimes.get(skillName) > 0;
+    }
+    
     public boolean useOnce(String skillName) {
-        if (skillRemainTimes.containsKey(skillName) && skillRemainTimes.get(skillName) > 0) {
+        if (canUseOnce(skillName)) {
             skillRemainTimes.compute(skillName, (k,v) -> v-1);
             return true;
         }

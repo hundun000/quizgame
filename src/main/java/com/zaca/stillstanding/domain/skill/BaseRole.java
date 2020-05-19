@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.zaca.stillstanding.exception.StillStandingException;
+
 /**
  * @author hundun
  * Created on 2019/10/08
@@ -33,13 +35,13 @@ public class BaseRole {
         return skillSlots;
     }
     
-    public BaseSkill getSkill(String skillName) {
+    public BaseSkill getSkill(String skillName) throws StillStandingException {
         for (SkillSlot skillSlot : skillSlots) {
             if (skillSlot.getSkill().getName().equals(skillName)) {
                 return skillSlot.getSkill();
             }
         }
-        return null;
+        throw new StillStandingException(getName() + "里没有技能：" + skillName, -1);
     }
 
 }

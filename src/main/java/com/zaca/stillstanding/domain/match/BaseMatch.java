@@ -1,10 +1,13 @@
 package com.zaca.stillstanding.domain.match;
 
 import java.awt.Event;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -105,24 +108,31 @@ public abstract class BaseMatch {
 	
 	
 	public void teamUseSkill(String skillName) throws StillStandingException {
+        events.clear();
+        events.addAll(generalUseSkill(skillName));  
+	}
+	
+	private List<MatchEvent> generalUseSkill(String skillName) throws StillStandingException {
+	    List<MatchEvent> newEvents = new ArrayList<>(); 
 	    BaseRole role = roleSkillService.getRole(currentTeam.getRoleName());
 	    BaseSkill skill = role.getSkill(skillName);
         
-	    if (skill != null) {
-	        boolean successful = currentTeam.getRoleRunTimeData().useOnce(skillName);
-	        
-	        MatchEvent event;
-	        if (successful) {
-	            event = getSkillSuccessMatchEvent(currentTeam, skill);
-            } else {
-                event = MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill);
+        boolean success = currentTeam.getRoleRunTimeData().useOnce(skillName);
+        if (success) {
+            newEvents.add(getSkillSuccessMatchEvent(currentTeam, skill));
+            switch (skill.getName()) {
+            case "跳过":
+                List<MatchEvent> skipEvents = generalAnswer(Question.SKIP_ANSWER_TEXT);
+                newEvents.addAll(skipEvents);
+                break;
+            default:
+                break;
             }
-	        
-	        events.clear();
-	        events.add(event);
-	    } else {
-	        throw new NotFoundException("当前队伍的技能中", skillName);
-	    }
+        } else {
+            newEvents.add(MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill));
+        }
+        
+        return newEvents;
     }
 	
 	private MatchEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
@@ -134,37 +144,46 @@ public abstract class BaseMatch {
 //        return teamAnswer(Question.SKIP_ANSWER_TEXT);
 //    }
 	public void teamAnswerTimeout() throws StillStandingException {
-	   teamAnswer(Question.TIMEOUT_ANSWER_TEXT);
+	   events.clear();
+       List<MatchEvent> newEvents = generalAnswer(Question.TIMEOUT_ANSWER_TEXT);
+       events.addAll(newEvents);
     }
-	/**
+	
+	public void teamAnswer(String answerText) throws StillStandingException {
+	    events.clear();
+	    List<MatchEvent> newEvents = generalAnswer(answerText);
+	    events.addAll(newEvents);
+    }
+
+    /**
 	 * 返回并更新进events
 	 * @param answer
 	 * @return
 	 * @throws StillStandingException
 	 */
-	public void teamAnswer(String answer) throws StillStandingException {
+	private List<MatchEvent> generalAnswer(String answer) throws StillStandingException {
 	    if (!currentTeam.isAlive()) {
 	        throw new TeamDeadException(currentTeam.getName());
 	    }
-	    List<MatchEvent> tempEvents = new ArrayList<>(); 
+	    List<MatchEvent> newEvents = new ArrayList<>(); 
 	    
 	    AnswerType answerType = currentQuestion.calculateAnswerType(answer);
         // 1. 记录回答
 		recorder.addRecord(currentTeam.getName(), answer, currentQuestion.getId(), answerType);
 		// 2. 结算加分与生命值
-		tempEvents.add(addScoreAndCountHealth(answerType));
+		newEvents.add(addScoreAndCountHealth(answerType));
         // 4.判断比赛结束
         MatchEvent finishEvent = checkFinishEvent();
         if (finishEvent == null) {
-            tempEvents.add(finishEvent);
             // 5.判断换队
-            tempEvents.add(checkSwitchTeamEvent());
+            newEvents.add(checkSwitchTeamEvent());
             // 6.换题
-            tempEvents.add(checkSwitchQuestionEvent());
+            newEvents.add(checkSwitchQuestionEvent());
+        } else {
+            newEvents.add(finishEvent);
         }
         
-        this.events.clear();
-        this.events = tempEvents.stream().filter(s -> s != null).collect(Collectors.toList());
+        return newEvents.stream().filter(s -> s != null).collect(Collectors.toList());
 	}
 
 	
@@ -205,6 +224,8 @@ public abstract class BaseMatch {
 	        }
 	    }
 	    if (allDie) {
+	        Map<String, Integer> scores = new HashMap<>(teams.size());
+	        teams.forEach(item -> scores.put(item.getName(), item.getMatchScore()));
 	        return MatchEvent.getTypeFinish();
 	    } else {
 	        return null;
