@@ -1,7 +1,13 @@
 package com.zaca.stillstanding.domain.skill;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.skill.effect.ISkillEffect;
+import com.zaca.stillstanding.exception.ModFormatException;
 
 /**
  * 原型类
@@ -12,26 +18,28 @@ public class BaseSkill {
     
     private final String name;
     private final String description;
-    private final JSONObject staticData;
+    private final JSONObject frontendData;
+    private final List<ISkillEffect> backendEffects;
     
-    BaseSkill(String name, String description) {
-        this(name, description, null);
-    }
-    BaseSkill(String name, String description, String staticDataString) {
+    BaseSkill(String name, String description, String frontendDataString, ISkillEffect... backendEffects) throws ModFormatException {
         this.name = name;
         this.description = description;
         
-        JSONObject staticData = null;
-        if (staticDataString != null) {
+        if (frontendDataString != null) {
             try {
-                staticData = JSONObject.parseObject(staticDataString);
+                this.frontendData = JSONObject.parseObject(frontendDataString);
             } catch (JSONException e) {
-                e.printStackTrace();
+                throw new ModFormatException(frontendDataString, "JSON");
             }
+        } else {
+            this.frontendData = null;
         }
-        this.staticData = staticData;
         
-        
+        if (backendEffects != null) {
+            this.backendEffects = Arrays.asList(backendEffects);
+        } else {
+            this.backendEffects = new ArrayList<>(0);
+        }
     }
     
     public String getName() {
@@ -42,8 +50,12 @@ public class BaseSkill {
         return description;
     }
     
-    public JSONObject getStaticData() {
-        return staticData;
+    public JSONObject getFrontendData() {
+        return frontendData;
+    }
+    
+    public List<ISkillEffect> getBackendEffects() {
+        return backendEffects;
     }
     
 }

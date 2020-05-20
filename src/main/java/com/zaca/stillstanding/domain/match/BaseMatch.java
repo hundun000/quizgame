@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,6 +18,12 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.buff.BuffFactory;
+import com.zaca.stillstanding.domain.buff.BuffModel;
+import com.zaca.stillstanding.domain.buff.IBuffEffect;
+import com.zaca.stillstanding.domain.buff.RunTimeBuff;
+import com.zaca.stillstanding.domain.buff.ScoreComboBuffEffect;
+import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
@@ -24,6 +31,8 @@ import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.skill.BaseRole;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
+import com.zaca.stillstanding.domain.skill.effect.AddBuffSkillEffect;
+import com.zaca.stillstanding.domain.skill.effect.ISkillEffect;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -120,14 +129,15 @@ public abstract class BaseMatch {
         boolean success = currentTeam.getRoleRunTimeData().useOnce(skillName);
         if (success) {
             newEvents.add(getSkillSuccessMatchEvent(currentTeam, skill));
-            switch (skill.getName()) {
-            case "跳过":
-                List<MatchEvent> skipEvents = generalAnswer(Question.SKIP_ANSWER_TEXT);
-                newEvents.addAll(skipEvents);
-                break;
-            default:
-                break;
+            
+            for (ISkillEffect skillEffect : skill.getBackendEffects()) {
+                if (skillEffect instanceof AddBuffSkillEffect) {
+                    AddBuffSkillEffect addBuffSkillEffect = (AddBuffSkillEffect) skillEffect;
+                    RunTimeBuff buff = BuffFactory.getBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
+                    currentTeam.addBuff(buff);
+                }
             }
+            
         } else {
             newEvents.add(MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill));
         }
@@ -179,6 +189,8 @@ public abstract class BaseMatch {
             newEvents.add(checkSwitchTeamEvent());
             // 6.换题
             newEvents.add(checkSwitchQuestionEvent());
+            // 7.
+            updateBuffsDuration(answerType);
         } else {
             newEvents.add(finishEvent);
         }
@@ -187,7 +199,33 @@ public abstract class BaseMatch {
 	}
 
 	
-	/**
+	private void updateBuffsDuration(AnswerType answerType) {
+	    // 某些BuffEffect有特殊的修改Duration规则
+	    for (RunTimeBuff buff : currentTeam.getBuffs()) {
+            for (IBuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+                if (buffEffect instanceof ScoreComboBuffEffect) {
+                    if (answerType == AnswerType.CORRECT) {
+                        // 本身每回合所有buff会减1层。为了使答对后最终加1层，则在此处加2层
+                        buff.addDuration(2);
+                    } else {
+                        buff.clearDuration();
+                    }
+                }
+            }
+        }
+	    
+	    // 所有buff减少一层，然后清理已经没有层数的buff
+        Iterator<RunTimeBuff> iterator = currentTeam.getBuffs().iterator();
+        while(iterator.hasNext()) {
+            RunTimeBuff buff = iterator.next();
+            buff.minusOneDurationAndCheckMaxDuration();
+            if (buff.getDuration() <= 0) {
+                iterator.remove();
+            }
+        }
+    }
+
+    /**
 	 * 为刚刚的答题加分。
 	 * 可实现为：固定加分；连续答对comb加分...
 	 * 
@@ -197,6 +235,27 @@ public abstract class BaseMatch {
 	 */
 	abstract protected MatchEvent addScoreAndCountHealth(AnswerType answerType);
 
+	/**
+	 * 计算所有buff引起的加分offset
+	 * @param baseScore
+	 * @return
+	 */
+	protected int calculateAddScoreSumOffsetByBuffs(AnswerType answerType, int baseScore) {
+	    int sumOffset = 0;
+        for (RunTimeBuff buff : currentTeam.getBuffs()) {
+            for (IBuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+                if (buffEffect instanceof ScoreScaleBuffEffect) {
+                    ScoreScaleBuffEffect scoreScaleBuffEffect = (ScoreScaleBuffEffect) buffEffect;
+                    sumOffset += scoreScaleBuffEffect.getScoreOffset(baseScore);
+                } else if (buffEffect instanceof ScoreComboBuffEffect) {
+                    ScoreComboBuffEffect scoreScaleBuffEffect = (ScoreComboBuffEffect) buffEffect;
+                    sumOffset += scoreScaleBuffEffect.getScoreOffset(buff.getDuration());
+                }
+            }
+        }
+        return sumOffset;
+	}
+	
 	
 	/**
 	 * 判断是否切换队伍。

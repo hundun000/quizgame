@@ -2,30 +2,34 @@ package com.zaca.stillstanding.domain.team;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zaca.stillstanding.domain.buff.BuffModel;
+import com.zaca.stillstanding.domain.buff.RunTimeBuff;
 import com.zaca.stillstanding.domain.skill.BaseRole;
 import com.zaca.stillstanding.domain.skill.RoleRuntimeData;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
 
 
 public class Team {
+    
+    private static double DEFAULT_HIT_PICK_RATE = 0.2;
+    private static double HIT_PICK_RATE_INCREASE_STEP = 0.05;
 	
 	private final String name;
 	private List<String> pickTags;
 	private List<String> banTags;
+	private BaseRole role;
 	
 	private RoleRuntimeData roleRuntimeData;
 	
 	private int matchScore;
-	private BaseRole role;
+	boolean alive;
+	private List<RunTimeBuff> buffs;
 	
 	private double hitPickRate;
-	private static double DEFAULT_HIT_PICK_RATE = 0.2;
-	private static double HIT_PICK_RATE_INCREASE_STEP = 0.05;
-	
-	boolean alive;
 	
 	
 	public Team(String name) {
@@ -40,6 +44,7 @@ public class Team {
             this.roleRuntimeData = new RoleRuntimeData(role);
         }
         resetHitPickRate();
+        buffs.clear();
 	}
 	
 	public void setPickTags(List<String> pickTags) {
@@ -90,6 +95,9 @@ public class Team {
 		data.put("name", name);
 		data.put("score", getMatchScore());
 		data.put("skillRemainTimes", roleRuntimeData.getSkillRemainTimes());
+		JSONObject buffsData = new JSONObject();
+		buffs.forEach(item -> buffsData.put(item.getModel().getName(), item.getDuration()));
+		data.put("buffs", buffsData);
 		return data;
 	}
 	
@@ -130,6 +138,18 @@ public class Team {
         return matchScore;
     }
     
+    public List<RunTimeBuff> getBuffs() {
+        return buffs;
+    }
 	
-	
+	public void addBuff(RunTimeBuff newBuff) {
+        for (RunTimeBuff buff : buffs) {
+            if (buff.getModel().getName().equals(newBuff.getModel().getName())) {
+                buff.addDuration(newBuff.getDuration());
+                return;
+            }
+        }
+        
+        buffs.add(newBuff);
+    }
 }

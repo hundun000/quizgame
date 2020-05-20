@@ -1,5 +1,8 @@
 package com.zaca.stillstanding.domain.match;
 
+import com.zaca.stillstanding.domain.buff.BuffModel;
+import com.zaca.stillstanding.domain.buff.IBuffEffect;
+import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
@@ -14,6 +17,8 @@ import com.zaca.stillstanding.service.TeamService;
  * Created on 2019/09/10
  */
 public class MainMatch extends BaseMatch {
+    
+    private static final int CORRECT_ANSWER_SCORE = 1;
 
     public MainMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
         super(questionService, teamService, roleSkillService,
@@ -28,10 +33,12 @@ public class MainMatch extends BaseMatch {
          * 固定加1
          */
         int addScore = 0;
+
         if (answerType == AnswerType.CORRECT) {
-            addScore= 1;
-            currentTeam.addScore(1);
+            addScore = CORRECT_ANSWER_SCORE;
+            addScore += calculateAddScoreSumOffsetByBuffs(answerType, addScore);
         }
+        currentTeam.addScore(addScore);
         
         /*
          * 连续答错数, 即为健康度的减少量。

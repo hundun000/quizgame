@@ -78,7 +78,7 @@ public class MatchEvent{
         data.put("team_name", teamName);
         data.put("role_name", roleName);
         data.put(KEY_SKILL_NAME, skill.getName());
-        data.put("static_data", skill.getStaticData());
+        data.put("static_data", skill.getFrontendData());
         data.put("skill_remain_time", skillRemainTime);
         return new MatchEvent(EventType.SKILL_SUCCESS, data);
     }
