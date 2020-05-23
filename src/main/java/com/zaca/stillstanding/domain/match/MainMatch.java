@@ -4,6 +4,7 @@ import com.zaca.stillstanding.domain.buff.BuffModel;
 import com.zaca.stillstanding.domain.buff.IBuffEffect;
 import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.event.MatchEventFactory;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
@@ -50,7 +51,7 @@ public class MainMatch extends BaseMatch {
             currentTeam.setAlive(false);
         }
         
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
+        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
     }
     
     @Override
@@ -60,7 +61,7 @@ public class MainMatch extends BaseMatch {
          */
         Team lastTeam = currentTeam;
         switchToNextTeam();
-        return MatchEvent.getTypeSwitchTeam(lastTeam, currentTeam);
+        return MatchEventFactory.getTypeSwitchTeam(lastTeam, currentTeam);
     }
 
 

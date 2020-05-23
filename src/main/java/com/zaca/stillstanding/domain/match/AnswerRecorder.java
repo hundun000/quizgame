@@ -40,7 +40,6 @@ public class AnswerRecorder {
     LinkedList<RecordNode> nodes = new LinkedList<>();
     
     public void addRecord(String teamName, String answer, String questionId, AnswerType answerType) {
-        // 仿栈
         nodes.addFirst(new RecordNode(teamName, answer, questionId, answerType));
     }
     

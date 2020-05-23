@@ -26,6 +26,7 @@ import com.zaca.stillstanding.domain.buff.ScoreComboBuffEffect;
 import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.event.MatchEventFactory;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.skill.BaseRole;
@@ -91,7 +92,7 @@ public abstract class BaseMatch {
 	    currentTeamIndex = teams.size() - 1;
 	    switchToNextTeam();
 	    events.clear();
-	    events.add(MatchEvent.getTypeStartTeam(currentTeam, currentTeam.getMatchScore(), healthType, calculateCurrentHealth(), currentTeam.getRoleRunTimeData().getSkillRemainTimes()));
+	    events.add(MatchEventFactory.getTypeStartTeam(currentTeam, currentTeam.getMatchScore(), healthType, calculateCurrentHealth(), currentTeam.getRoleRunTimeData().getSkillRemainTimes()));
         events.add(checkSwitchQuestionEvent());
     }
 	
@@ -139,7 +140,7 @@ public abstract class BaseMatch {
             }
             
         } else {
-            newEvents.add(MatchEvent.getTypeSkillUseOut(currentTeam.getName(), skill));
+            newEvents.add(MatchEventFactory.getTypeSkillUseOut(currentTeam.getName(), skill));
         }
         
         return newEvents;
@@ -147,7 +148,7 @@ public abstract class BaseMatch {
 	
 	private MatchEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
 	    int skillRemainTime = team.getRoleRunTimeData().getSkillRemainTimes().get(skill.getName());
-	    return MatchEvent.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill, skillRemainTime);
+	    return MatchEventFactory.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill, skillRemainTime);
     }
 	
 //	private List<MatchEvent> teamAnswerSkip() throws StillStandingException {
@@ -271,7 +272,7 @@ public abstract class BaseMatch {
 	 */
 	protected MatchEvent checkSwitchQuestionEvent() {
 	    currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
-	    return MatchEvent.getTypeSwitchQuestion(15);
+	    return MatchEventFactory.getTypeSwitchQuestion(15);
 	}
 	
 	protected MatchEvent checkFinishEvent() {
@@ -283,9 +284,11 @@ public abstract class BaseMatch {
 	        }
 	    }
 	    if (allDie) {
+//	        JSONObject scores = new JSONObject();
+//	        teams.forEach(item -> scores.put(item.getName(), item.getMatchScore()));
 	        Map<String, Integer> scores = new HashMap<>(teams.size());
 	        teams.forEach(item -> scores.put(item.getName(), item.getMatchScore()));
-	        return MatchEvent.getTypeFinish();
+	        return MatchEventFactory.getTypeFinish(scores);
 	    } else {
 	        return null;
 	    }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.event.MatchEventFactory;
 import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
@@ -23,7 +24,7 @@ import com.zaca.stillstanding.service.TeamService;
  * Created on 2019/09/06
  */
 public class PreMatch extends BaseMatch {
-    
+    private static final int CORRECT_ANSWER_SCORE = 1;
 
     public PreMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
         super(questionService, teamService, roleSkillService,
@@ -55,9 +56,10 @@ public class PreMatch extends BaseMatch {
          */
         int addScore = 0;
         if (answerType == AnswerType.CORRECT) {
-            addScore= 1;
-            currentTeam.addScore(1);
+            addScore = CORRECT_ANSWER_SCORE;
+            addScore += calculateAddScoreSumOffsetByBuffs(answerType, addScore);
         }
+        currentTeam.addScore(addScore);
         
         int currentHealth = calculateCurrentHealth();
         
@@ -65,7 +67,7 @@ public class PreMatch extends BaseMatch {
             currentTeam.setAlive(false);
         }
         
-        return MatchEvent.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
+        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
     }
     
 
