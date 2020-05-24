@@ -6,7 +6,7 @@ package com.zaca.stillstanding.domain.buff;
 public class ScoreComboBuffEffect implements IBuffEffect {
     
     public int getScoreOffset(int buffDuration) {
-        return buffDuration;
+        return buffDuration > 0 ? buffDuration - 1 : 0;
     }
 
 }

@@ -31,5 +31,9 @@ public class BaseSkillFactory {
     public static BaseSkill getSkill(String name) {
         return skills.get(name);
     }
+    
+    public static boolean exsistSkill(String skillName) {
+        return skills.containsKey(skillName);
+    }
 
 }

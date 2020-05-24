@@ -27,7 +27,7 @@ public class Team {
 	
 	private int matchScore;
 	boolean alive;
-	private List<RunTimeBuff> buffs;
+	private List<RunTimeBuff> buffs = new ArrayList<>();
 	
 	private double hitPickRate;
 	
