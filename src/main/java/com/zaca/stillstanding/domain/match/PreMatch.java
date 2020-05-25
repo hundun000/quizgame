@@ -15,6 +15,7 @@ import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
@@ -26,8 +27,13 @@ import com.zaca.stillstanding.service.TeamService;
 public class PreMatch extends BaseMatch {
     private static final int CORRECT_ANSWER_SCORE = 1;
 
-    public PreMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
-        super(questionService, teamService, roleSkillService,
+    public PreMatch(
+            QuestionService questionService, 
+            TeamService teamService, 
+            RoleSkillService roleSkillService,
+            BuffService buffService
+            ) {
+        super(questionService, teamService, roleSkillService, buffService,
                 HealthType.SUM
                 );
     }

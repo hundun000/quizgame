@@ -26,7 +26,7 @@ public class MatchEventFactory {
     
     public static MatchEvent getTypeStartTeam(Team team, int currentScore, HealthType healthType, int currentHealth, Map<String, Integer> skillRemainTimes) {
         JSONObject data = new JSONObject();
-        data.put("team_match_data", team.getMatchData());
+        data.put("team_match_data", team.toMatchDataPayload());
         data.put("current_score", currentScore);
         data.put("health_type_code", healthType.getCode());
         data.put("current_health", currentHealth);
@@ -35,8 +35,8 @@ public class MatchEventFactory {
     
     public static MatchEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
         JSONObject data = new JSONObject();
-        data.put("last_team", lastTeam.getMatchData());
-        data.put("current_team", currentTeam.getMatchData());
+        data.put("last_team", lastTeam.toMatchDataPayload());
+        data.put("current_team", currentTeam.toMatchDataPayload());
         return new MatchEvent(EventType.SWITCH_TEAM, data);
     }
     

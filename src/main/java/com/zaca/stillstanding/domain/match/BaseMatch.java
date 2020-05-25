@@ -18,9 +18,8 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zaca.stillstanding.domain.buff.BuffFactory;
 import com.zaca.stillstanding.domain.buff.BuffModel;
-import com.zaca.stillstanding.domain.buff.IBuffEffect;
+import com.zaca.stillstanding.domain.buff.BuffEffect;
 import com.zaca.stillstanding.domain.buff.RunTimeBuff;
 import com.zaca.stillstanding.domain.buff.ScoreComboBuffEffect;
 import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
@@ -39,6 +38,7 @@ import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.exception.TeamDeadException;
+import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
@@ -53,6 +53,7 @@ public abstract class BaseMatch {
     protected final QuestionService questionService;
     protected final TeamService teamService;
     protected final RoleSkillService roleSkillService;
+    protected final BuffService buffService;
     
 	protected List<Team> teams = new ArrayList<>();
 	protected Team currentTeam;
@@ -67,11 +68,13 @@ public abstract class BaseMatch {
 	        QuestionService questionService,
 	        TeamService teamService,
 	        RoleSkillService roleSkillService,
+	        BuffService buffService,
 	        HealthType healthType
 	        ) {
         this.questionService = questionService;
         this.teamService = teamService;
         this.roleSkillService = roleSkillService;
+        this.buffService = buffService;
         // TODO 测试阶段固定
         //this.id = UUID.randomUUID().toString();
         this.id = String.valueOf(currentId++);
@@ -134,7 +137,7 @@ public abstract class BaseMatch {
             for (ISkillEffect skillEffect : skill.getBackendEffects()) {
                 if (skillEffect instanceof AddBuffSkillEffect) {
                     AddBuffSkillEffect addBuffSkillEffect = (AddBuffSkillEffect) skillEffect;
-                    RunTimeBuff buff = BuffFactory.getBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
+                    RunTimeBuff buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
                     currentTeam.addBuff(buff);
                 }
             }
@@ -203,7 +206,7 @@ public abstract class BaseMatch {
 	private void updateBuffsDuration(AnswerType answerType) {
 	    // 某些BuffEffect有特殊的修改Duration规则
 	    for (RunTimeBuff buff : currentTeam.getBuffs()) {
-            for (IBuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+            for (BuffEffect buffEffect : buff.getModel().getBuffEffects()) {
                 if (buffEffect instanceof ScoreComboBuffEffect) {
                     if (answerType == AnswerType.CORRECT) {
                         // 本身每回合所有buff会减1层。为了使答对后最终加1层，则在此处加2层
@@ -244,7 +247,7 @@ public abstract class BaseMatch {
 	protected int calculateAddScoreSumOffsetByBuffs(AnswerType answerType, int baseScore) {
 	    int sumOffset = 0;
         for (RunTimeBuff buff : currentTeam.getBuffs()) {
-            for (IBuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+            for (BuffEffect buffEffect : buff.getModel().getBuffEffects()) {
                 if (buffEffect instanceof ScoreScaleBuffEffect) {
                     ScoreScaleBuffEffect scoreScaleBuffEffect = (ScoreScaleBuffEffect) buffEffect;
                     sumOffset += scoreScaleBuffEffect.getScoreOffset(baseScore);
@@ -315,6 +318,8 @@ public abstract class BaseMatch {
 		
 	}
 	
+	// ===== normal getter =====
+	
 	public String getId() {
         return id;
     }
@@ -342,6 +347,8 @@ public abstract class BaseMatch {
 	public List<MatchEvent> getEvents() {
         return events;
     }
+	
+	// ===== quick getter =====
 	
 	/**
 	 * 直接取出需要的类型

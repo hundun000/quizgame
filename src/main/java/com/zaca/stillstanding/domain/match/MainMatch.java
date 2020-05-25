@@ -1,7 +1,7 @@
 package com.zaca.stillstanding.domain.match;
 
 import com.zaca.stillstanding.domain.buff.BuffModel;
-import com.zaca.stillstanding.domain.buff.IBuffEffect;
+import com.zaca.stillstanding.domain.buff.BuffEffect;
 import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.event.MatchEventFactory;
@@ -9,6 +9,7 @@ import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.TeamDeadException;
+import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.RoleSkillService;
 import com.zaca.stillstanding.service.TeamService;
@@ -21,8 +22,13 @@ public class MainMatch extends BaseMatch {
     
     private static final int CORRECT_ANSWER_SCORE = 1;
 
-    public MainMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService) {
-        super(questionService, teamService, roleSkillService,
+    public MainMatch(
+            QuestionService questionService, 
+            TeamService teamService, 
+            RoleSkillService roleSkillService,
+            BuffService buffService
+            ) {
+        super(questionService, teamService, roleSkillService, buffService,
                 HealthType.CONSECUTIVE_WRONG_AT_LEAST
                 );
     }

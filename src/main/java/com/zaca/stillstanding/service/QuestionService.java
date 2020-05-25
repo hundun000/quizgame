@@ -62,7 +62,7 @@ public class QuestionService {
 		}
 		if (index < 0) {
 		    index = 0;
-		    logger.warn("没有合适的题目。hitPick={}, team={}", hitPick, team.getAllData().toString());
+		    logger.warn("没有合适的题目。hitPick={}, team={}", hitPick, team.toAllDataPayload().toString());
 		}
 		Question question = questions.remove(index);
 		dirtyQuestions.add(question);

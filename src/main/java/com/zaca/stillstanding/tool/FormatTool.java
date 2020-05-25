@@ -63,7 +63,7 @@ public class FormatTool {
     public static JSONArray teamsToJSON(List<Team> teams) {
         JSONArray array = new JSONArray();
         for (Team team : teams) {
-            array.add(team.getMatchData());
+            array.add(team.toMatchDataPayload());
         }
         
         return array;

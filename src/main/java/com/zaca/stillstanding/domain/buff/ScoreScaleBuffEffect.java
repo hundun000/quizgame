@@ -3,12 +3,12 @@ package com.zaca.stillstanding.domain.buff;
  * @author hundun
  * Created on 2020/05/20
  */
-public class ScoreScaleBuffEffect implements IBuffEffect {
+public class ScoreScaleBuffEffect extends BuffEffect {
     
     private double rate;
     
     public ScoreScaleBuffEffect(double rate) {
-        super();
+        super(BuffEffectType.SCORE_SCALE);
         this.rate = rate;
     }
 

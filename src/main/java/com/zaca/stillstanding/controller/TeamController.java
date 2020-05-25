@@ -37,7 +37,7 @@ public class TeamController {
     public IApiResult listTeams() {
         Collection<Team> teams = teamService.listTeams();
         JSONArray array = new JSONArray(teams.size());
-        teams.forEach(team -> array.add(team.getAllData()));
+        teams.forEach(team -> array.add(team.toAllDataPayload()));
         return new ApiResult(array);
     }
     

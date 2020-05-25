@@ -89,7 +89,7 @@ public class Team {
 		this.hitPickRate = Math.min(hitPickRate + HIT_PICK_RATE_INCREASE_STEP, 1);
 	}
 	
-	public JSONObject getMatchData() {
+	public JSONObject toMatchDataPayload() {
 		JSONObject data = new JSONObject();
 		data.put("alive", alive);
 		data.put("name", name);
@@ -101,8 +101,8 @@ public class Team {
 		return data;
 	}
 	
-	public JSONObject getAllData() {
-        JSONObject data = getMatchData();
+	public JSONObject toAllDataPayload() {
+        JSONObject data = toMatchDataPayload();
         data.put("pickTags", pickTags);
         data.put("banTags", banTags);
         data.put("roleName", getRoleName());

@@ -40,6 +40,9 @@ public class GameService {
     @Autowired
     private RoleSkillService roleSkillService;
     
+    @Autowired
+    private BuffService buffService;
+    
     Map<String, BaseMatch> matches = new HashMap<>();
     
     LinkedHashMap<String, MatchRecord> matchRecords = new LinkedHashMap<>();
@@ -66,7 +69,7 @@ public class GameService {
     
     public BaseMatch createMatch(String[] teamNames) throws NotFoundException {
         logger.info("create match by teams={}", Arrays.toString(teamNames));
-        BaseMatch match = new PreMatch(questionService, teamService, roleSkillService);
+        BaseMatch match = new PreMatch(questionService, teamService, roleSkillService, buffService);
         matches.put(match.getId(), match);
         match.setTeamsByNames(teamNames);
         logger.info("match created, id = {}", match.getId());
