@@ -37,9 +37,9 @@ public class SimpleQuestionTest {
 	@Test
 	public void test() throws IOException, QuestionFormatException, ConflictException, NotFoundException {
 		
+		String matchId = "unitestMatchId";
 		
-		
-		questionService.initQuestions(QuestionTool.TEST_PACKAGE_NAME);
+		questionService.initQuestions(matchId, QuestionTool.TEST_PACKAGE_NAME);
 		teamService.creatTeam(testTeamName);
 		
 		List<String> pickTagNames = new ArrayList<>();
@@ -52,7 +52,7 @@ public class SimpleQuestionTest {
 		
 		Team team = teamService.getTeam(testTeamName);
 		for (int i = 1; i < 20; i++) {
-			Question question = questionService.getNewQuestionForTeam(team);
+			Question question = questionService.getNewQuestionForTeam(matchId, team, true);
 			System.out.println("第"+i+"题"+question.getTags()+"："+question.getStem());
 		}
 	}

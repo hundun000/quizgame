@@ -1,5 +1,5 @@
 server:
-    port: 10099
+    port: 10100
 
 using-GUI: false
 using-small-frame: false

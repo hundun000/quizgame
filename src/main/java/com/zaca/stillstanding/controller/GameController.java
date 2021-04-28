@@ -60,7 +60,23 @@ public class GameController {
             ) {
         logger.info("===== /new {} =====", Arrays.toString(teamNames));
         try {
-            BaseMatch match = gameService.createMatch(teamNames);
+            BaseMatch match = gameService.createPreMatch(teamNames);
+            return new ApiResult(match.getId());
+        } catch (StillStandingException e) {
+            e.printStackTrace();
+            return new ApiResult(e);
+        }
+        
+    }
+    
+    @RequestMapping(value="/createEndlessMatch", method=RequestMethod.POST)
+    public IApiResult createEndlessMatch(
+            @RequestParam(value = "teamNames") String[] teamNames, 
+            @RequestParam(value = "questionPackageName") String questionPackageName
+            ) {
+        logger.info("===== /createEndlessMatch {} =====", Arrays.toString(teamNames));
+        try {
+            BaseMatch match = gameService.createEndlessMatch(teamNames, questionPackageName);
             return new ApiResult(match.getId());
         } catch (StillStandingException e) {
             e.printStackTrace();
@@ -86,15 +102,11 @@ public class GameController {
     
     @RequestMapping(value="/start", method=RequestMethod.POST)
     public IApiResult start(
-            @RequestParam(value = "matchId") String matchId,
-            @RequestParam(value = "reload_questions", required = false, defaultValue = "true") boolean reloadQuestions
+            @RequestParam(value = "matchId") String matchId
             ) {
-        logger.info("===== /start {} {} =====", matchId, reloadQuestions);
+        logger.info("===== /start {}=====", matchId);
         BaseMatch match;
         try {
-            if (reloadQuestions) {
-                questionService.initQuestions(QuestionTool.PRELEASE_PACKAGE_NAME);
-            }
             match = gameService.startMatch(matchId);
         } catch (StillStandingException e) {
             e.printStackTrace();

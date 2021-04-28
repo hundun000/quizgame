@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.yaml.snakeyaml.nodes.Tag;
 
 import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.question.TagManager;

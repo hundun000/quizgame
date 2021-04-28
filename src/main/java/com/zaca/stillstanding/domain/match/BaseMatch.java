@@ -229,6 +229,7 @@ public abstract class BaseMatch {
         }
     }
 
+	protected static final int DEFAULT_CORRECT_ANSWER_SCORE = 1;
     /**
 	 * 为刚刚的答题加分。
 	 * 可实现为：固定加分；连续答对comb加分...
@@ -237,7 +238,25 @@ public abstract class BaseMatch {
 	 * 可实现为：累计答n题死亡；连续答错n题死亡；累计答错n题死亡...
 	 * @param answerType 
 	 */
-	abstract protected MatchEvent addScoreAndCountHealth(AnswerType answerType);
+	protected MatchEvent addScoreAndCountHealth(AnswerType answerType) {
+        /*
+         * 固定加1分
+         */
+        int addScore = 0;
+        if (answerType == AnswerType.CORRECT) {
+            addScore = DEFAULT_CORRECT_ANSWER_SCORE;
+            addScore += calculateAddScoreSumOffsetByBuffs(answerType, addScore);
+        }
+        currentTeam.addScore(addScore);
+        
+        int currentHealth = calculateCurrentHealth();
+        
+        if (currentHealth == 0) {
+            currentTeam.setAlive(false);
+        }
+        
+        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
+    }
 
 	/**
 	 * 计算所有buff引起的加分offset
@@ -274,7 +293,8 @@ public abstract class BaseMatch {
 	 * @return
 	 */
 	protected MatchEvent checkSwitchQuestionEvent() {
-	    currentQuestion = questionService.getNewQuestionForTeam(currentTeam);
+	    boolean removeToDirty = this.healthType != HealthType.ENDLESS;
+	    currentQuestion = questionService.getNewQuestionForTeam(this.id, currentTeam, removeToDirty);
 	    return MatchEventFactory.getTypeSwitchQuestion(15);
 	}
 	

@@ -25,7 +25,7 @@ import com.zaca.stillstanding.service.TeamService;
  * Created on 2019/09/06
  */
 public class PreMatch extends BaseMatch {
-    private static final int CORRECT_ANSWER_SCORE = 1;
+    
 
     public PreMatch(
             QuestionService questionService, 
@@ -41,6 +41,7 @@ public class PreMatch extends BaseMatch {
     @Override
     public void setTeamsByNames(String... teamNames) throws NotFoundException {
         if (teamNames != null && teamNames.length > 0) {
+            // only set first team
             super.setTeamsByNames(Arrays.copyOf(teamNames, 1));
         }
     }
@@ -54,28 +55,6 @@ public class PreMatch extends BaseMatch {
         return null;
     }
 
-    
-    @Override
-    protected MatchEvent addScoreAndCountHealth(AnswerType answerType) {
-        /*
-         * 固定加1分
-         */
-        int addScore = 0;
-        if (answerType == AnswerType.CORRECT) {
-            addScore = CORRECT_ANSWER_SCORE;
-            addScore += calculateAddScoreSumOffsetByBuffs(answerType, addScore);
-        }
-        currentTeam.addScore(addScore);
-        
-        int currentHealth = calculateCurrentHealth();
-        
-        if (currentHealth == 0) {
-            currentTeam.setAlive(false);
-        }
-        
-        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
-    }
-    
 
 
     @Override

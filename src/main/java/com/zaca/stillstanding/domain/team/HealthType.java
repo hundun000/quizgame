@@ -13,7 +13,10 @@ public enum HealthType {
      * 生命值即为已答题目总数
      */
     SUM(1),
-    
+    /**
+     * 无尽
+     */
+    ENDLESS(2),
     ;
     
     

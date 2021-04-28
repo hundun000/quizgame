@@ -12,4 +12,8 @@ public class Resource {
 	public String getData() {
         return data;
     }
+	
+	public ResourceType getType() {
+        return type;
+    }
 }

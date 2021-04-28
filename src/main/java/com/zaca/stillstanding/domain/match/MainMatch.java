@@ -20,7 +20,7 @@ import com.zaca.stillstanding.service.TeamService;
  */
 public class MainMatch extends BaseMatch {
     
-    private static final int CORRECT_ANSWER_SCORE = 1;
+
 
     public MainMatch(
             QuestionService questionService, 
@@ -33,32 +33,6 @@ public class MainMatch extends BaseMatch {
                 );
     }
 
-    
-    @Override
-    protected MatchEvent addScoreAndCountHealth(AnswerType answerType) {
-        /*
-         * 固定加1
-         */
-        int addScore = 0;
-
-        if (answerType == AnswerType.CORRECT) {
-            addScore = CORRECT_ANSWER_SCORE;
-            addScore += calculateAddScoreSumOffsetByBuffs(answerType, addScore);
-        }
-        currentTeam.addScore(addScore);
-        
-        /*
-         * 连续答错数, 即为健康度的减少量。
-         */
-        int fullHealth = 1;
-        int currentHealth = fullHealth - recorder.countConsecutiveWrong(currentTeam.getName(), fullHealth);
-        
-        if (currentHealth == 0) {
-            currentTeam.setAlive(false);
-        }
-        
-        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, currentTeam.getMatchScore(), healthType, currentHealth);
-    }
     
     @Override
     protected MatchEvent checkSwitchTeamEvent() {

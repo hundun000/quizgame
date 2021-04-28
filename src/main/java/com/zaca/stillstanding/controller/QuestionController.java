@@ -38,12 +38,12 @@ public class QuestionController {
     @Autowired
     QuestionService questionService;
     
-    @RequestMapping(value="/tags", method=RequestMethod.GET)
-    public Object listTeams() {
-        logger.info("===== /tags =====");
-        Collection<String> tags = questionService.getTags();
-        return tags;
-    }
+//    @RequestMapping(value="/tags", method=RequestMethod.GET)
+//    public Object listTeams() {
+//        logger.info("===== /tags =====");
+//        Collection<String> tags = questionService.getTags(null);
+//        return tags;
+//    }
     
     @CrossOrigin
     @RequestMapping(value = "/pictures",method=RequestMethod.GET)

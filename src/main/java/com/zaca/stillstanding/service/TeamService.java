@@ -62,11 +62,11 @@ public class TeamService {
 	}
 	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPick) throws NotFoundException {
 		Team team = getTeam(teamName);
-		for (String tagName:tagNames) {
-			if (!TagManager.tagExsist(tagName)) {
-				throw new NotFoundException("Tag", tagName);
-			}
-		}
+//		for (String tagName:tagNames) {
+//			if (!TagManager.tagExsist(tagName)) {
+//				throw new NotFoundException("Tag", tagName);
+//			}
+//		}
 		if (isPick) {
 			team.setPickTags(tagNames);
 		} else {

@@ -10,7 +10,7 @@ public enum ResourceType {
 			return ResourceType.IMAGE;
 		}
 		
-		if (name.endsWith(".Ogg")) {
+		if (name.endsWith(".Ogg") || name.endsWith(".ogg")) {
 			return ResourceType.VOICE;
 		}
 		

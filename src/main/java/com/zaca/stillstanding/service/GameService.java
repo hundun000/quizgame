@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.zaca.stillstanding.domain.event.EventType;
 import com.zaca.stillstanding.domain.event.MatchEvent;
 import com.zaca.stillstanding.domain.match.BaseMatch;
+import com.zaca.stillstanding.domain.match.EndlessMatch;
 import com.zaca.stillstanding.domain.match.MatchRecord;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -62,14 +63,24 @@ public class GameService {
     
 
     public void initOtherServiceForTest() throws StillStandingException {
-        questionService.initQuestions(QuestionTool.PRELEASE_PACKAGE_NAME);
+        
         teamService.quickRegisterTeam("砍口垒同好组", "单机游戏", "动画", "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", "动画", "单机游戏", "ZACA娘");
     }
     
-    public BaseMatch createMatch(String[] teamNames) throws NotFoundException {
+    public EndlessMatch createEndlessMatch(String[] teamNames, String questionPackageName) throws NotFoundException {
         logger.info("create match by teams={}", Arrays.toString(teamNames));
-        BaseMatch match = new PreMatch(questionService, teamService, roleSkillService, buffService);
+        EndlessMatch match = new EndlessMatch(questionService, teamService, roleSkillService, buffService);
+        matches.put(match.getId(), match);
+        match.setTeamsByNames(teamNames);
+        questionService.initQuestions(match.getId(), questionPackageName);
+        logger.info("match created, id = {}", match.getId());
+        return match;
+    }
+    
+    public PreMatch createPreMatch(String[] teamNames) throws NotFoundException {
+        logger.info("create match by teams={}", Arrays.toString(teamNames));
+        PreMatch match = new PreMatch(questionService, teamService, roleSkillService, buffService);
         matches.put(match.getId(), match);
         match.setTeamsByNames(teamNames);
         logger.info("match created, id = {}", match.getId());
