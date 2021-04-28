@@ -30,7 +30,7 @@ public class QuestionService {
 	private Random hitRandom = new Random(1);
 	private Random shuffleRandom = new Random(1);
 	
-	boolean onlyNoneResource;
+	
 	
 
 	
@@ -38,6 +38,8 @@ public class QuestionService {
 	    List<Question> questions;
 	    List<Question> dirtyQuestions;
 	    Set<String> tags;
+	    boolean allowImageResource = true;
+	    boolean allowVoiceResource;
 	}
 	Map<String, QuestionPackage> questionPackages = new HashMap<>();
 	
@@ -103,10 +105,14 @@ public class QuestionService {
 				question = null;
 				i++;
 			}
-			if (onlyNoneResource && question.getResource().getType() != ResourceType.NONE) {
-			    question = null;
+			if (!questionPackage.allowImageResource && question.getResource().getType() == ResourceType.IMAGE) {
+                question = null;
                 i++;
-			}
+            }
+            if (!questionPackage.allowVoiceResource && question.getResource().getType() == ResourceType.VOICE) {
+                question = null;
+                i++;
+            }
 		}
 		if (i == questionPackage.questions.size()) {
             i = -1;
@@ -125,7 +131,11 @@ public class QuestionService {
 				question = null;
 				i++;
 			}
-			if (onlyNoneResource && question.getResource().getType() != ResourceType.NONE) {
+			if (!questionPackage.allowImageResource && question.getResource().getType() == ResourceType.IMAGE) {
+                question = null;
+                i++;
+            }
+			if (!questionPackage.allowVoiceResource && question.getResource().getType() == ResourceType.VOICE) {
                 question = null;
                 i++;
             }
