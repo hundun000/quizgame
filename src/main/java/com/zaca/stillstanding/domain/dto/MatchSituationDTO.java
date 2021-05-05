@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zaca.stillstanding.domain.dto.event.AnswerResultEvent;
 import com.zaca.stillstanding.domain.dto.event.FinishEvent;
 import com.zaca.stillstanding.domain.dto.event.SkillResultEvent;
+import com.zaca.stillstanding.domain.dto.event.StartMatchEvent;
 import com.zaca.stillstanding.domain.dto.event.StubEvent;
 import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
 
@@ -24,9 +25,10 @@ public class MatchSituationDTO {
     List<TeamRuntimeInfoDTO> teamRuntimeInfos;
     MatchState state;
     
-    protected AnswerResultEvent answerResultEvent;
-    protected SkillResultEvent skillResultEvent;
-    protected StubEvent stubEvent;
-    protected SwitchTeamEvent switchTeamEvent;
-    protected FinishEvent finishEvent;
+    AnswerResultEvent answerResultEvent;
+    SkillResultEvent skillResultEvent;
+    StubEvent stubEvent;
+    SwitchTeamEvent switchTeamEvent;
+    FinishEvent finishEvent;
+    StartMatchEvent startMatchEvent;
 }

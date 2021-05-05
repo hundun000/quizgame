@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.zaca.stillstanding.core.match.BaseMatch;
+import com.zaca.stillstanding.core.match.strategy.PreStrategy;
 import com.zaca.stillstanding.domain.dto.EventType;
 import com.zaca.stillstanding.domain.dto.MatchEvent;
 import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.domain.match.BaseMatch;
-import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;

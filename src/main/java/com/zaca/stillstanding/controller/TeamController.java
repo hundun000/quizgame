@@ -19,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaca.stillstanding.domain.dto.ApiResult;
-import com.zaca.stillstanding.domain.dto.IApiResult;
 import com.zaca.stillstanding.domain.dto.TeamDTO;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
@@ -40,7 +39,7 @@ public class TeamController {
     TeamService teamService;
     
     @RequestMapping(value="", method=RequestMethod.GET)
-    public IApiResult listTeams() throws JsonProcessingException {
+    public ApiResult listTeams() throws JsonProcessingException {
         Collection<Team> teams = teamService.listTeams();
         List<TeamDTO> teamDTOs = new ArrayList<>();
         teams.forEach(team -> teamDTOs.add(team.toTeamDTO()));
@@ -48,7 +47,7 @@ public class TeamController {
     }
     
     @RequestMapping(value="", method=RequestMethod.POST)
-    public IApiResult updateTeam(
+    public ApiResult updateTeam(
             @RequestParam(value = "team") TeamDTO teamDTO
             ) {
         logger.info("===== \"\" {} =====", teamDTO);
@@ -59,7 +58,8 @@ public class TeamController {
             teamService.setBanTagsForTeam(teamDTO.getName(), teamDTO.getBanTags());
             teamService.setRoleForTeam(teamDTO.getName(), teamDTO.getRoleName());
         } catch (NotFoundException e) {
-            return e;
+            e.printStackTrace();
+            return new ApiResult(e);
         }
         return new ApiResult();
     }

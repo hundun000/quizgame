@@ -25,14 +25,11 @@ public class TeamService {
     
 	private Map<String, Team> teams = new HashMap<>();
 	
-	public void quickRegisterTeam(String teamName, String pickTagName, String banTagName, String roleName) throws StillStandingException {
+	public void quickRegisterTeam(String teamName, List<String> pickTagNames, List<String> banTagNames, String roleName) throws StillStandingException {
         creatTeam(teamName); 
-        List<String> pickTagNames = new ArrayList<>();
-        pickTagNames.add(pickTagName);
+
         setPickTagsForTeam(teamName, pickTagNames);
-        
-        List<String> banTagNames = new ArrayList<>();
-        banTagNames.add(banTagName);
+
         setBanTagsForTeam(teamName, banTagNames);
         
         setRoleForTeam(teamName, roleName);

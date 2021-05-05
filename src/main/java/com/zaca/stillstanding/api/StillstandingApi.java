@@ -49,5 +49,9 @@ public interface StillstandingApi {
             @RequestParam(value = "answer") String answer
             );
     
-
+    @RequestMapping(value="/use-skill", method=RequestMethod.POST)
+    ApiResult teamUseSkill(
+            @RequestParam(value = "sessionId") String sessionId,
+            @RequestParam(value = "skillName") String skillName
+            );
 }

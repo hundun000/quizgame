@@ -18,22 +18,14 @@ public class BaseSkill {
     
     private final String name;
     private final String description;
-    private final JSONObject frontendData;
+    private final List<String> frontendData;
     private final List<ISkillEffect> backendEffects;
     
-    BaseSkill(String name, String description, String frontendDataString, ISkillEffect... backendEffects) throws ModFormatException {
+    BaseSkill(String name, String description, List<String> frontendData, ISkillEffect... backendEffects) throws ModFormatException {
         this.name = name;
         this.description = description;
         
-        if (frontendDataString != null) {
-            try {
-                this.frontendData = JSONObject.parseObject(frontendDataString);
-            } catch (JSONException e) {
-                throw new ModFormatException(frontendDataString, "JSON");
-            }
-        } else {
-            this.frontendData = null;
-        }
+        this.frontendData = frontendData;
         
         if (backendEffects != null) {
             this.backendEffects = Arrays.asList(backendEffects);
@@ -50,7 +42,7 @@ public class BaseSkill {
         return description;
     }
     
-    public JSONObject getFrontendData() {
+    public List<String> getFrontendData() {
         return frontendData;
     }
     

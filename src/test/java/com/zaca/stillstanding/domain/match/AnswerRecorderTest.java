@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.zaca.stillstanding.core.match.AnswerRecorder;
 import com.zaca.stillstanding.domain.dto.AnswerType;
 
 /**

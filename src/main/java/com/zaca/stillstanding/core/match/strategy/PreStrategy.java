@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.core.match.strategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,32 +25,24 @@ import com.zaca.stillstanding.service.TeamService;
  * @author hundun
  * Created on 2019/09/06
  */
-public class PreMatch extends BaseMatch {
+public class PreStrategy extends BaseMatchStrategy {
     
 
-    public PreMatch(
+    public PreStrategy(
             QuestionService questionService, 
             TeamService teamService, 
             RoleSkillService roleSkillService,
-            BuffService buffService, 
-            String sessionId
+            BuffService buffService
             ) {
         super(questionService, teamService, roleSkillService, buffService,
-                HealthType.SUM, sessionId
+                HealthType.SUM
                 );
     }
     
-    @Override
-    public void setTeamsByNames(List<String> list) throws NotFoundException {
-        if (list != null && list.size() > 0) {
-            // only set first team
-            super.setTeamsByNames(list.subList(0, 1));
-        }
-    }
 
     
     @Override
-    protected SwitchTeamEvent checkSwitchTeamEvent() {
+    public SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 一定不换队
          */
@@ -65,7 +57,7 @@ public class PreMatch extends BaseMatch {
          * 累计答n题后死亡
          */
         int fullHealth = 5;
-        int currentHealth = fullHealth - recorder.countSum(currentTeam.getName(), fullHealth);
+        int currentHealth = fullHealth - parent.getRecorder().countSum(parent.getCurrentTeam().getName(), fullHealth);
         
         return currentHealth;
     }

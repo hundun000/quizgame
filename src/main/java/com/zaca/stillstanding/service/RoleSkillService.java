@@ -24,9 +24,9 @@ public class RoleSkillService {
     public RoleSkillService() {
         
         registerRole(new BaseRole("ZACA娘", "主人公。",
-                new SkillSlot(BaseSkillFactory.getSkill("5050"), 2),
-                new SkillSlot(BaseSkillFactory.getSkill("求助"), 2),
-                new SkillSlot(BaseSkillFactory.getSkill("跳过"), 2),
+                new SkillSlot(BaseSkillFactory.getSkill("5050"), 1000),
+                new SkillSlot(BaseSkillFactory.getSkill("求助"), 1000),
+                new SkillSlot(BaseSkillFactory.getSkill("跳过"), 1000),
                 new SkillSlot(BaseSkillFactory.getSkill("连击之力"), 2)
                 )
         );

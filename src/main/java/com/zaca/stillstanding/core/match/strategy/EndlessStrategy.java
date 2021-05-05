@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.core.match.strategy;
 
 import com.zaca.stillstanding.domain.dto.AnswerType;
 import com.zaca.stillstanding.domain.dto.MatchEvent;
@@ -14,17 +14,17 @@ import com.zaca.stillstanding.service.TeamService;
  * @author hundun
  * Created on 2021/04/25
  */
-public class EndlessMatch extends BaseMatch {
+public class EndlessStrategy extends BaseMatchStrategy {
 
-    public EndlessMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService,
-            BuffService buffService, String sessionId) {
+    public EndlessStrategy(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService,
+            BuffService buffService) {
         super(
                 questionService, 
                 teamService, 
                 roleSkillService, 
                 buffService, 
-                HealthType.ENDLESS,
-                sessionId);
+                HealthType.ENDLESS
+                );
     }
 
     @Override
@@ -37,7 +37,7 @@ public class EndlessMatch extends BaseMatch {
 
 
     @Override
-    protected SwitchTeamEvent checkSwitchTeamEvent() {
+    public SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 一定不换队
          */

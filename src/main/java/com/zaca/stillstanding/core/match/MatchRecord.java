@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.core.match;
 /**
  * @author hundun
  * Created on 2020/01/10

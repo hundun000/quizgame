@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.match;
+package com.zaca.stillstanding.core.match.strategy;
 
 import com.zaca.stillstanding.domain.buff.BuffModel;
 import com.zaca.stillstanding.domain.buff.BuffEffect;
@@ -19,7 +19,7 @@ import com.zaca.stillstanding.service.TeamService;
  * @author hundun
  * Created on 2019/09/10
  */
-public class MainMatch extends BaseMatch {
+public class MainMatch extends BaseMatchStrategy {
     
 
 
@@ -31,19 +31,19 @@ public class MainMatch extends BaseMatch {
             String sessionId
             ) {
         super(questionService, teamService, roleSkillService, buffService,
-                HealthType.CONSECUTIVE_WRONG_AT_LEAST, sessionId
+                HealthType.CONSECUTIVE_WRONG_AT_LEAST
                 );
     }
 
     
     @Override
-    protected SwitchTeamEvent checkSwitchTeamEvent() {
+    public SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 每一题换队（被调用一定换）
          */
-        Team lastTeam = currentTeam;
+        Team lastTeam = parent.getCurrentTeam();
         switchToNextTeam();
-        return MatchEventFactory.getTypeSwitchTeam(lastTeam, currentTeam);
+        return MatchEventFactory.getTypeSwitchTeam(lastTeam, parent.getCurrentTeam());
     }
 
 
@@ -53,7 +53,7 @@ public class MainMatch extends BaseMatch {
         /*
          * 连续答错数, 即为健康度的减少量。
          */
-        int currentHealth = fullHealth - recorder.countConsecutiveWrong(currentTeam.getName(), fullHealth);
+        int currentHealth = fullHealth - parent.getRecorder().countConsecutiveWrong(parent.getCurrentTeam().getName(), fullHealth);
         return currentHealth;
     }
 

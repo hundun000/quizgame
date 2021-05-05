@@ -3,7 +3,7 @@ package com.zaca.stillstanding.domain;
 import java.util.List;
 import java.util.Set;
 
-import com.zaca.stillstanding.domain.match.BaseMatch;
+import com.zaca.stillstanding.core.match.BaseMatch;
 import com.zaca.stillstanding.domain.question.Question;
 
 import lombok.Data;

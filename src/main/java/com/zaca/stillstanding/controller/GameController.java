@@ -23,14 +23,13 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaca.stillstanding.api.StillstandingApi;
+import com.zaca.stillstanding.core.match.BaseMatch;
+import com.zaca.stillstanding.core.match.MatchRecord;
+import com.zaca.stillstanding.core.match.strategy.PreStrategy;
 import com.zaca.stillstanding.domain.dto.ApiResult;
-import com.zaca.stillstanding.domain.dto.IApiResult;
 import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
 import com.zaca.stillstanding.domain.dto.MatchEvent;
 import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.domain.match.BaseMatch;
-import com.zaca.stillstanding.domain.match.MatchRecord;
-import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
@@ -65,7 +64,7 @@ public class GameController implements StillstandingApi {
     
     
     @RequestMapping(value="/createPreMatch", method=RequestMethod.POST)
-    public IApiResult createPreMatch(
+    public ApiResult createPreMatch(
             @RequestBody MatchConfigDTO matchConfigDTO
             ) {
         logger.info("===== /createPreMatch {} =====", matchConfigDTO);
@@ -103,20 +102,20 @@ public class GameController implements StillstandingApi {
         
     }
     
-    @RequestMapping(value="/match-records/all", method=RequestMethod.GET)
-    public IApiResult getMatchRecords() {
-        List<MatchRecord> matchRecords = gameService.getMatchRecords();
-        return new ApiResult(JSON.toJSONString(matchRecords));
-    }
-    
-    @RequestMapping(value="/match-records", method=RequestMethod.GET)
-    public IApiResult getOneMatchRecord(
-            @RequestParam(value = "sessionId") String sessionId
-            ) {
-        logger.info("===== /match-records {} =====", sessionId);
-        MatchRecord matchRecord = gameService.getOneMatchRecord(sessionId);
-        return new ApiResult(JSON.toJSONString(matchRecord));
-    }
+//    @RequestMapping(value="/match-records/all", method=RequestMethod.GET)
+//    public ApiResult getMatchRecords() {
+//        List<MatchRecord> matchRecords = gameService.getMatchRecords();
+//        return new ApiResult(JSON.toJSONString(matchRecords));
+//    }
+//    
+//    @RequestMapping(value="/match-records", method=RequestMethod.GET)
+//    public ApiResult getOneMatchRecord(
+//            @RequestParam(value = "sessionId") String sessionId
+//            ) {
+//        logger.info("===== /match-records {} =====", sessionId);
+//        MatchRecord matchRecord = gameService.getOneMatchRecord(sessionId);
+//        return new ApiResult(JSON.toJSONString(matchRecord));
+//    }
     
     @Override
     public ApiResult start(
@@ -158,10 +157,10 @@ public class GameController implements StillstandingApi {
         }
     }
     
-    @RequestMapping(value="/use-skill", method=RequestMethod.POST)
-    public IApiResult teamUseSkill(
-            @RequestParam(value = "sessionId") String sessionId,
-            @RequestParam(value = "skillName") String skillName
+
+    public ApiResult teamUseSkill(
+            String sessionId,
+            String skillName
             ) {
         logger.info("===== /use-skill {} {} =====", sessionId, skillName);
         try {
@@ -179,7 +178,7 @@ public class GameController implements StillstandingApi {
 
     @CrossOrigin
     @RequestMapping(value = "/pictures",method=RequestMethod.GET)
-    public IApiResult pictures(HttpServletResponse response,
+    public ApiResult pictures(HttpServletResponse response,
             @RequestParam("id") String id
             ) {
         logger.info("===== /pictures {} =====", id);

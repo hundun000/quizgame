@@ -84,8 +84,9 @@ public class MatchEventFactory {
         event.setTeamName(teamName);
         event.setRoleName(roleName);
         event.setSkillName(skill.getName());
+        event.setSkillDesc(skill.getDescription());
         event.setSkillRemainTime(skillRemainTime);
-        event.setStaticData(skill.getFrontendData().toJSONString());
+        event.setArgs(skill.getFrontendData());
         
         return event;
     }
@@ -96,8 +97,9 @@ public class MatchEventFactory {
         event.setTeamName(teamName);
         event.setRoleName(roleName);
         event.setSkillName(skill.getName());
+        event.setSkillDesc(skill.getDescription());
         event.setSkillRemainTime(0);
-        event.setStaticData(skill.getFrontendData().toJSONString());
+        event.setArgs(skill.getFrontendData());
         
         return event;
     }
