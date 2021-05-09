@@ -1,8 +1,9 @@
 package com.zaca.stillstanding.domain.match;
 
-import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.domain.dto.MatchEvent;
+import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.domain.event.MatchEventFactory;
-import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
@@ -16,13 +17,14 @@ import com.zaca.stillstanding.service.TeamService;
 public class EndlessMatch extends BaseMatch {
 
     public EndlessMatch(QuestionService questionService, TeamService teamService, RoleSkillService roleSkillService,
-            BuffService buffService) {
+            BuffService buffService, String sessionId) {
         super(
                 questionService, 
                 teamService, 
                 roleSkillService, 
                 buffService, 
-                HealthType.ENDLESS);
+                HealthType.ENDLESS,
+                sessionId);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class EndlessMatch extends BaseMatch {
 
 
     @Override
-    protected MatchEvent checkSwitchTeamEvent() {
+    protected SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 一定不换队
          */

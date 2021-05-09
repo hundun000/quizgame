@@ -13,142 +13,146 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zaca.stillstanding.domain.SessionDataPackage;
+import com.zaca.stillstanding.domain.dto.ResourceType;
 import com.zaca.stillstanding.domain.question.Question;
-import com.zaca.stillstanding.domain.question.ResourceType;
 import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.QuestionFormatException;
+import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.tool.QuestionTool;
 
 @Service
 public class QuestionService {
+    
+    @Autowired
+    SessionService sessionService;
 	
     private static final Logger logger = LoggerFactory.getLogger(QuestionService.class);
 	
 
 	private Random hitRandom = new Random(1);
-	private Random shuffleRandom = new Random(1);
+	private Random insertQuestionRandom = new Random(1);
 	
 	
 	
+	Map<String, List<Question>> questionPackages = new HashMap<>();
+	Map<String, Question> questionPool = new HashMap<>();
 
 	
-	class QuestionPackage {
-	    List<Question> questions;
-	    List<Question> dirtyQuestions;
-	    Set<String> tags;
-	    boolean allowImageResource = true;
-	    boolean allowVoiceResource;
-	}
-	Map<String, QuestionPackage> questionPackages = new HashMap<>();
-	
-	public void initQuestions(String matchId, String questionPackageName) {
-		
-	    QuestionPackage questionPackage = new QuestionPackage();
-	    
-	    try {
-	        questionPackage.questions = QuestionTool.LoadAllQuestions(questionPackageName);
-			Collections.shuffle(questionPackage.questions, shuffleRandom);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
-		
-	    questionPackage.dirtyQuestions = new LinkedList<>();
-	    questionPackage.tags = new HashSet<>();
-		
-	    questionPackage.questions.forEach(question -> questionPackage.tags.addAll(question.getTags()));
-	
-	    questionPackages.put(matchId, questionPackage);
-	}
-	
-	public Question getNewQuestionForTeam(String matchId, Team team, boolean removeToDirty) {
-	    QuestionPackage questionPackage = questionPackages.get(matchId);
-	    
-	    int index;
+	public Question getNewQuestionForTeam(String sessionId, Team team, boolean removeToDirty) throws StillStandingException {
+	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
+  
+	    Question question;
 		boolean hitPick = hitRandom.nextDouble() < team.getHitPickRate();
 		if (hitPick) {
-			index = getFirstPickQuestionIndex(matchId, team);
+		    question = getFirstPickQuestionIndex(sessionId, team);
 			team.resetHitPickRate();
-			logger.debug("FirstPickQuestionIndex = {}", index);
+			logger.debug("FirstPickQuestionIndex");
 		} else {
-			index = getFirstNotBanQuestionIndex(matchId, team);
+		    question = getFirstNotBanQuestionIndex(sessionId, team);
 			team.increaseHitPickRate();
-			logger.debug("FirstNotBanQuestionIndex = {}", index);
+			logger.debug("FirstNotBanQuestionIndex");
 		}
-		if (index < 0) {
-		    index = 0;
-		    logger.warn("没有合适的题目。hitPick={}, team={}", hitPick, team.toAllDataPayload().toString());
+		if (question == null) {
+		    question = getFirstQuestionIgnorePickBan(sessionId, team);
 		}
+		logger.info("questionDTO = {}", question.toQuestionDTO());
 		
-		Question question = questionPackage.questions.remove(index);
+		sessionDataPackage.getQuestionIds().remove(question.getId());
 		if (removeToDirty) {
-		    questionPackage.dirtyQuestions.add(question);
+		    sessionDataPackage.getDirtyQuestionIds().add(question);
 		} else {
-		    int insertIndex = Math.min(questionPackage.questions.size(), questionPackage.questions.size()/2 + shuffleRandom.nextInt(questionPackage.questions.size()/2));
-		    questionPackage.questions.add(insertIndex, question);
+		    int insertIndex = Math.min(sessionDataPackage.getQuestionIds().size(), sessionDataPackage.getQuestionIds().size()/2 + insertQuestionRandom.nextInt(sessionDataPackage.getQuestionIds().size()/2));
+		    sessionDataPackage.getQuestionIds().add(insertIndex, question.getId());
 		}
 		
 		return question;
 	}
 	
 	
-	private int getFirstPickQuestionIndex(String matchId, Team team) {
-	    QuestionPackage questionPackage = questionPackages.get(matchId);
+	private Question getFirstQuestionIgnorePickBan(String sessionId, Team team) throws StillStandingException {
+	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
+        Question question = null;
+        int i = 0;  
+        String questionId = sessionDataPackage.getQuestionIds().get(i);
+        question = questionPool.get(questionId); 
+           
+        return question;
+    }
+
+
+    private Question getFirstPickQuestionIndex(String sessionId, Team team) throws StillStandingException {
+	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
-		while (question == null && i < questionPackage.questions.size()) {
-			question = questionPackage.questions.get(i);
+		while (question == null && i < sessionDataPackage.getQuestionIds().size()) {
+		    String questionId = sessionDataPackage.getQuestionIds().get(i);
+            question = questionPool.get(questionId); 
 			
 			if (!team.isPickAndNotBan(question.getTags())) {
 				question = null;
 				i++;
+				continue;
 			}
-			if (!questionPackage.allowImageResource && question.getResource().getType() == ResourceType.IMAGE) {
+			if (!sessionDataPackage.isAllowImageResource() && question.getResource().getType() == ResourceType.IMAGE) {
                 question = null;
                 i++;
+                continue;
             }
-            if (!questionPackage.allowVoiceResource && question.getResource().getType() == ResourceType.VOICE) {
+            if (!sessionDataPackage.isAllowVoiceResource() && question.getResource().getType() == ResourceType.VOICE) {
                 question = null;
                 i++;
+                continue;
             }
 		}
-		if (i == questionPackage.questions.size()) {
-            i = -1;
-        }
-		return i;
+		return question;
 	}
 	
-	private int getFirstNotBanQuestionIndex(String matchId, Team team) {
-	    QuestionPackage questionPackage = questionPackages.get(matchId);
+	private Question getFirstNotBanQuestionIndex(String sessionId, Team team) throws StillStandingException {
+	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
-		while (question == null && i < questionPackage.questions.size()) {
-			question = questionPackage.questions.get(i);
+		while (question == null && i < sessionDataPackage.getQuestionIds().size()) {
+			String questionId = sessionDataPackage.getQuestionIds().get(i);
+			question = questionPool.get(questionId); 
 			
 			if (!team.isNotBan(question.getTags())) {
 				question = null;
 				i++;
+				continue;
 			}
-			if (!questionPackage.allowImageResource && question.getResource().getType() == ResourceType.IMAGE) {
+			if (!sessionDataPackage.isAllowImageResource() && question.getResource().getType() == ResourceType.IMAGE) {
                 question = null;
                 i++;
+                continue;
             }
-			if (!questionPackage.allowVoiceResource && question.getResource().getType() == ResourceType.VOICE) {
+			if (!sessionDataPackage.isAllowVoiceResource() && question.getResource().getType() == ResourceType.VOICE) {
                 question = null;
                 i++;
+                continue;
             }
 		}
-		if (i == questionPackage.questions.size()) {
-		    i = -1;
-		}
-		return i;
+		return question;
 	}
 	
-	public Set<String> getTags(String matchId) {
-	    QuestionPackage questionPackage = questionPackages.get(matchId);
-        return questionPackage.tags;
+	
+
+    public List<Question> getQuestions(String questionPackageName) throws StillStandingException {
+        if (!questionPackages.containsKey(questionPackageName)) {
+            List<Question> questions = QuestionTool.LoadAllQuestions(questionPackageName);
+            questionPackages.put(questionPackageName, questions);
+            questions.forEach(item -> questionPool.put(item.getId(), item));
+        }
+        return questionPackages.get(questionPackageName);
     }
+    
+//    public Set<String> getTags(String sessionId) {
+//        SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
+//        return sessionDataPackage.getTags();
+//    }
 
 }

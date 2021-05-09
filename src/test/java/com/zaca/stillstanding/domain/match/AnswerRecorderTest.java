@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.zaca.stillstanding.domain.question.AnswerType;
+import com.zaca.stillstanding.domain.dto.AnswerType;
 
 /**
  * @author hundun

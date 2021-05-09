@@ -1,12 +1,15 @@
 package com.zaca.stillstanding.gui;
 
 import java.awt.EventQueue;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
+import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.service.GameService;
@@ -29,7 +32,7 @@ public class GUILoader implements CommandLineRunner{
     
     
     
-    BaseMatch match;
+    MatchSituationDTO match;
     
     @Autowired
     GameService gameService;
@@ -42,7 +45,9 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        match = gameService.createPreMatch(new String[] {"砍口垒同好组", "方舟同好组"});
+                        MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
+                        matchConfigDTO.setTeamNames(Arrays.asList("砍口垒同好组", "方舟同好组"));
+                        match = gameService.createPreMatch(matchConfigDTO);
                         
                         frame = new MyFrame(match);
                         frame.start();

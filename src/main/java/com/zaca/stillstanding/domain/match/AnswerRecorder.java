@@ -7,7 +7,7 @@ package com.zaca.stillstanding.domain.match;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.zaca.stillstanding.domain.question.AnswerType;
+import com.zaca.stillstanding.domain.dto.AnswerType;
 
 public class AnswerRecorder {
     

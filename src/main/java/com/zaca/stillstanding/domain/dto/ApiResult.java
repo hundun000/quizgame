@@ -1,8 +1,8 @@
-package com.zaca.stillstanding.domain;
+package com.zaca.stillstanding.domain.dto;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.zaca.stillstanding.exception.StillStandingException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 
 /**
  * @author hundun
@@ -36,16 +36,16 @@ public class ApiResult implements IApiResult {
         this.payload = payload;
         this.retcode = 0;
     }
+
+
     
-    public ApiResult(JSON payload) {
-        this(payload.toString());
+    public ApiResult(JsonProcessingException e) {
+        this.message = e.getMessage();
+        this.status = FAIL_STATUS;
+        this.payload = null;
+        this.retcode = -1;
     }
-    
-    @Deprecated
-    public ApiResult(Object payload) {
-        this(JSON.toJSONString(payload));
-    }
-    
+
     @Override
     public String getMessage() {
         return message;

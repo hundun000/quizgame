@@ -1,7 +1,9 @@
 package com.zaca.stillstanding.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.zaca.stillstanding.domain.ApiResult;
-import com.zaca.stillstanding.domain.IApiResult;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zaca.stillstanding.domain.dto.ApiResult;
+import com.zaca.stillstanding.domain.dto.IApiResult;
+import com.zaca.stillstanding.domain.dto.TeamDTO;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.TeamService;
@@ -29,31 +34,30 @@ import com.zaca.stillstanding.service.TeamService;
 public class TeamController {
     
     private static final Logger logger = LoggerFactory.getLogger(TeamController.class);
+    ObjectMapper objectMapper = new ObjectMapper();
     
     @Autowired
     TeamService teamService;
     
     @RequestMapping(value="", method=RequestMethod.GET)
-    public IApiResult listTeams() {
+    public IApiResult listTeams() throws JsonProcessingException {
         Collection<Team> teams = teamService.listTeams();
-        JSONArray array = new JSONArray(teams.size());
-        teams.forEach(team -> array.add(team.toAllDataPayload()));
-        return new ApiResult(array);
+        List<TeamDTO> teamDTOs = new ArrayList<>();
+        teams.forEach(team -> teamDTOs.add(team.toTeamDTO()));
+        return new ApiResult(objectMapper.writeValueAsString(teamDTOs));
     }
     
     @RequestMapping(value="", method=RequestMethod.POST)
     public IApiResult updateTeam(
-            @RequestParam(value = "team") String teamString
+            @RequestParam(value = "team") TeamDTO teamDTO
             ) {
-        logger.info("===== \"\" {} =====", teamString);
+        logger.info("===== \"\" {} =====", teamDTO);
         // TODO 中途失败回滚
         
-        JSONObject teamObject = JSONObject.parseObject(teamString);
-        String teamName = teamObject.getString("name");
         try {
-            teamService.setPickTagsForTeam(teamName, teamObject.getJSONArray("pickTags").toJavaList(String.class));
-            teamService.setBanTagsForTeam(teamName, teamObject.getJSONArray("banTags").toJavaList(String.class));
-            teamService.setRoleForTeam(teamName, teamObject.getString("roleName"));
+            teamService.setPickTagsForTeam(teamDTO.getName(), teamDTO.getPickTags());
+            teamService.setBanTagsForTeam(teamDTO.getName(), teamDTO.getBanTags());
+            teamService.setRoleForTeam(teamDTO.getName(), teamDTO.getRoleName());
         } catch (NotFoundException e) {
             return e;
         }

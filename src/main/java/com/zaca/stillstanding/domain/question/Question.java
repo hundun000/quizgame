@@ -1,7 +1,11 @@
 package com.zaca.stillstanding.domain.question;
 
+import java.util.Arrays;
 import java.util.Set;
 
+import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.domain.dto.QuestionDTO;
+import com.zaca.stillstanding.domain.dto.Resource;
 import com.zaca.stillstanding.exception.QuestionFormatException;
 
 /**
@@ -29,42 +33,24 @@ public class Question {
 		this.options[1] = optionB;
 		this.options[2] = optionC;
 		this.options[3] = optionD;
-		this.answer = answerTextToInt(answerText);
+		this.answer = QuestionDTO.answerTextToInt(answerText);
 		this.tags = tags;
 		this.resource = new Resource(resourceText);
 		
-		StringBuilder builder = new StringBuilder();
-		tags.forEach(e -> builder.append(e.charAt(0)));
-		builder.append("-").append(stem.substring(0, Math.min(6, stem.length())));
-		this.id = builder.toString();
+//		StringBuilder builder = new StringBuilder();
+//		tags.forEach(e -> builder.append(e.charAt(0)));
+//		builder.append("-").append(stem.substring(0, Math.min(6, stem.length())));
+		this.id = this.toString();
 	}
 	
 	
-	public static int answerTextToInt(String text) {
-		switch (text) {
-			case "A":
-			case "a":
-				return 0;
-			case "B":
-			case "b":
-				return 1;
-			case "C":
-			case "c":
-				return 2;
-			case "D":
-			case "d":
-				return 3;
-			default:
-				return -1;
-		}
-		
-	}
+	
 	
 	public boolean isCorrectOrSkipped(String answerText) {
 	    if (answerText == null) {
 	        return false;
 	    }
-		return answerTextToInt(answerText) == this.answer;
+		return QuestionDTO.answerTextToInt(answerText) == this.answer;
 	}
 	
 	public Set<String> getTags() {
@@ -114,11 +100,23 @@ public class Question {
             return AnswerType.WRONG;
         } else {
             // 正常回答A、B、C、D
-            if (answerTextToInt(answerText) == this.answer) {
+            if (QuestionDTO.answerTextToInt(answerText) == this.answer) {
                 return AnswerType.CORRECT;
             } else {
                 return AnswerType.WRONG;
             }
         }
+    }
+
+
+    public QuestionDTO toQuestionDTO() {
+        QuestionDTO dto = new QuestionDTO();
+        dto.setId(this.id);
+        dto.setAnswer(this.answer);
+        dto.setStem(this.stem);
+        dto.setOptions(Arrays.asList(this.getOptions()));
+        dto.setResource(this.resource);
+        dto.setTags(this.tags);
+        return dto;
     }
 }

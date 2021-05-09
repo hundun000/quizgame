@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
-
-import com.zaca.stillstanding.domain.ApiResult;
-import com.zaca.stillstanding.domain.IApiResult;
+import com.zaca.stillstanding.domain.dto.ApiResult;
+import com.zaca.stillstanding.domain.dto.IApiResult;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
@@ -33,38 +32,13 @@ public class QuestionController {
     
     private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
     
-    private static final String RESOURCE_ICON_FOLDER = "./data/pictures/";
+    
     
     @Autowired
     QuestionService questionService;
-    
-//    @RequestMapping(value="/tags", method=RequestMethod.GET)
-//    public Object listTeams() {
-//        logger.info("===== /tags =====");
-//        Collection<String> tags = questionService.getTags(null);
-//        return tags;
-//    }
-    
-    @CrossOrigin
-    @RequestMapping(value = "/pictures",method=RequestMethod.GET)
-    public IApiResult loadFile(HttpServletResponse response,
-            @RequestParam("id") String id
-            ) {
-        logger.info("===== /pictures {} =====", id);
-        String fileName = id;
-        String filePathName = RESOURCE_ICON_FOLDER + id;
 
-        File file = new File(filePathName);
-        if (!file.exists()) {
-            return new ApiResult("文件名找不到文件！" + file.getAbsolutePath());
-        }
-        try {
-            FileTool.putFileToResponse(response, file, fileName);
-        } catch (Exception e) {
-            return new ApiResult(new StillStandingException(e.getMessage(), -1));
-        }
-        return new ApiResult("成功");
-    }
+    
+    
 	
 
 }

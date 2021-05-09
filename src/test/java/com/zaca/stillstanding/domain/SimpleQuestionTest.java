@@ -11,15 +11,23 @@ import java.util.Set;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.InitBinder;
 
+import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
 import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.question.TagManager;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.QuestionFormatException;
+import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
+import com.zaca.stillstanding.service.SessionService;
 import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.QuestionTool;
 
@@ -28,33 +36,56 @@ import com.zaca.stillstanding.tool.QuestionTool;
  * @author hundun
  * Created on 2019/03/19
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class SimpleQuestionTest {
 	
-	QuestionService questionService = new QuestionService();
-	TeamService teamService = new TeamService();
+    @Autowired
+	QuestionService questionService;
+    
+    @Autowired
+	TeamService teamService;
+    
+    @Autowired
+    SessionService sessionService;
+    
+    @Autowired
+    GameService gameService;
+    
 	String  testTeamName = "砍口垒同好组";
 	
+	
+    private void prepare() throws IOException, StillStandingException {
+        teamService.creatTeam(testTeamName);
+        
+        
+        List<String> pickTagNames = new ArrayList<>();
+        pickTagNames.add("单机游戏");
+        teamService.setPickTagsForTeam(testTeamName, pickTagNames);
+        
+        List<String> banTagNames = new ArrayList<>();
+        banTagNames.add("动画");
+        teamService.setBanTagsForTeam(testTeamName, banTagNames);
+	}
+	
+	
 	@Test
-	public void test() throws IOException, QuestionFormatException, ConflictException, NotFoundException {
+	public void test() throws IOException, StillStandingException {
 		
-		String matchId = "unitestMatchId";
 		
-		questionService.initQuestions(matchId, QuestionTool.TEST_PACKAGE_NAME);
-		teamService.creatTeam(testTeamName);
 		
-		List<String> pickTagNames = new ArrayList<>();
-		pickTagNames.add("单机游戏");
-		teamService.setPickTagsForTeam(testTeamName, pickTagNames);
+        // request_0
+		MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
+		matchConfigDTO.setTeamNames(Arrays.asList(testTeamName));
+		matchConfigDTO.setQuestionPackageName(QuestionTool.TEST_PACKAGE_NAME);
+		String sessionId = gameService.createEndlessMatch(matchConfigDTO).getId();
 		
-		List<String> banTagNames = new ArrayList<>();
-		banTagNames.add("动画");
-		teamService.setBanTagsForTeam(testTeamName, banTagNames);
-		
-		Team team = teamService.getTeam(testTeamName);
-		for (int i = 1; i < 20; i++) {
-			Question question = questionService.getNewQuestionForTeam(matchId, team, true);
-			System.out.println("第"+i+"题"+question.getTags()+"："+question.getStem());
-		}
+		// request_1
+        gameService.startMatch(sessionId);
+        
+        
+        // request_2
+		gameService.teamAnswer(sessionId, "A");
 	}
 
 

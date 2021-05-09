@@ -7,9 +7,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.domain.dto.MatchEvent;
+import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.domain.event.MatchEventFactory;
-import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
@@ -31,24 +32,25 @@ public class PreMatch extends BaseMatch {
             QuestionService questionService, 
             TeamService teamService, 
             RoleSkillService roleSkillService,
-            BuffService buffService
+            BuffService buffService, 
+            String sessionId
             ) {
         super(questionService, teamService, roleSkillService, buffService,
-                HealthType.SUM
+                HealthType.SUM, sessionId
                 );
     }
     
     @Override
-    public void setTeamsByNames(String... teamNames) throws NotFoundException {
-        if (teamNames != null && teamNames.length > 0) {
+    public void setTeamsByNames(List<String> list) throws NotFoundException {
+        if (list != null && list.size() > 0) {
             // only set first team
-            super.setTeamsByNames(Arrays.copyOf(teamNames, 1));
+            super.setTeamsByNames(list.subList(0, 1));
         }
     }
 
     
     @Override
-    protected MatchEvent checkSwitchTeamEvent() {
+    protected SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 一定不换队
          */

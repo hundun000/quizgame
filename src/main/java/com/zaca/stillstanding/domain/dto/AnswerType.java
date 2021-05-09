@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.question;
+package com.zaca.stillstanding.domain.dto;
 /**
  * @author hundun
  * Created on 2019/10/08
@@ -8,7 +8,7 @@ public enum AnswerType {
     WRONG,
     SKIPPED;
     
-    public static AnswerType get(Boolean isCorrect) {
+    public static AnswerType value(Boolean isCorrect) {
         if (isCorrect == null) {
             return SKIPPED;
         } else {

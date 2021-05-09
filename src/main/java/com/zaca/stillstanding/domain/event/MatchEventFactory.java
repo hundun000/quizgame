@@ -1,10 +1,23 @@
 package com.zaca.stillstanding.domain.event;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zaca.stillstanding.domain.question.AnswerType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.domain.dto.EventType;
+import com.zaca.stillstanding.domain.dto.MatchEvent;
+import com.zaca.stillstanding.domain.dto.TeamDTO;
+import com.zaca.stillstanding.domain.dto.event.AnswerResultEvent;
+import com.zaca.stillstanding.domain.dto.event.FinishEvent;
+import com.zaca.stillstanding.domain.dto.event.SkillResultEvent;
+import com.zaca.stillstanding.domain.dto.event.StartMatchEvent;
+import com.zaca.stillstanding.domain.dto.event.StubEvent;
+import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.domain.skill.BaseSkill;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
@@ -15,6 +28,8 @@ import com.zaca.stillstanding.domain.team.Team;
  */
 public class MatchEventFactory {
     
+    static ObjectMapper mapper = new ObjectMapper(); 
+    
     public static boolean isTypeInCollection(Collection<MatchEvent> events, EventType type) {
         for (MatchEvent event : events) {
             if (event.getType() == type) {
@@ -24,62 +39,81 @@ public class MatchEventFactory {
         return false;
     }
     
-    public static MatchEvent getTypeStartTeam(Team team, int currentScore, HealthType healthType, int currentHealth, Map<String, Integer> skillRemainTimes) {
-        JSONObject data = new JSONObject();
-        data.put("team_match_data", team.toMatchDataPayload());
-        data.put("current_score", currentScore);
-        data.put("health_type_code", healthType.getCode());
-        data.put("current_health", currentHealth);
-        return new MatchEvent(EventType.START_TEAM, data);
+    public static StubEvent getTypeStartTeam(Team team, int currentScore, HealthType healthType, int currentHealth, Map<String, Integer> skillRemainTimes) {
+//        ObjectNode data = mapper.createObjectNode();
+//        data.put("team_match_data", team.toMatchDataPayload().toJSONString());
+//        data.put("current_score", currentScore);
+//        data.put("health_type_code", healthType.getCode());
+//        data.put("current_health", currentHealth);
+        StubEvent event = new StubEvent();
+        event.setType(EventType.START_TEAM);
+        return event;
     }
     
-    public static MatchEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
-        JSONObject data = new JSONObject();
-        data.put("last_team", lastTeam.toMatchDataPayload());
-        data.put("current_team", currentTeam.toMatchDataPayload());
-        return new MatchEvent(EventType.SWITCH_TEAM, data);
+    public static SwitchTeamEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
+//        ObjectNode data = mapper.createObjectNode();
+//        data.put("last_team", lastTeam.toMatchDataPayload().toJSONString());
+//        data.put("current_team", currentTeam.toMatchDataPayload().toJSONString());
+        SwitchTeamEvent event = new SwitchTeamEvent();
+        event.setType(EventType.SWITCH_TEAM);
+        return event;
     }
     
-    public static MatchEvent getTypeSwitchQuestion(int time) {
-        JSONObject data = new JSONObject();
-        data.put("time", time);
-        return new MatchEvent(EventType.SWITCH_QUESTION, data);
+    public static StubEvent getTypeSwitchQuestion(int time) {
+//        ObjectNode data = mapper.createObjectNode();
+//        data.put("time", time);
+        StubEvent event = new StubEvent();
+        event.setType(EventType.SWITCH_QUESTION);
+        return event;
     }
     
     
-    public static MatchEvent getTypeFinish(Map<String, Integer> scores) {
-        JSONObject data = new JSONObject();
-        data.put("scores", scores);
-        return new MatchEvent(EventType.FINISH, data);
+    public static FinishEvent getTypeFinish(Map<String, Integer> scores) {
+//        ObjectNode data = mapper.createObjectNode();
+//        data.put("scores", scores.toString());
+        FinishEvent event = new FinishEvent();
+        event.setType(EventType.FINISH);
+        return event;
     }
     
     public static final String KEY_SKILL_NAME = "skill_name";
 
-    public static MatchEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill, int skillRemainTime) {
-        JSONObject data = new JSONObject();
-        data.put("team_name", teamName);
-        data.put("role_name", roleName);
-        data.put(KEY_SKILL_NAME, skill.getName());
-        data.put("static_data", skill.getFrontendData());
-        data.put("skill_remain_time", skillRemainTime);
-        return new MatchEvent(EventType.SKILL_SUCCESS, data);
+    public static SkillResultEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill, int skillRemainTime) {
+        SkillResultEvent event = new SkillResultEvent();
+        event.setType(EventType.SKILL_SUCCESS);
+        event.setTeamName(teamName);
+        event.setRoleName(roleName);
+        event.setSkillName(skill.getName());
+        event.setSkillRemainTime(skillRemainTime);
+        event.setStaticData(skill.getFrontendData().toJSONString());
+        
+        return event;
     }
     
-    public static MatchEvent getTypeSkillUseOut(String teamName, BaseSkill skill) {
-        JSONObject data = new JSONObject();
-        data.put("team_name", teamName);
-        data.put("skill_name", skill.getName());
-        return new MatchEvent(EventType.SKILL_USE_OUT, data);
+    public static SkillResultEvent getTypeSkillUseOut(String teamName, String roleName, BaseSkill skill) {
+        SkillResultEvent event = new SkillResultEvent();
+        event.setType(EventType.SKILL_USE_OUT);
+        event.setTeamName(teamName);
+        event.setRoleName(roleName);
+        event.setSkillName(skill.getName());
+        event.setSkillRemainTime(0);
+        event.setStaticData(skill.getFrontendData().toJSONString());
+        
+        return event;
     }
     
-    public static MatchEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore, HealthType healthType, int currentHealth) {
-        JSONObject data = new JSONObject();
-        data.put("result", answerType);
-        data.put("add_score", addScore);
-        data.put("current_score", currentScore);
-        data.put("health_type_code", healthType.getCode());
-        data.put("current_health", currentHealth);
-        return new MatchEvent(EventType.ANSWER_RESULT, data);
+    public static AnswerResultEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore, HealthType healthType, int currentHealth) {
+        AnswerResultEvent event = new AnswerResultEvent();
+        event.setType(EventType.ANSWER_RESULT);
+        event.setAddScore(addScore);
+        event.setResult(answerType);
+        return event;
+    }
+
+    public static StartMatchEvent getTypeStartTeam(int currentTeamIndex, List<Team> teams) {
+        StartMatchEvent event = new StartMatchEvent();
+        event.setType(EventType.START_TEAM);
+        return event;
     }
 
 }

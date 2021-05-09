@@ -14,7 +14,7 @@ public class MatchRecord {
     private Map<String, Integer> scores = new LinkedHashMap<>();
     
     public MatchRecord(BaseMatch match) {
-        this.matchId = match.getId();
+        this.matchId = match.getSessionId();
         match.teams.forEach(team -> scores.put(team.getName(), team.getMatchScore()));
     }
     

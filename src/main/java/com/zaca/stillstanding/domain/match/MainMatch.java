@@ -3,9 +3,10 @@ package com.zaca.stillstanding.domain.match;
 import com.zaca.stillstanding.domain.buff.BuffModel;
 import com.zaca.stillstanding.domain.buff.BuffEffect;
 import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
-import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.domain.dto.MatchEvent;
+import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.domain.event.MatchEventFactory;
-import com.zaca.stillstanding.domain.question.AnswerType;
 import com.zaca.stillstanding.domain.team.HealthType;
 import com.zaca.stillstanding.domain.team.Team;
 import com.zaca.stillstanding.exception.TeamDeadException;
@@ -26,16 +27,17 @@ public class MainMatch extends BaseMatch {
             QuestionService questionService, 
             TeamService teamService, 
             RoleSkillService roleSkillService,
-            BuffService buffService
+            BuffService buffService,
+            String sessionId
             ) {
         super(questionService, teamService, roleSkillService, buffService,
-                HealthType.CONSECUTIVE_WRONG_AT_LEAST
+                HealthType.CONSECUTIVE_WRONG_AT_LEAST, sessionId
                 );
     }
 
     
     @Override
-    protected MatchEvent checkSwitchTeamEvent() {
+    protected SwitchTeamEvent checkSwitchTeamEvent() {
         /*
          * 每一题换队（被调用一定换）
          */

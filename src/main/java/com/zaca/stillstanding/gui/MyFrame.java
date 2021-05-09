@@ -18,15 +18,15 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.zaca.stillstanding.domain.event.EventType;
-import com.zaca.stillstanding.domain.event.MatchEvent;
+import com.zaca.stillstanding.domain.dto.EventType;
+import com.zaca.stillstanding.domain.dto.MatchEvent;
+import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
 import com.zaca.stillstanding.domain.match.BaseMatch;
 import com.zaca.stillstanding.domain.match.PreMatch;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
 import com.zaca.stillstanding.service.TeamService;
-import com.zaca.stillstanding.tool.FormatTool;
 import com.zaca.stillstanding.tool.QuestionTool;
 
 import javax.swing.JTextArea;
@@ -43,7 +43,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     
     
-    BaseMatch match;
+    MatchSituationDTO match;
     
     private JPanel contentPane;
     private JTextField input;
@@ -69,7 +69,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
      * @param questionService2 
      * @throws Exception 
      */
-    public MyFrame(BaseMatch match) {
+    public MyFrame(MatchSituationDTO match) {
         this.match = match;
         
         
@@ -100,8 +100,8 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     private void initGame() throws Exception {
 
-        match.start();
-        renewTimerCount(match.getEvents().get(0).getPayload().getIntValue("time"));
+        //match.start();
+        //renewTimerCount(match.getEvents().get(0).getPayload().value("time").asInt());
     }
     
     private void renewTimerCount(int value) {
@@ -115,7 +115,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void initUIData() {
-        dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
+        //dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
     }
     
     private void initEvent() {
@@ -132,17 +132,17 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                String command = input.getText();
                input.setText("");
                
-               if (!handleGUICommand(command)) {
-                   try {
-                    match.commandLineControl(command);
-                    handleEvent(match);
-                } catch (StillStandingException e1) {
-                    dataOutput.setText("StillStandingException:" + e1.getMessage());
-                    disableTimer();
-                }
-                   
-                   
-               }
+//               if (!handleGUICommand(command)) {
+//                   try {
+//                    match.commandLineControl(command);
+//                    handleEvent(match);
+//                } catch (StillStandingException e1) {
+//                    dataOutput.setText("StillStandingException:" + e1.getMessage());
+//                    disableTimer();
+//                }
+//                   
+//                   
+//               }
 
             }
           }
@@ -169,12 +169,12 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                 lblTime.setForeground(Color.RED);
                 ignoreSecondTimer = true;
                 
-                try {
-                    match.teamAnswerTimeout();
-                    handleEvent(match);
-                } catch (StillStandingException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    match.teamAnswerTimeout();
+//                    handleEvent(match);
+//                } catch (StillStandingException e) {
+//                    e.printStackTrace();
+//                }
                 
             }
             
@@ -190,17 +190,17 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     }
     
     private void handleEvent(BaseMatch match) {
-        if (match.containsEventByType(EventType.FINISH)) {
-            dataOutput.setText("FINISH!");
-            disableTimer();
-            return;
-        }
-        
-        if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
-            renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getPayload().getIntValue("time"));
-            dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
-            return;
-        }
+//        if (match.containsEventByType(EventType.FINISH)) {
+//            dataOutput.setText("FINISH!");
+//            disableTimer();
+//            return;
+//        }
+//        
+//        if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
+//            //renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getPayload().value("time").asInt());
+//            dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
+//            return;
+//        }
         
     }
 }

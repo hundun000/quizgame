@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.domain.event;
+package com.zaca.stillstanding.domain.dto;
 
 public enum EventType {
     SWITCH_QUESTION,

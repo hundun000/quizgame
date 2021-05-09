@@ -1,6 +1,6 @@
 package com.zaca.stillstanding.exception;
 
-import com.zaca.stillstanding.domain.IApiResult;
+import com.zaca.stillstanding.domain.dto.IApiResult;
 
 /**
  * @author hundun

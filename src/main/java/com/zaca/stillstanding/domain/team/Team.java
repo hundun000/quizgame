@@ -1,6 +1,7 @@
 package com.zaca.stillstanding.domain.team;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +9,8 @@ import java.util.Set;
 import com.alibaba.fastjson.JSONObject;
 import com.zaca.stillstanding.domain.buff.BuffModel;
 import com.zaca.stillstanding.domain.buff.RunTimeBuff;
+import com.zaca.stillstanding.domain.dto.TeamDTO;
+import com.zaca.stillstanding.domain.dto.TeamRuntimeInfoDTO;
 import com.zaca.stillstanding.domain.skill.BaseRole;
 import com.zaca.stillstanding.domain.skill.RoleRuntimeData;
 import com.zaca.stillstanding.domain.skill.SkillSlot;
@@ -89,26 +92,6 @@ public class Team {
 		this.hitPickRate = Math.min(hitPickRate + HIT_PICK_RATE_INCREASE_STEP, 1);
 	}
 	
-	public JSONObject toMatchDataPayload() {
-		JSONObject data = new JSONObject();
-		data.put("alive", alive);
-		data.put("name", name);
-		data.put("score", getMatchScore());
-		data.put("skillRemainTimes", roleRuntimeData.getSkillRemainTimes());
-		JSONObject buffsData = new JSONObject();
-		buffs.forEach(item -> buffsData.put(item.getModel().getName(), item.getDuration()));
-		data.put("buffs", buffsData);
-		return data;
-	}
-	
-	public JSONObject toAllDataPayload() {
-        JSONObject data = toMatchDataPayload();
-        data.put("pickTags", pickTags);
-        data.put("banTags", banTags);
-        data.put("roleName", getRoleName());
-        return data;
-    }
-	
 	public String getName() {
         return name;
     }
@@ -151,5 +134,27 @@ public class Team {
         }
         
         buffs.add(newBuff);
+    }
+
+    public TeamDTO toTeamDTO() {
+        TeamDTO teamDTO = new TeamDTO();
+        teamDTO.setName(this.getName());
+        teamDTO.setPickTags(this.pickTags);
+        teamDTO.setBanTags(this.banTags);
+        teamDTO.setRoleName(this.role != null ? role.getName() : null);
+        return teamDTO;
+    }
+    
+    public TeamRuntimeInfoDTO toTeamRuntimeInfoDTO() {
+        TeamRuntimeInfoDTO dto = new TeamRuntimeInfoDTO();
+        dto.setName(name);
+        dto.setRoleName(role.getName());
+        dto.setMatchScore(matchScore);
+        dto.setSkillRemainTimes(roleRuntimeData.getSkillRemainTimes());
+        Map<String, Integer> buffsData = new HashMap<>();
+        buffs.forEach(item -> buffsData.put(item.getModel().getName(), item.getDuration()));
+        dto.setBuffs(buffsData);
+        dto.setAlive(alive);
+        return dto;
     }
 }

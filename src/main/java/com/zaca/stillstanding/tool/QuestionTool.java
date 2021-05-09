@@ -15,10 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
+import com.zaca.stillstanding.controller.GameController;
+import com.zaca.stillstanding.domain.dto.ResourceType;
 import com.zaca.stillstanding.domain.question.Question;
 import com.zaca.stillstanding.domain.question.TagManager;
 import com.zaca.stillstanding.exception.QuestionFormatException;
+import com.zaca.stillstanding.exception.StillStandingException;
 
 public class QuestionTool {
 	
@@ -61,10 +63,14 @@ public class QuestionTool {
 	}
 	
 	
-	public static List<Question> LoadAllQuestions(String packageName) throws IOException, QuestionFormatException {
+	public static List<Question> LoadAllQuestions(String packageName) throws StillStandingException {
 		List<Question> questions = new LinkedList<>();
 		File mainFolder = new File(DATA_FOLDER + packageName);
-		LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
+		try {
+		    LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
+        } catch (IOException e) {
+            throw new StillStandingException("IOException :" + e.getMessage(), -1);
+        }
 		return questions;
 	}
 	
@@ -195,6 +201,16 @@ public class QuestionTool {
 				i += numBlankLine;
 				
 				Question question = new Question(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
+				
+				if (question.getResource().getData() != null) {
+				    String filePathName = GameController.RESOURCE_ICON_FOLDER + question.getResource().getData();
+			        File file = new File(filePathName);
+			        if (!file.exists()) {
+			            question.getResource().setType(ResourceType.IMAGE);
+			            question.getResource().setData("default.png");
+			        }
+				}
+				
 				questions.add(question);
 			} catch (IndexOutOfBoundsException e) {
 				throw new QuestionFormatException(i + 1, i + 1, questions.size() + 1, "题目组成");

@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.1.0.RELEASE'
+        springCloudVersion = '2.0.2.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -17,7 +18,7 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.zaca'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
@@ -25,8 +26,13 @@ repositories {
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
+	implementation ("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    implementation ("org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}")
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	
+	
+	
 	compile('com.alibaba:fastjson:1.2.54')
+	compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
