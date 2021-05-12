@@ -6,24 +6,25 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zaca.stillstanding.core.buff.BuffEffect;
+import com.zaca.stillstanding.core.buff.RunTimeBuff;
+import com.zaca.stillstanding.core.buff.ScoreComboBuffEffect;
+import com.zaca.stillstanding.core.buff.ScoreScaleBuffEffect;
+import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.domain.buff.BuffEffect;
-import com.zaca.stillstanding.domain.buff.RunTimeBuff;
-import com.zaca.stillstanding.domain.buff.ScoreComboBuffEffect;
-import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
-import com.zaca.stillstanding.domain.dto.AnswerType;
-import com.zaca.stillstanding.domain.dto.event.AnswerResultEvent;
-import com.zaca.stillstanding.domain.dto.event.FinishEvent;
-import com.zaca.stillstanding.domain.dto.event.SkillResultEvent;
-import com.zaca.stillstanding.domain.dto.event.StubEvent;
-import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
-import com.zaca.stillstanding.domain.event.MatchEventFactory;
-import com.zaca.stillstanding.domain.skill.BaseRole;
-import com.zaca.stillstanding.domain.skill.BaseSkill;
-import com.zaca.stillstanding.domain.skill.effect.AddBuffSkillEffect;
-import com.zaca.stillstanding.domain.skill.effect.ISkillEffect;
-import com.zaca.stillstanding.domain.team.HealthType;
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.role.BaseRole;
+import com.zaca.stillstanding.core.skill.BaseSkill;
+import com.zaca.stillstanding.core.skill.effect.AddBuffSkillEffect;
+import com.zaca.stillstanding.core.skill.effect.ISkillEffect;
+import com.zaca.stillstanding.core.team.HealthType;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.event.AnswerResultEvent;
+import com.zaca.stillstanding.dto.event.FinishEvent;
+import com.zaca.stillstanding.dto.event.SkillResultEvent;
+
+import com.zaca.stillstanding.dto.event.SwitchQuestionEvent;
+import com.zaca.stillstanding.dto.event.SwitchTeamEvent;
+import com.zaca.stillstanding.dto.match.AnswerType;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
@@ -130,7 +131,7 @@ public abstract class BaseMatchStrategy {
      * @return
      * @throws StillStandingException 
      */
-    public StubEvent checkSwitchQuestionEvent() throws StillStandingException {
+    public SwitchQuestionEvent checkSwitchQuestionEvent() throws StillStandingException {
         boolean removeToDirty = this.healthType != HealthType.ENDLESS;
         parent.setCurrentQuestion(questionService.getNewQuestionForTeam(parent.getSessionId(), parent.getCurrentTeam(), removeToDirty));
         return MatchEventFactory.getTypeSwitchQuestion(15);
@@ -201,6 +202,8 @@ public abstract class BaseMatchStrategy {
         
         return newEvents;
     }
+    
+    
     
     private SkillResultEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
         int skillRemainTime = team.getRoleRunTimeData().getSkillRemainTimes().get(skill.getName());

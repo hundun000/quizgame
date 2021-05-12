@@ -17,10 +17,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
-import com.zaca.stillstanding.domain.question.Question;
-import com.zaca.stillstanding.domain.question.TagManager;
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.core.question.TagManager;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.match.MatchConfigDTO;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.QuestionFormatException;

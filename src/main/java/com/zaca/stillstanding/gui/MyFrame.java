@@ -1,37 +1,19 @@
 package com.zaca.stillstanding.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 import java.util.Timer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.core.match.strategy.PreStrategy;
-import com.zaca.stillstanding.domain.dto.EventType;
-import com.zaca.stillstanding.domain.dto.MatchEvent;
-import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.exception.StillStandingException;
-import com.zaca.stillstanding.service.GameService;
-import com.zaca.stillstanding.service.QuestionService;
-import com.zaca.stillstanding.service.TeamService;
-import com.zaca.stillstanding.tool.QuestionTool;
-
+import com.zaca.stillstanding.dto.match.MatchSituationDTO;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JButton;
+import javax.swing.WindowConstants;
 import javax.swing.JLabel;
 
 /**
@@ -73,7 +55,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         this.match = match;
         
         
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBounds(100, 100, 832, 723);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -127,6 +109,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     
     class MyKeyAdapter extends KeyAdapter {
 
+        @Override
         public void keyPressed(KeyEvent e) {
             if(e.getKeyCode()==KeyEvent.VK_ENTER){
                String command = input.getText();

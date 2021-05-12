@@ -5,9 +5,7 @@ package com.zaca.stillstanding.core.match;
  */
 
 import java.util.LinkedList;
-import java.util.List;
-
-import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.dto.match.AnswerType;
 
 public class AnswerRecorder {
     

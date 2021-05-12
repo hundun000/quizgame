@@ -1,7 +1,7 @@
 package com.zaca.stillstanding.controller;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,24 +18,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaca.stillstanding.api.StillstandingApi;
-import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.core.match.MatchRecord;
-import com.zaca.stillstanding.core.match.strategy.PreStrategy;
-import com.zaca.stillstanding.domain.dto.ApiResult;
-import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
-import com.zaca.stillstanding.domain.dto.MatchEvent;
-import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.ApiResult;
+import com.zaca.stillstanding.dto.match.MatchConfigDTO;
+import com.zaca.stillstanding.dto.match.MatchSituationDTO;
+import com.zaca.stillstanding.dto.team.TeamConstInfoDTO;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
 import com.zaca.stillstanding.service.QuestionService;
+import com.zaca.stillstanding.service.TeamService;
 import com.zaca.stillstanding.tool.FileTool;
-import com.zaca.stillstanding.tool.QuestionTool;
 
 /**
  *
@@ -62,123 +58,92 @@ public class GameController implements StillstandingApi {
     @Autowired
     GameService gameService;
     
+    @Autowired
+    TeamService teamService;
+
     
     @RequestMapping(value="/createPreMatch", method=RequestMethod.POST)
-    public ApiResult createPreMatch(
+    public ApiResult<MatchSituationDTO> createPreMatch(
             @RequestBody MatchConfigDTO matchConfigDTO
             ) {
         logger.info("===== /createPreMatch {} =====", matchConfigDTO);
 
         try {
             MatchSituationDTO matchSituationDTO = gameService.createPreMatch(matchConfigDTO);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
-        
     }
     
     @Override
-    public ApiResult createEndlessMatch(
+    public ApiResult<MatchSituationDTO> createEndlessMatch(
             MatchConfigDTO matchConfigDTO
             ) {
         logger.info("===== /createEndlessMatch {} =====", matchConfigDTO);
         try {
             MatchSituationDTO matchSituationDTO = gameService.createEndlessMatch(matchConfigDTO);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
         
     }
     
-//    @RequestMapping(value="/match-records/all", method=RequestMethod.GET)
-//    public ApiResult getMatchRecords() {
-//        List<MatchRecord> matchRecords = gameService.getMatchRecords();
-//        return new ApiResult(JSON.toJSONString(matchRecords));
-//    }
-//    
-//    @RequestMapping(value="/match-records", method=RequestMethod.GET)
-//    public ApiResult getOneMatchRecord(
-//            @RequestParam(value = "sessionId") String sessionId
-//            ) {
-//        logger.info("===== /match-records {} =====", sessionId);
-//        MatchRecord matchRecord = gameService.getOneMatchRecord(sessionId);
-//        return new ApiResult(JSON.toJSONString(matchRecord));
-//    }
     
     @Override
-    public ApiResult start(
+    public ApiResult<MatchSituationDTO> start(
             String sessionId
             ) {
         logger.info("===== /start {}=====", sessionId);
         
         try {
             MatchSituationDTO matchSituationDTO = gameService.startMatch(sessionId);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
         
     }
     
     
     @Override
-    public ApiResult teamAnswer(
+    public ApiResult<MatchSituationDTO> teamAnswer(
             String sessionId,
             String answer
             ) {
         logger.info("===== /answer {} {} =====", sessionId, answer);
         try {
             MatchSituationDTO matchSituationDTO = gameService.teamAnswer(sessionId, answer);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
     }
     
 
-    public ApiResult teamUseSkill(
+    @Override
+    public ApiResult<MatchSituationDTO> teamUseSkill(
             String sessionId,
             String skillName
             ) {
         logger.info("===== /use-skill {} {} =====", sessionId, skillName);
         try {
             MatchSituationDTO matchSituationDTO = gameService.teamUseSkill(sessionId, skillName);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
     }
 
     @CrossOrigin
     @RequestMapping(value = "/pictures",method=RequestMethod.GET)
-    public ApiResult pictures(HttpServletResponse response,
+    public ApiResult<String> pictures(HttpServletResponse response,
             @RequestParam("id") String id
             ) {
         logger.info("===== /pictures {} =====", id);
@@ -187,31 +152,59 @@ public class GameController implements StillstandingApi {
 
         File file = new File(filePathName);
         if (!file.exists()) {
-            return new ApiResult("文件名找不到文件！" + file.getAbsolutePath());
+            return new ApiResult<>("文件名找不到文件！" + file.getAbsolutePath());
         }
         try {
             FileTool.putFileToResponse(response, file, fileName);
         } catch (Exception e) {
-            return new ApiResult(new StillStandingException(e.getMessage(), -1));
+            return new ApiResult<>(e.getMessage(), -1);
         }
-        return new ApiResult("成功");
+        return new ApiResult<>("成功");
     }
 
     @Override
-    public ApiResult nextQustion(String sessionId) {
+    public ApiResult<MatchSituationDTO> nextQustion(String sessionId) {
         logger.info("===== /nextQustion {}=====", sessionId);
         
         try {
             MatchSituationDTO matchSituationDTO = gameService.nextQustion(sessionId);
-            String payload = objectMapper.writeValueAsString(matchSituationDTO);
-            return new ApiResult(payload);
+            return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
-            return new ApiResult(e);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ApiResult(e);
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
         }
+    }
+
+    @Override
+    public ApiResult<List<TeamConstInfoDTO>> listTeams() {
+        logger.info("===== listTeams =====");
+        
+            Collection<Team> teams = teamService.listTeams();
+            List<TeamConstInfoDTO> teamConstInfoDTOs = new ArrayList<>();
+            teams.forEach(team -> teamConstInfoDTOs.add(team.toTeamDTO()));
+            return new ApiResult<>(teamConstInfoDTOs);
+        
+    }
+    
+    @Override
+    public ApiResult<List<TeamConstInfoDTO>> updateTeam(
+            TeamConstInfoDTO teamConstInfoDTO
+            ) {
+        logger.info("===== updateTeam {} =====", teamConstInfoDTO);
+        // TODO 中途失败回滚
+        
+        try {
+            if (!teamService.existTeam(teamConstInfoDTO.getName())) {
+                teamService.creatTeam(teamConstInfoDTO.getName());
+            }
+            teamService.setPickTagsForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getPickTags());
+            teamService.setBanTagsForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getBanTags());
+            teamService.setRoleForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getRoleName());
+        } catch (StillStandingException e) {
+            e.printStackTrace();
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
+        }
+        return listTeams();
     }
     
 }

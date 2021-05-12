@@ -2,57 +2,31 @@ package com.zaca.stillstanding.core.match;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.zaca.stillstanding.domain.buff.BuffModel;
+import com.zaca.stillstanding.core.buff.BuffEffect;
+import com.zaca.stillstanding.core.buff.RunTimeBuff;
+import com.zaca.stillstanding.core.buff.ScoreComboBuffEffect;
+import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.match.strategy.BaseMatchStrategy;
-import com.zaca.stillstanding.domain.buff.BuffEffect;
-import com.zaca.stillstanding.domain.buff.RunTimeBuff;
-import com.zaca.stillstanding.domain.buff.ScoreComboBuffEffect;
-import com.zaca.stillstanding.domain.buff.ScoreScaleBuffEffect;
-import com.zaca.stillstanding.domain.dto.AnswerType;
-import com.zaca.stillstanding.domain.dto.EventType;
-import com.zaca.stillstanding.domain.dto.MatchEvent;
-import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.domain.dto.MatchState;
-import com.zaca.stillstanding.domain.dto.TeamRuntimeInfoDTO;
-import com.zaca.stillstanding.domain.dto.event.AnswerResultEvent;
-import com.zaca.stillstanding.domain.dto.event.FinishEvent;
-import com.zaca.stillstanding.domain.dto.event.SkillResultEvent;
-import com.zaca.stillstanding.domain.dto.event.StartMatchEvent;
-import com.zaca.stillstanding.domain.dto.event.StubEvent;
-import com.zaca.stillstanding.domain.dto.event.SwitchTeamEvent;
-import com.zaca.stillstanding.domain.event.MatchEventFactory;
-import com.zaca.stillstanding.domain.question.Question;
-import com.zaca.stillstanding.domain.skill.BaseRole;
-import com.zaca.stillstanding.domain.skill.BaseSkill;
-import com.zaca.stillstanding.domain.skill.SkillSlot;
-import com.zaca.stillstanding.domain.skill.effect.AddBuffSkillEffect;
-import com.zaca.stillstanding.domain.skill.effect.ISkillEffect;
-import com.zaca.stillstanding.domain.team.HealthType;
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.event.AnswerResultEvent;
+import com.zaca.stillstanding.dto.event.FinishEvent;
+import com.zaca.stillstanding.dto.event.SkillResultEvent;
+import com.zaca.stillstanding.dto.event.StartMatchEvent;
+import com.zaca.stillstanding.dto.event.SwitchQuestionEvent;
+import com.zaca.stillstanding.dto.event.SwitchTeamEvent;
+import com.zaca.stillstanding.dto.match.AnswerType;
+import com.zaca.stillstanding.dto.match.MatchSituationDTO;
+import com.zaca.stillstanding.dto.match.MatchState;
+import com.zaca.stillstanding.dto.team.TeamRuntimeInfoDTO;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.exception.TeamDeadException;
-import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.GameService;
-import com.zaca.stillstanding.service.QuestionService;
-import com.zaca.stillstanding.service.RoleSkillService;
-import com.zaca.stillstanding.service.TeamService;
 
 public class BaseMatch {
     
@@ -67,12 +41,11 @@ public class BaseMatch {
 	private Question currentQuestion;
 	
 	protected AnswerRecorder recorder = new AnswerRecorder();
-	
-	//protected List<MatchEvent> events = new ArrayList<>();
+
 	
 	public AnswerResultEvent answerResultEvent;
 	public SkillResultEvent skillResultEvent;
-	public StubEvent stubEvent;
+	public SwitchQuestionEvent switchQuestionEvent;
 	public SwitchTeamEvent switchTeamEvent;
 	public FinishEvent finishEvent;
 	public StartMatchEvent startMatchEvent;
@@ -107,7 +80,7 @@ public class BaseMatch {
 	    setCurrentTeamIndex(teams.size() - 1);
 	    strategy.switchToNextTeam();
 	    eventsClear();
-	    this.startMatchEvent = MatchEventFactory.getTypeStartTeam(getCurrentTeamIndex(), this.teams);
+	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teams);
         //events.add(checkSwitchQuestionEvent());
 	    this.state = MatchState.WAIT_GENERATE_QUESTION;
     }
@@ -115,7 +88,7 @@ public class BaseMatch {
 	private void eventsClear() {
 	    this.answerResultEvent = null;
 	    this.skillResultEvent = null;
-	    this.stubEvent = null;
+	    this.switchQuestionEvent = null;
 	    this.switchTeamEvent = null;
 	    this.finishEvent = null;
 	    this.startMatchEvent = null;
@@ -149,7 +122,7 @@ public class BaseMatch {
 	
 	public void nextQustion() throws StillStandingException {
         eventsClear();
-        this.stubEvent = strategy.checkSwitchQuestionEvent();
+        this.switchQuestionEvent = strategy.checkSwitchQuestionEvent();
         //events.add(checkSwitchQuestionEvent());  
         this.state = MatchState.WAIT_ANSWER;
     }
@@ -298,8 +271,9 @@ public class BaseMatch {
         dto.setCurrentTeamIndex(this.getCurrentTeamIndex());
         dto.setAnswerResultEvent(answerResultEvent);
         dto.setSkillResultEvent(skillResultEvent);
-        dto.setStubEvent(stubEvent);
+        dto.setStartMatchEvent(startMatchEvent);
         dto.setSwitchTeamEvent(switchTeamEvent);
+        dto.setSwitchQuestionEvent(switchQuestionEvent);
         dto.setFinishEvent(finishEvent);
         List<TeamRuntimeInfoDTO> teamRuntimeInfos = new ArrayList<>(this.teams.size());
         this.teams.forEach(team -> teamRuntimeInfos.add(team.toTeamRuntimeInfoDTO()));

@@ -1,24 +1,21 @@
 package com.zaca.stillstanding.tool;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import com.zaca.stillstanding.controller.GameController;
-import com.zaca.stillstanding.domain.dto.ResourceType;
-import com.zaca.stillstanding.domain.question.Question;
-import com.zaca.stillstanding.domain.question.TagManager;
+import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.core.question.TagManager;
+import com.zaca.stillstanding.dto.question.ResourceType;
 import com.zaca.stillstanding.exception.QuestionFormatException;
 import com.zaca.stillstanding.exception.StillStandingException;
 

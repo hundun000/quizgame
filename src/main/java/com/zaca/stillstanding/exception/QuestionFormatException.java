@@ -1,7 +1,5 @@
 package com.zaca.stillstanding.exception;
 
-import java.security.spec.ECField;
-
 public class QuestionFormatException extends StillStandingException {
 
 	/**

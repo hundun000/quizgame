@@ -2,11 +2,8 @@ package com.zaca.stillstanding.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
@@ -14,20 +11,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zaca.stillstanding.core.SessionDataPackage;
 import com.zaca.stillstanding.core.match.BaseMatch;
 import com.zaca.stillstanding.core.match.MatchRecord;
 import com.zaca.stillstanding.core.match.strategy.BaseMatchStrategy;
 import com.zaca.stillstanding.core.match.strategy.EndlessStrategy;
 import com.zaca.stillstanding.core.match.strategy.PreStrategy;
-import com.zaca.stillstanding.domain.SessionDataPackage;
-import com.zaca.stillstanding.domain.dto.EventType;
-import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
-import com.zaca.stillstanding.domain.dto.MatchEvent;
-import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
-import com.zaca.stillstanding.domain.team.Team;
-import com.zaca.stillstanding.exception.NotFoundException;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.match.MatchConfigDTO;
+import com.zaca.stillstanding.dto.match.MatchSituationDTO;
 import com.zaca.stillstanding.exception.StillStandingException;
-import com.zaca.stillstanding.tool.QuestionTool;
 
 /**
  *

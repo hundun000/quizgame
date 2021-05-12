@@ -1,6 +1,5 @@
 package com.zaca.stillstanding.gui;
 
-import java.awt.EventQueue;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.core.match.strategy.PreStrategy;
-import com.zaca.stillstanding.domain.dto.MatchConfigDTO;
-import com.zaca.stillstanding.domain.dto.MatchSituationDTO;
+import com.zaca.stillstanding.dto.match.MatchConfigDTO;
+import com.zaca.stillstanding.dto.match.MatchSituationDTO;
 import com.zaca.stillstanding.service.GameService;
-import com.zaca.stillstanding.service.QuestionService;
-import com.zaca.stillstanding.service.TeamService;
 
 /**
  * @author hundun

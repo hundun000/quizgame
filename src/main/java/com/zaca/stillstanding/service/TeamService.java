@@ -1,18 +1,13 @@
 package com.zaca.stillstanding.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.domain.question.TagManager;
-import com.zaca.stillstanding.domain.skill.SkillSlot;
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;

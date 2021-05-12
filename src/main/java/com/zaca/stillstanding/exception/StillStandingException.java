@@ -1,12 +1,11 @@
 package com.zaca.stillstanding.exception;
 
-import com.zaca.stillstanding.domain.dto.IApiResult;
 
 /**
  * @author hundun
  * Created on 2019/10/12
  */
-public class StillStandingException extends Exception implements IApiResult{
+public class StillStandingException extends Exception {
     
     private static final long serialVersionUID = 6572553799656923229L;
     
@@ -21,22 +20,22 @@ public class StillStandingException extends Exception implements IApiResult{
         this.code = code;
     }
 
-    @Override
+    
     public int getRetcode() {
         return code;
     }
 
-    @Override
+    
     public int getStatus() {
         return 400;
     }
 
-    @Override
+    
     public String getPayload() {
         return null;
     };
     
-    @Override
+    
     public String getMessage() {
         return super.getMessage();
     }

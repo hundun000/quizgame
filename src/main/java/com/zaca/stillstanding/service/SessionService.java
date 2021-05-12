@@ -15,11 +15,10 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.domain.SessionDataPackage;
-import com.zaca.stillstanding.domain.question.Question;
+import com.zaca.stillstanding.core.SessionDataPackage;
+import com.zaca.stillstanding.core.question.Question;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
-import com.zaca.stillstanding.tool.QuestionTool;
 
 /**
  * @author hundun

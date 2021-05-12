@@ -1,27 +1,18 @@
 package com.zaca.stillstanding.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.domain.SessionDataPackage;
-import com.zaca.stillstanding.domain.dto.ResourceType;
-import com.zaca.stillstanding.domain.question.Question;
-import com.zaca.stillstanding.domain.team.Team;
-import com.zaca.stillstanding.exception.NotFoundException;
-import com.zaca.stillstanding.exception.QuestionFormatException;
+import com.zaca.stillstanding.core.SessionDataPackage;
+import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.dto.question.ResourceType;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.tool.QuestionTool;
 

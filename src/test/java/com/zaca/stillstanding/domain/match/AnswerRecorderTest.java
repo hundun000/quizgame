@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.zaca.stillstanding.core.match.AnswerRecorder;
-import com.zaca.stillstanding.domain.dto.AnswerType;
+import com.zaca.stillstanding.dto.match.AnswerType;
 
 /**
  * @author hundun

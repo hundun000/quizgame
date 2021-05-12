@@ -6,10 +6,9 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.domain.skill.BaseRole;
-import com.zaca.stillstanding.domain.skill.BaseSkill;
-import com.zaca.stillstanding.domain.skill.BaseSkillFactory;
-import com.zaca.stillstanding.domain.skill.SkillSlot;
+import com.zaca.stillstanding.core.role.BaseRole;
+import com.zaca.stillstanding.core.skill.BaseSkillFactory;
+import com.zaca.stillstanding.core.skill.SkillSlot;
 
 /**
  * @author hundun

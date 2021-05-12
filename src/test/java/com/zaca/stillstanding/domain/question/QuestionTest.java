@@ -11,7 +11,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.zaca.stillstanding.domain.team.Team;
+import com.zaca.stillstanding.core.question.TagManager;
+import com.zaca.stillstanding.core.team.Team;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.TeamService;
