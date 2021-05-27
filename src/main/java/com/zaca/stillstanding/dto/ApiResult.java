@@ -40,7 +40,7 @@ public class ApiResult<T> {
         this.message = SUCCESS_MESSAGE;
         this.status = SUCCESS_STATUS;
         this.payload = payload;
-        this.retcode = -1;
+        this.retcode = 0;
     }
 
 

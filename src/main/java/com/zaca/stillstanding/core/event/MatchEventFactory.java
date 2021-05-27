@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaca.stillstanding.core.skill.BaseSkill;
+import com.zaca.stillstanding.core.skill.SkillConstData;
 import com.zaca.stillstanding.core.team.HealthType;
 import com.zaca.stillstanding.core.team.Team;
 import com.zaca.stillstanding.dto.event.AnswerResultEvent;
@@ -56,6 +56,7 @@ public class MatchEventFactory {
         SwitchTeamEvent event = new SwitchTeamEvent();
         event.setType(EventType.SWITCH_TEAM);
         event.setFromTeamName(lastTeam.getName());
+        event.setToTeamName(currentTeam.getName());
         return event;
     }
     
@@ -77,7 +78,7 @@ public class MatchEventFactory {
     
     public static final String KEY_SKILL_NAME = "skill_name";
 
-    public static SkillResultEvent getTypeSkillSuccess(String teamName, String roleName, BaseSkill skill, int skillRemainTime) {
+    public static SkillResultEvent getTypeSkillSuccess(String teamName, String roleName, SkillConstData skill, int skillRemainTime) {
         SkillResultEvent event = new SkillResultEvent();
         event.setType(EventType.SKILL_SUCCESS);
         event.setTeamName(teamName);
@@ -90,7 +91,7 @@ public class MatchEventFactory {
         return event;
     }
     
-    public static SkillResultEvent getTypeSkillUseOut(String teamName, String roleName, BaseSkill skill) {
+    public static SkillResultEvent getTypeSkillUseOut(String teamName, String roleName, SkillConstData skill) {
         SkillResultEvent event = new SkillResultEvent();
         event.setType(EventType.SKILL_USE_OUT);
         event.setTeamName(teamName);
@@ -103,10 +104,12 @@ public class MatchEventFactory {
         return event;
     }
     
-    public static AnswerResultEvent getTypeAnswerResult(AnswerType answerType, int addScore, int currentScore, HealthType healthType, int currentHealth) {
+    public static AnswerResultEvent getTypeAnswerResult(AnswerType answerType, int addScore, String addScoreTeamName) {
         AnswerResultEvent event = new AnswerResultEvent();
         event.setType(EventType.ANSWER_RESULT);
         event.setAddScore(addScore);
+        event.setAddScore(addScore);
+        event.setAddScoreTeamName(addScoreTeamName);
         event.setResult(answerType);
         return event;
     }

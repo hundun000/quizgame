@@ -12,8 +12,8 @@ import com.zaca.stillstanding.core.buff.ScoreComboBuffEffect;
 import com.zaca.stillstanding.core.buff.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.core.role.BaseRole;
-import com.zaca.stillstanding.core.skill.BaseSkill;
+import com.zaca.stillstanding.core.role.RoleConstData;
+import com.zaca.stillstanding.core.skill.SkillConstData;
 import com.zaca.stillstanding.core.skill.effect.AddBuffSkillEffect;
 import com.zaca.stillstanding.core.skill.effect.ISkillEffect;
 import com.zaca.stillstanding.core.team.HealthType;
@@ -89,11 +89,10 @@ public abstract class BaseMatchStrategy {
         
         int currentHealth = calculateCurrentHealth();
         
-        if (currentHealth == 0) {
-            parent.getCurrentTeam().setAlive(false);
-        }
+        parent.getCurrentTeam().setHealth(currentHealth);
         
-        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, parent.getCurrentTeam().getMatchScore(), this.healthType, currentHealth);
+        
+        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, parent.getCurrentTeam().getName());
     }
 
     /**
@@ -138,16 +137,15 @@ public abstract class BaseMatchStrategy {
     }
     
     public FinishEvent checkFinishEvent() {
-        boolean allDie = true;
+        boolean anyDie = false;
         for (Team team : parent.getTeams()) {
-            if (team.isAlive()) {
-                allDie = false;
+            if (!team.isAlive()) {
+                anyDie = true;
                 break;
             }
         }
-        if (allDie) {
-//          JSONObject scores = new JSONObject();
-//          teams.forEach(item -> scores.put(item.getName(), item.getMatchScore()));
+        if (anyDie) {
+
             Map<String, Integer> scores = new HashMap<>(parent.getTeams().size());
             parent.getTeams().forEach(item -> scores.put(item.getName(), item.getMatchScore()));
             return MatchEventFactory.getTypeFinish(scores);
@@ -177,12 +175,12 @@ public abstract class BaseMatchStrategy {
         
     }
     
-    protected abstract int calculateCurrentHealth();
+    public abstract int calculateCurrentHealth();
     
     public SkillResultEvent generalUseSkill(String skillName) throws StillStandingException {
         SkillResultEvent newEvents; 
-        BaseRole role = roleSkillService.getRole(parent.getCurrentTeam().getRoleName());
-        BaseSkill skill = role.getSkill(skillName);
+        RoleConstData role = roleSkillService.getRole(parent.getCurrentTeam().getRoleName());
+        SkillConstData skill = role.getSkill(skillName);
         
         boolean success = parent.getCurrentTeam().getRoleRunTimeData().useOnce(skillName);
         if (success) {
@@ -205,7 +203,7 @@ public abstract class BaseMatchStrategy {
     
     
     
-    private SkillResultEvent getSkillSuccessMatchEvent(Team team, BaseSkill skill) throws StillStandingException {
+    private SkillResultEvent getSkillSuccessMatchEvent(Team team, SkillConstData skill) throws StillStandingException {
         int skillRemainTime = team.getRoleRunTimeData().getSkillRemainTimes().get(skill.getName());
         return MatchEventFactory.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill, skillRemainTime);
     }

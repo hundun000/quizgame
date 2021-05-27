@@ -76,9 +76,14 @@ public class BaseMatch {
 	
 
 	public void start() throws StillStandingException {
-        teams.forEach(team -> team.resetForMatch());
-	    setCurrentTeamIndex(teams.size() - 1);
-	    strategy.switchToNextTeam();
+	    setCurrentTeamIndex(0);
+        setCurrentTeam(teams.get(0));
+        
+        for (Team team : teams) {
+            int currentHealth = this.strategy.calculateCurrentHealth();
+            team.resetForMatch(currentHealth);
+        }
+        
 	    eventsClear();
 	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teams);
         //events.add(checkSwitchQuestionEvent());

@@ -38,7 +38,7 @@ public class PreStrategy extends BaseMatchStrategy {
 
 
     @Override
-    protected int calculateCurrentHealth() {
+    public int calculateCurrentHealth() {
         /*
          * 累计答n题后死亡
          */

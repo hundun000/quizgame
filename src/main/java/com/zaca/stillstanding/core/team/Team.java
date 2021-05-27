@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.zaca.stillstanding.core.buff.RunTimeBuff;
-import com.zaca.stillstanding.core.role.BaseRole;
+import com.zaca.stillstanding.core.role.RoleConstData;
 import com.zaca.stillstanding.core.role.RoleRuntimeData;
+import com.zaca.stillstanding.dto.buff.BuffDTO;
 import com.zaca.stillstanding.dto.team.TeamConstInfoDTO;
 import com.zaca.stillstanding.dto.team.TeamRuntimeInfoDTO;
 
@@ -21,12 +22,13 @@ public class Team {
 	private final String name;
 	private List<String> pickTags;
 	private List<String> banTags;
-	private BaseRole role;
+	private RoleConstData role;
 	
 	private RoleRuntimeData roleRuntimeData;
 	
 	private int matchScore;
-	boolean alive;
+	private int health;
+	
 	private List<RunTimeBuff> buffs = new ArrayList<>();
 	
 	private double hitPickRate;
@@ -34,12 +36,12 @@ public class Team {
 	
 	public Team(String name) {
 		this.name = name;
-		resetForMatch();
+		resetForMatch(1);
 	}
 	
-	public void resetForMatch() {
+	public void resetForMatch(int currentHealth) {
 	    this.matchScore = 0;
-        this.alive = true;
+        setHealth(currentHealth);
         if (role != null) {
             this.roleRuntimeData = new RoleRuntimeData(role);
         }
@@ -92,24 +94,21 @@ public class Team {
 	public String getName() {
         return name;
     }
-	
-	public void setAlive(boolean alive) {
-        this.alive = alive;
-    }
+
 	
 	public boolean isAlive() {
-        return alive;
+        return this.health > 0;
     }
 
     public String getRoleName() {
         return role.getName();
     }
     
-    public BaseRole getRole() {
+    public RoleConstData getRole() {
         return role;
     }
 
-    public void setRole(BaseRole role) {
+    public void setRole(RoleConstData role) {
         this.role = role;
         this.roleRuntimeData = new RoleRuntimeData(role);
     }
@@ -125,6 +124,11 @@ public class Team {
     public List<RunTimeBuff> getBuffs() {
         return buffs;
     }
+    
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
 	
 	public void addBuff(RunTimeBuff newBuff) {
         for (RunTimeBuff buff : buffs) {
@@ -152,10 +156,11 @@ public class Team {
         dto.setRoleName(role.getName());
         dto.setMatchScore(matchScore);
         dto.setSkillRemainTimes(roleRuntimeData.getSkillRemainTimes());
-        Map<String, Integer> buffsData = new HashMap<>();
-        buffs.forEach(item -> buffsData.put(item.getModel().getName(), item.getDuration()));
-        dto.setBuffs(buffsData);
-        dto.setAlive(alive);
+        List<BuffDTO> buffDTOs = new ArrayList<>();
+        buffs.forEach(item -> buffDTOs.add(item.toBuffDTO()));
+        dto.setBuffs(buffDTOs);
+        dto.setAlive(isAlive());
+        dto.setHealth(health);
         return dto;
     }
 }

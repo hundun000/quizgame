@@ -1,0 +1,21 @@
+{
+    "apps":[
+    {
+        "name":"yzdd",
+        "cwd":".",
+        "script":"/usr/bin/java",
+        "args":[
+            "-jar",
+            "-Xmx256m",
+            "stillstanding-0.0.1-SNAPSHOT.jar"
+            
+        ],
+        "node_args":[],
+        "log_date_format":"YYYY-MM-DD HH:mm Z",
+        "exec_interpreter":"",
+        "exec_mode":"fork",
+        "error_file" : "yzdd-err.log",
+        "out_file"   : "yzdd-out.log"
+     }
+   ]
+}

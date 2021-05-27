@@ -69,6 +69,9 @@ public class QuestionService {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
         Question question = null;
         int i = 0;  
+        if (sessionDataPackage.getQuestionIds().isEmpty()) {
+            throw new StillStandingException("题库已经空了", -1);
+        }
         String questionId = sessionDataPackage.getQuestionIds().get(i);
         question = questionPool.get(questionId); 
            

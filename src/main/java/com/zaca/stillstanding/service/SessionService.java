@@ -34,7 +34,7 @@ public class SessionService {
     
     Map<String, SessionDataPackage> dataPackages = new HashMap<>();
     
-    private Random shuffleRandom = new Random(1);
+    private Random shuffleRandom = new Random(System.currentTimeMillis());
     
     public SessionDataPackage createSession(String questionPackageName) throws StillStandingException {
         

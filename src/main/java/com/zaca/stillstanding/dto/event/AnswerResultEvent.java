@@ -12,4 +12,5 @@ import lombok.Data;
 public class AnswerResultEvent extends MatchEvent {
     AnswerType result;
     int addScore;
+    String addScoreTeamName;
 }

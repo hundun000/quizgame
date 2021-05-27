@@ -11,11 +11,11 @@ public class RoleRuntimeData {
     
     private Map<String, Integer> skillRemainTimes = new HashMap<>();
 
-    public RoleRuntimeData(BaseRole role) {
+    public RoleRuntimeData(RoleConstData role) {
         resetRemain(role);
     }
     
-    public void resetRemain(BaseRole role) {
+    public void resetRemain(RoleConstData role) {
         skillRemainTimes.clear();
         role.getSkillSlots().forEach(skillSlot -> skillRemainTimes.put(skillSlot.getSkill().getName(), skillSlot.getFullCount()));
     }

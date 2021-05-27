@@ -61,10 +61,24 @@ public class GameController implements StillstandingApi {
     @Autowired
     TeamService teamService;
 
+    @Override
+    public ApiResult<MatchSituationDTO> createMainMatch(
+            MatchConfigDTO matchConfigDTO
+            ) {
+        logger.info("===== /createPreMatch {} =====", matchConfigDTO);
+
+        try {
+            MatchSituationDTO matchSituationDTO = gameService.createMainMatch(matchConfigDTO);
+            return new ApiResult<>(matchSituationDTO);
+        } catch (StillStandingException e) {
+            e.printStackTrace();
+            return new ApiResult<>(e.getMessage(), e.getRetcode());
+        }
+    }
     
-    @RequestMapping(value="/createPreMatch", method=RequestMethod.POST)
+    @Override
     public ApiResult<MatchSituationDTO> createPreMatch(
-            @RequestBody MatchConfigDTO matchConfigDTO
+            MatchConfigDTO matchConfigDTO
             ) {
         logger.info("===== /createPreMatch {} =====", matchConfigDTO);
 

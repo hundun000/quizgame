@@ -16,6 +16,7 @@ import com.zaca.stillstanding.core.match.BaseMatch;
 import com.zaca.stillstanding.core.match.MatchRecord;
 import com.zaca.stillstanding.core.match.strategy.BaseMatchStrategy;
 import com.zaca.stillstanding.core.match.strategy.EndlessStrategy;
+import com.zaca.stillstanding.core.match.strategy.MainStrategy;
 import com.zaca.stillstanding.core.match.strategy.PreStrategy;
 import com.zaca.stillstanding.core.team.Team;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
@@ -63,6 +64,10 @@ public class GameService {
     
 
     public void initOtherServiceForTest() throws StillStandingException {
+        teamService.quickRegisterTeam("甲鱼队", Arrays.asList(), Arrays.asList(), "ZACA娘");
+        teamService.quickRegisterTeam("沙丁鱼队", Arrays.asList(), Arrays.asList(), "ZACA娘");
+        teamService.quickRegisterTeam("整合运动队", Arrays.asList(), Arrays.asList(), "ZACA娘");
+        teamService.quickRegisterTeam("罗德岛队", Arrays.asList(), Arrays.asList(), "ZACA娘");
         
         teamService.quickRegisterTeam("砍口垒同好组", Arrays.asList("单机游戏"), Arrays.asList("动画"), "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", Arrays.asList("动画"), Arrays.asList("单机游戏"), "ZACA娘");
@@ -101,6 +106,18 @@ public class GameService {
         logger.info("createPreMatch by {}", matchConfigDTO);
         
         PreStrategy strategy = new PreStrategy(questionService, teamService, roleSkillService, buffService);
+        
+        BaseMatch match = createMatch(strategy, matchConfigDTO);
+        logger.info("match created, id = {}", match.getSessionId());
+        
+        MatchSituationDTO matchSituationDTO = match.toMatchSituationDTO();
+        return matchSituationDTO;
+    }
+    
+    public MatchSituationDTO createMainMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
+        logger.info("createPreMatch by {}", matchConfigDTO);
+        
+        MainStrategy strategy = new MainStrategy(questionService, teamService, roleSkillService, buffService);
         
         BaseMatch match = createMatch(strategy, matchConfigDTO);
         logger.info("match created, id = {}", match.getSessionId());

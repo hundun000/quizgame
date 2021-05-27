@@ -25,7 +25,7 @@ public class EndlessStrategy extends BaseMatchStrategy {
     }
 
     @Override
-    protected int calculateCurrentHealth() {
+    public int calculateCurrentHealth() {
         /*
          * 一定不死亡
          */

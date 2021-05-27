@@ -26,7 +26,21 @@ public interface StillstandingApi {
             @RequestBody MatchConfigDTO matchConfigDTO
             );
     
+    @RequestMapping(
+            value = "/createPreMatch", 
+            method = RequestMethod.POST
+            )
+    ApiResult<MatchSituationDTO> createPreMatch(
+            @RequestBody MatchConfigDTO matchConfigDTO
+            );
     
+    @RequestMapping(
+            value = "/createMainMatch", 
+            method = RequestMethod.POST
+            )
+    ApiResult<MatchSituationDTO> createMainMatch(
+            @RequestBody MatchConfigDTO matchConfigDTO
+            );
     
     @RequestMapping(
             value = "/start", 

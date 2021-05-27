@@ -9,4 +9,5 @@ import lombok.Data;
 @Data
 public class SwitchTeamEvent extends MatchEvent {
     String fromTeamName;
+    String toTeamName;
 }

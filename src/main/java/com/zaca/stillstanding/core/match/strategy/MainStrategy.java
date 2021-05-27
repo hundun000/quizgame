@@ -13,16 +13,15 @@ import com.zaca.stillstanding.service.TeamService;
  * @author hundun
  * Created on 2019/09/10
  */
-public class MainMatch extends BaseMatchStrategy {
+public class MainStrategy extends BaseMatchStrategy {
     
 
 
-    public MainMatch(
+    public MainStrategy(
             QuestionService questionService, 
             TeamService teamService, 
             RoleSkillService roleSkillService,
-            BuffService buffService,
-            String sessionId
+            BuffService buffService
             ) {
         super(questionService, teamService, roleSkillService, buffService,
                 HealthType.CONSECUTIVE_WRONG_AT_LEAST
@@ -40,10 +39,11 @@ public class MainMatch extends BaseMatchStrategy {
         return MatchEventFactory.getTypeSwitchTeam(lastTeam, parent.getCurrentTeam());
     }
 
-
+    int fullHealth = 2;
+    
     @Override
-    protected int calculateCurrentHealth() {
-        int fullHealth = 1;
+    public int calculateCurrentHealth() {
+        
         /*
          * 连续答错数, 即为健康度的减少量。
          */

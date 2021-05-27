@@ -12,14 +12,14 @@ import com.zaca.stillstanding.exception.ModFormatException;
  * @author hundun
  * Created on 2019/10/08
  */
-public class BaseSkill {
+public class SkillConstData {
     
     private final String name;
     private final String description;
     private final List<String> eventArgs;
     private final List<ISkillEffect> backendEffects;
     
-    BaseSkill(String name, String description, List<String> frontendData, ISkillEffect... backendEffects) throws ModFormatException {
+    SkillConstData(String name, String description, List<String> frontendData, ISkillEffect... backendEffects) throws ModFormatException {
         this.name = name;
         this.description = description;
         

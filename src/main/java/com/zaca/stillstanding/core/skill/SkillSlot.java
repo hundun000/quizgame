@@ -5,15 +5,15 @@ package com.zaca.stillstanding.core.skill;
  */
 public class SkillSlot {
     
-    private final BaseSkill skill;
+    private final SkillConstData skill;
     private final int fullCount;
     
-    public SkillSlot(BaseSkill skill, int fullCount) {
+    public SkillSlot(SkillConstData skill, int fullCount) {
         this.skill = skill;
         this.fullCount = fullCount;
     }
 
-    public BaseSkill getSkill() {
+    public SkillConstData getSkill() {
         return skill;
     }
     

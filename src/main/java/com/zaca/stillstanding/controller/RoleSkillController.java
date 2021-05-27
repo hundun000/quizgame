@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zaca.stillstanding.core.role.BaseRole;
+import com.zaca.stillstanding.core.role.RoleConstData;
 import com.zaca.stillstanding.service.RoleSkillService;
 
 /**
@@ -30,7 +30,7 @@ public class RoleSkillController {
     @RequestMapping(value="", method=RequestMethod.GET)
     public Object listTeams() {
         logger.info("===== \"\" =====");
-        Collection<BaseRole> roles = roleSkillService.listRoles();
+        Collection<RoleConstData> roles = roleSkillService.listRoles();
         return roles;
     }
 

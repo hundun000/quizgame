@@ -1,4 +1,7 @@
 package com.zaca.stillstanding.core.buff;
+
+import com.zaca.stillstanding.dto.buff.BuffDTO;
+
 /**
  * @author hundun
  * Created on 2020/05/20
@@ -34,6 +37,14 @@ public class RunTimeBuff {
     
     public int getDuration() {
         return duration;
+    }
+
+    public BuffDTO toBuffDTO() {
+        BuffDTO dto = new BuffDTO();
+        dto.setName(this.model.getName());
+        dto.setDescription(this.model.getDescription());
+        dto.setDuration(duration);
+        return dto;
     }
 
 }

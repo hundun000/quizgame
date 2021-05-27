@@ -10,7 +10,7 @@ public class ScoreComboBuffEffect extends BuffEffect {
     }
 
     public int getScoreOffset(int buffDuration) {
-        return buffDuration > 0 ? buffDuration - 1 : 0;
+        return buffDuration > 0 ? buffDuration : 0;
     }
 
 }
