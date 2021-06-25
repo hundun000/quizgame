@@ -45,7 +45,9 @@ public class MatchEventFactory {
         List<RoleConstInfoDTO> roleConstInfoDTOs = new ArrayList<>();
         for (Team team : teams) {
             teamConstInfoDTOs.add(team.toTeamDTO());
-            roleConstInfoDTOs.add(team.getRole().toRoleConstInfoDTO());
+            if (team.getRole() != null) {
+                roleConstInfoDTOs.add(team.getRole().toRoleConstInfoDTO());
+            }
         }
         event.setTeamConstInfos(teamConstInfoDTOs);
         event.setRoleConstInfos(roleConstInfoDTOs);

@@ -5,7 +5,7 @@
 
 ### custom ###
 /data/questions
-/data/questions_test_small
+/data/questions*
 
 ### IntelliJ IDEA ###
 .idea

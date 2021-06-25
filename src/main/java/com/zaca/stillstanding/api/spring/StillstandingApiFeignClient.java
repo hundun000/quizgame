@@ -1,10 +1,12 @@
-package com.zaca.stillstanding.api;
+package com.zaca.stillstanding.api.spring;
 
 
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+
+import com.zaca.stillstanding.api.StillstandingApiFeignConfiguration;
 
 import feign.Response;
 

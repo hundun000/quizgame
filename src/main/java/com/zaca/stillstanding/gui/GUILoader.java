@@ -27,7 +27,6 @@ public class GUILoader implements CommandLineRunner{
     
     
     
-    MatchSituationDTO match;
     
     @Autowired
     GameService gameService;
@@ -40,12 +39,9 @@ public class GUILoader implements CommandLineRunner{
 //            public void run() {
 //                try {
                     if (usingGUI) {
-                        MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
-                        matchConfigDTO.setTeamNames(Arrays.asList("砍口垒同好组", "方舟同好组"));
-                        match = gameService.createPreMatch(matchConfigDTO);
                         
-                        frame = new MyFrame(match);
-                        frame.start();
+                        frame = new MyFrame(gameService);
+                        
                         
                         if (usingSmallFrame) {
                             frame.setBounds(frame.getX(), frame.getY(), SMALL_WIDTH, frame.getHeight());

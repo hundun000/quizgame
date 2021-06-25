@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.api;
+package com.zaca.stillstanding.api.spring;
 
 import java.util.List;
 

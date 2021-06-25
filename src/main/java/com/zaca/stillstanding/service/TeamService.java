@@ -67,14 +67,15 @@ public class TeamService {
 	}
 	
 	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
-        
-	    Team team = getTeam(teamName);
-	    
-        if (!roleSkillServic.existRole(roleName)) {
-            throw new NotFoundException("Role", roleName);
+        if (roleName != null) {
+            Team team = getTeam(teamName);
+            
+            if (!roleSkillServic.existRole(roleName)) {
+                throw new NotFoundException("Role", roleName);
+            }
+            
+            team.setRole(roleSkillServic.getRole(roleName));
         }
-        
-        team.setRole(roleSkillServic.getRole(roleName));
     }
 	
 	

@@ -8,7 +8,7 @@ import lombok.Data;
  * Created on 2021/05/15
  */
 @Data
-public class BuffDTO {
+public class RunTimeBuffDTO {
     String name;
     String description;
     int duration;

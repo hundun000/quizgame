@@ -71,7 +71,7 @@ public class GameService {
         
         teamService.quickRegisterTeam("砍口垒同好组", Arrays.asList("单机游戏"), Arrays.asList("动画"), "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", Arrays.asList("动画"), Arrays.asList("单机游戏"), "ZACA娘");
-        teamService.quickRegisterTeam("游客", Arrays.asList(), Arrays.asList(), "ZACA娘");
+        teamService.quickRegisterTeam("游客", Arrays.asList(), Arrays.asList(), null);
     }
     
     public MatchSituationDTO createEndlessMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
@@ -177,6 +177,26 @@ public class GameService {
     
     public MatchRecord getOneMatchRecord(String id) {
         return matchRecords.get(id);
+    }
+    
+    public MatchSituationDTO commandLineControl(String sessionId, String line) throws StillStandingException {
+        List<String> args = Arrays.asList(line.split(" "));
+        
+        String action = args.get(0);
+        String answerText;
+        
+        switch (action) {
+        case "ans":
+        case "answer":
+            answerText = args.get(1);
+            return teamAnswer(sessionId, answerText);
+        case "next":
+            return nextQustion(sessionId);
+        default:
+            break;
+        }
+        return null;
+        
     }
 
 }

@@ -1,16 +1,26 @@
 package com.zaca.stillstanding.gui;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.zaca.stillstanding.core.match.BaseMatch;
+import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.dto.match.MatchConfigDTO;
 import com.zaca.stillstanding.dto.match.MatchSituationDTO;
+import com.zaca.stillstanding.exception.StillStandingException;
+import com.zaca.stillstanding.service.GameService;
+
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -22,27 +32,26 @@ import javax.swing.JLabel;
  */
 public class MyFrame extends JFrame implements ISecondEventReceiver{
 
+    GameService gameService;
     
-    
-    
-    MatchSituationDTO match;
+    String matchId;
+    MatchSituationDTO matchSituationDTO;
     
     private JPanel contentPane;
     private JTextField input;
-    private JTextArea dataOutput;
+    private JTextArea matchSituationOutput;
     private JTextArea viewOutput; 
+    private JButton createAndStartButton;
+    private JButton nextQuestionButton;
+    private JButton answerAButton;
+    private JButton answerBButton;
+    private JButton answerCButton;
+    private JButton answerDButton;
     JLabel lblTime;
     
     int timerCount;
     Timer secondTimer;
-    boolean ignoreSecondTimer;
-    
-    public void start() throws Exception {
-        setVisible(true);
-        initGame();
-        initUIData();
-        initEvent();
-    }
+    //boolean ignoreSecondTimer;
 
     /**
      * Create the frame.
@@ -51,25 +60,66 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
      * @param questionService2 
      * @throws Exception 
      */
-    public MyFrame(MatchSituationDTO match) {
-        this.match = match;
+    public MyFrame(GameService gameService) {
+        this.gameService = gameService;
         
-        
+        setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 832, 723);
+        setBounds(100, 100, 832, 923);
+        
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
         
-        dataOutput = new JTextArea();
-        dataOutput.setBounds(22, 55, 403, 551);
-        contentPane.add(dataOutput);
+        matchSituationOutput = new JTextArea();
+        matchSituationOutput.setBounds(22, 55, 403, 551);
+        matchSituationOutput.setLineWrap(true);
+        contentPane.add(matchSituationOutput);
         
         input = new JTextField();
         input.setBounds(22, 623, 403, 29);
         contentPane.add(input);
         input.setColumns(10);
+        
+        createAndStartButton = new JButton("createAndStart");
+        createAndStartButton.setBounds(10, 660, 50, 29);
+        createAndStartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    createAndStartMatch();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        contentPane.add(createAndStartButton);
+        
+        nextQuestionButton = new JButton("nextQuestion");
+        nextQuestionButton.setBounds(70, 660, 50, 29);
+        nextQuestionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    matchSituationDTO = gameService.nextQustion(matchId);
+                } catch (StillStandingException e1) {
+                    e1.printStackTrace();
+                }
+                updateByNewMatchSituation();
+            }
+        });
+        contentPane.add(nextQuestionButton);
+        
+        answerAButton = new JButton("A");
+        answerAButton.setBounds(130, 660, 30, 29);
+        answerAButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+        contentPane.add(nextQuestionButton);
         
         viewOutput = new JTextArea();
         viewOutput.setBounds(452, 25, 347, 627);
@@ -78,34 +128,45 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         lblTime = new JLabel("Time:");
         lblTime.setBounds(22, 23, 108, 29);
         contentPane.add(lblTime);
-    }
-    
-    private void initGame() throws Exception {
-
-        //match.start();
-        //renewTimerCount(match.getEvents().get(0).getPayload().value("time").asInt());
-    }
-    
-    private void renewTimerCount(int value) {
-        ignoreSecondTimer = false;
-        timerCount = value;
-        lblTime.setText(String.valueOf(timerCount));
-    }
-    
-    private void renewTimerCountByAdd(int add) {
-        renewTimerCount(timerCount + add);
-    }
-    
-    private void initUIData() {
-        //dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
-    }
-    
-    private void initEvent() {
+        
         secondTimer = new Timer();
         secondTimer.schedule(new SecondTimerTask(this), 1000, 1000);
         
         input.addKeyListener(new MyKeyAdapter());
     }
+    
+    private void createAndStartMatch() throws Exception {
+        MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
+        matchConfigDTO.setTeamNames(Arrays.asList("游客"));
+        matchConfigDTO.setQuestionPackageName("questions");
+        
+        matchSituationDTO = gameService.createEndlessMatch(matchConfigDTO);
+        this.matchId = matchSituationDTO.getId();
+        
+        matchSituationDTO = gameService.startMatch(matchId);
+        
+        updateByNewMatchSituation();
+    }
+    
+    private void updateByNewMatchSituation() {
+        
+        matchSituationOutput.setText(matchSituationDTO.toString());
+        
+        if (matchSituationDTO.getSwitchQuestionEvent() != null) {
+            int newTimeCount = matchSituationDTO.getSwitchQuestionEvent().getTime();
+            
+            timerCount = newTimeCount;
+            lblTime.setText(String.valueOf(timerCount));
+        }
+        
+        if (matchSituationDTO.getAnswerResultEvent() != null) {
+            timerCount = 0;
+            lblTime.setText(String.valueOf(timerCount));
+        }
+
+    }
+    
+
     
     class MyKeyAdapter extends KeyAdapter {
 
@@ -115,75 +176,45 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
                String command = input.getText();
                input.setText("");
                
-//               if (!handleGUICommand(command)) {
-//                   try {
-//                    match.commandLineControl(command);
-//                    handleEvent(match);
-//                } catch (StillStandingException e1) {
-//                    dataOutput.setText("StillStandingException:" + e1.getMessage());
-//                    disableTimer();
-//                }
-//                   
-//                   
-//               }
+
+               try {
+                   matchSituationDTO = gameService.commandLineControl(matchId, command);
+                   updateByNewMatchSituation();
+               } catch (StillStandingException e1) {
+                   e1.printStackTrace();
+               }
+
+
 
             }
           }
     }
     
-    private boolean handleGUICommand(String command) {
-        switch (command) {
-        case "the world":
-            ignoreSecondTimer = !ignoreSecondTimer;
-            break;
-        default:
-            return false;
-        }
-        return true;
-    }
+
 
     @Override
     public void whenReceive() {
-        if (!ignoreSecondTimer) {
-            lblTime.setForeground(Color.BLACK);
-            renewTimerCountByAdd(-1);
-            
-            if (timerCount == 0) {
-                lblTime.setForeground(Color.RED);
-                ignoreSecondTimer = true;
+
+            if (timerCount > 0) {
+                lblTime.setForeground(Color.BLACK);
+                timerCount -= 1;
+                lblTime.setText(String.valueOf(timerCount));
                 
-//                try {
-//                    match.teamAnswerTimeout();
-//                    handleEvent(match);
-//                } catch (StillStandingException e) {
-//                    e.printStackTrace();
-//                }
-                
+                if (timerCount == 0) {
+                    lblTime.setForeground(Color.RED);
+                    try {
+                        matchSituationDTO = gameService.teamAnswer(matchId, Question.TIMEOUT_ANSWER_TEXT);
+                    } catch (StillStandingException e) {
+                        e.printStackTrace();
+                    }
+                    updateByNewMatchSituation();
+                }
+            } else {
+                lblTime.setForeground(Color.BLUE);
             }
-            
-        } else {
-            lblTime.setForeground(Color.BLUE);
-        }
     }
     
-    private void disableTimer() {
-        ignoreSecondTimer = true;
-        lblTime.setForeground(Color.BLUE);
-        lblTime.setText("unused");;
-    }
+
     
-    private void handleEvent(BaseMatch match) {
-//        if (match.containsEventByType(EventType.FINISH)) {
-//            dataOutput.setText("FINISH!");
-//            disableTimer();
-//            return;
-//        }
-//        
-//        if (match.containsEventByType(EventType.SWITCH_QUESTION)) {
-//            //renewTimerCount(match.getEventByType(EventType.SWITCH_QUESTION).getPayload().value("time").asInt());
-//            dataOutput.setText(JSON.toJSONString(FormatTool.matchToShortJSON(match), SerializerFeature.PrettyFormat) + "\n");
-//            return;
-//        }
-        
-    }
+
 }

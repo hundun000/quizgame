@@ -101,23 +101,7 @@ public class BaseMatch {
 
     
 	
-	public void commandLineControl(String line) throws StillStandingException {
-        List<String> args = Arrays.asList(line.split(" "));
-        
-        String action = args.get(0);
-        String answerText;
-        
-        switch (action) {
-        case "ans":
-        case "answer":
-            answerText = args.get(1);
-            teamAnswer(answerText);
-            break;
-        default:
-            break;
-        }
-        
-    }
+	
 	
 	
 	public void teamUseSkill(String skillName) throws StillStandingException {

@@ -21,7 +21,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaca.stillstanding.api.StillstandingApi;
+import com.zaca.stillstanding.api.spring.StillstandingApi;
 import com.zaca.stillstanding.core.team.Team;
 import com.zaca.stillstanding.dto.ApiResult;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
@@ -157,7 +157,7 @@ public class GameController implements StillstandingApi {
 
     @CrossOrigin
     @RequestMapping(value = "/pictures",method=RequestMethod.GET)
-    public ApiResult<String> pictures(HttpServletResponse response,
+    public void pictures(HttpServletResponse response,
             @RequestParam("id") String id
             ) {
         logger.info("===== /pictures {} =====", id);
@@ -166,14 +166,16 @@ public class GameController implements StillstandingApi {
 
         File file = new File(filePathName);
         if (!file.exists()) {
-            return new ApiResult<>("文件名找不到文件！" + file.getAbsolutePath());
+            logger.warn("文件名找不到文件！" + file.getAbsolutePath());
+            return;
         }
         try {
             FileTool.putFileToResponse(response, file, fileName);
         } catch (Exception e) {
-            return new ApiResult<>(e.getMessage(), -1);
+            e.printStackTrace();;
+            return;
         }
-        return new ApiResult<>("成功");
+        return;
     }
 
     @Override

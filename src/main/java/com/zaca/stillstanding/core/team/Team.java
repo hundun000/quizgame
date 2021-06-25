@@ -9,7 +9,7 @@ import java.util.Set;
 import com.zaca.stillstanding.core.buff.RunTimeBuff;
 import com.zaca.stillstanding.core.role.RoleConstData;
 import com.zaca.stillstanding.core.role.RoleRuntimeData;
-import com.zaca.stillstanding.dto.buff.BuffDTO;
+import com.zaca.stillstanding.dto.buff.RunTimeBuffDTO;
 import com.zaca.stillstanding.dto.team.TeamConstInfoDTO;
 import com.zaca.stillstanding.dto.team.TeamRuntimeInfoDTO;
 
@@ -153,12 +153,14 @@ public class Team {
     public TeamRuntimeInfoDTO toTeamRuntimeInfoDTO() {
         TeamRuntimeInfoDTO dto = new TeamRuntimeInfoDTO();
         dto.setName(name);
-        dto.setRoleName(role.getName());
         dto.setMatchScore(matchScore);
-        dto.setSkillRemainTimes(roleRuntimeData.getSkillRemainTimes());
-        List<BuffDTO> buffDTOs = new ArrayList<>();
-        buffs.forEach(item -> buffDTOs.add(item.toBuffDTO()));
-        dto.setBuffs(buffDTOs);
+        if (this.role != null) {
+            dto.setRoleName(role.getName());
+            dto.setSkillRemainTimes(roleRuntimeData.getSkillRemainTimes());
+        }
+        List<RunTimeBuffDTO> runTimeBuffDTOs = new ArrayList<>();
+        buffs.forEach(item -> runTimeBuffDTOs.add(item.toRunTimeBuffDTO()));
+        dto.setRunTimeBuffs(runTimeBuffDTOs);
         dto.setAlive(isAlive());
         dto.setHealth(health);
         return dto;

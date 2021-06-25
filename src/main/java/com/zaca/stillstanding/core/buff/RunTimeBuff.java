@@ -1,6 +1,6 @@
 package com.zaca.stillstanding.core.buff;
 
-import com.zaca.stillstanding.dto.buff.BuffDTO;
+import com.zaca.stillstanding.dto.buff.RunTimeBuffDTO;
 
 /**
  * @author hundun
@@ -39,8 +39,8 @@ public class RunTimeBuff {
         return duration;
     }
 
-    public BuffDTO toBuffDTO() {
-        BuffDTO dto = new BuffDTO();
+    public RunTimeBuffDTO toRunTimeBuffDTO() {
+        RunTimeBuffDTO dto = new RunTimeBuffDTO();
         dto.setName(this.model.getName());
         dto.setDescription(this.model.getDescription());
         dto.setDuration(duration);

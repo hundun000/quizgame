@@ -3,7 +3,7 @@ package com.zaca.stillstanding.dto.team;
 import java.util.List;
 import java.util.Map;
 
-import com.zaca.stillstanding.dto.buff.BuffDTO;
+import com.zaca.stillstanding.dto.buff.RunTimeBuffDTO;
 
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class TeamRuntimeInfoDTO {
     String roleName;
     int matchScore;
     Map<String, Integer> skillRemainTimes;
-    List<BuffDTO> buffs;
+    List<RunTimeBuffDTO> RunTimeBuffs;
     boolean alive;
     int health;
 }
