@@ -6,13 +6,14 @@ import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.zaca.stillstanding.core.buff.BuffEffect;
-import com.zaca.stillstanding.core.buff.RunTimeBuff;
-import com.zaca.stillstanding.core.buff.ScoreComboBuffEffect;
+
+import com.zaca.stillstanding.core.buff.BuffRuntime;
+import com.zaca.stillstanding.core.buff.effect.BuffEffect;
+import com.zaca.stillstanding.core.buff.effect.ScoreComboBuffEffect;
 import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.match.strategy.BaseMatchStrategy;
 import com.zaca.stillstanding.core.question.Question;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.event.AnswerResultEvent;
 import com.zaca.stillstanding.dto.event.FinishEvent;
 import com.zaca.stillstanding.dto.event.SkillResultEvent;
@@ -20,13 +21,16 @@ import com.zaca.stillstanding.dto.event.StartMatchEvent;
 import com.zaca.stillstanding.dto.event.SwitchQuestionEvent;
 import com.zaca.stillstanding.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.dto.match.AnswerType;
+import com.zaca.stillstanding.dto.match.ClientActionType;
 import com.zaca.stillstanding.dto.match.MatchSituationDTO;
 import com.zaca.stillstanding.dto.match.MatchState;
 import com.zaca.stillstanding.dto.team.TeamRuntimeInfoDTO;
 import com.zaca.stillstanding.exception.NotFoundException;
+import com.zaca.stillstanding.exception.StateException;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.exception.TeamDeadException;
 import com.zaca.stillstanding.service.GameService;
+import com.zaca.stillstanding.tool.MatchStateUtils;
 
 public class BaseMatch {
     
@@ -35,8 +39,8 @@ public class BaseMatch {
     protected final String sessionId;
 
     
-	protected List<Team> teams = new ArrayList<>();
-	private Team currentTeam;
+	protected List<TeamRuntime> teamRuntimes = new ArrayList<>();
+	
 	private int currentTeamIndex;
 	private Question currentQuestion;
 	
@@ -68,24 +72,26 @@ public class BaseMatch {
         strategy.initMatch(this);
     }
 	
-	public void initTeams(List<Team> teams) throws NotFoundException {
-		this.teams.clear();
-		this.teams.addAll(teams);
-		this.setCurrentTeam(null);
+	public void initTeams(List<TeamRuntime> teamRuntimes) throws NotFoundException {
+		this.teamRuntimes.clear();
+		this.teamRuntimes.addAll(teamRuntimes);
+		this.setCurrentTeam(-1);
 	}
 	
 
 	public void start() throws StillStandingException {
-	    setCurrentTeamIndex(0);
-        setCurrentTeam(teams.get(0));
+	    checkStateException(state, ClientActionType.START_MATCH);
+	    
+	    setCurrentTeam(0);
+
         
-        for (Team team : teams) {
+        for (TeamRuntime teamRuntime : teamRuntimes) {
             int currentHealth = this.strategy.calculateCurrentHealth();
-            team.resetForMatch(currentHealth);
+            teamRuntime.resetForMatch(currentHealth);
         }
         
 	    eventsClear();
-	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teams);
+	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teamRuntimes);
         //events.add(checkSwitchQuestionEvent());
 	    this.state = MatchState.WAIT_GENERATE_QUESTION;
     }
@@ -105,15 +111,23 @@ public class BaseMatch {
 	
 	
 	public void teamUseSkill(String skillName) throws StillStandingException {
-        eventsClear();
+	    checkStateException(state, ClientActionType.USE_SKILL);
+	    eventsClear();
         this.skillResultEvent = strategy.generalUseSkill(skillName);  
 	}
 	
 	public void nextQustion() throws StillStandingException {
+	    checkStateException(state, ClientActionType.NEXT_QUESTION);
         eventsClear();
-        this.switchQuestionEvent = strategy.checkSwitchQuestionEvent();
-        //events.add(checkSwitchQuestionEvent());  
+        this.switchQuestionEvent = strategy.checkSwitchQuestionEvent(); 
         this.state = MatchState.WAIT_ANSWER;
+    }
+	
+	
+	private void checkStateException(MatchState state, ClientActionType actionType) throws StateException {
+        if (!MatchStateUtils.check(state, actionType)) {
+            throw new StateException(state.name(), actionType.name());
+        }
     }
 	
 	
@@ -124,16 +138,15 @@ public class BaseMatch {
 //        return teamAnswer(Question.SKIP_ANSWER_TEXT);
 //    }
 	public void teamAnswerTimeout() throws StillStandingException {
+	   checkStateException(state, ClientActionType.ANSWER);
 	   eventsClear();
        generalAnswer(Question.TIMEOUT_ANSWER_TEXT);
-
     }
 	
 	public void teamAnswer(String answerText) throws StillStandingException {
+	    checkStateException(state, ClientActionType.ANSWER);
 	    eventsClear();
 	    generalAnswer(answerText);
-	    //events.addAll(newEvents);
-	    this.state = MatchState.WAIT_GENERATE_QUESTION;
     }
 
     /**
@@ -143,42 +156,32 @@ public class BaseMatch {
 	 * @throws StillStandingException
 	 */
 	private void generalAnswer(String answer) throws StillStandingException {
-	    if (!getCurrentTeam().isAlive()) {
-	        throw new TeamDeadException(getCurrentTeam().getName());
-	    }
-	    if (getCurrentQuestion() == null) {
-            throw new StillStandingException("当前没有待回答的题目", -1);
-        }
-	    
-	    
+
 	    AnswerType answerType = getCurrentQuestion().calculateAnswerType(answer);
 	    logger.info("generalAnswer:: {} is {}", answer, answerType);
-        // 1. 记录回答
+        // 记录回答
 		getRecorder().addRecord(getCurrentTeam().getName(), answer, getCurrentQuestion().getId(), answerType);
-		// 2. 结算加分与生命值
+		// 结算加分与生命值
 		this.answerResultEvent = strategy.addScoreAndCountHealth(answerType);
-        // 4.判断比赛结束
-        FinishEvent finishEvent = strategy.checkFinishEvent();
+		// 清空旧题
+        setCurrentQuestion(null);
+        // 结算buff
+        updateBuffsDuration(answerType);
+		// 判断比赛结束
+		this.finishEvent = strategy.checkFinishEvent();
         if (finishEvent == null) {
-            // 5.判断换队
+            // 判断换队
             this.switchTeamEvent = strategy.checkSwitchTeamEvent();
-//            // 6.换题
-//            newEvents.add(checkSwitchQuestionEvent());
-            // 6 清空旧题
-            setCurrentQuestion(null);
-            // 7.
-            updateBuffsDuration(answerType);
-        } else {
-            this.finishEvent = finishEvent;
         }
-
+        
+        this.state = MatchState.WAIT_GENERATE_QUESTION;
 	}
 
 	
 	private void updateBuffsDuration(AnswerType answerType) {
 	    // 某些BuffEffect有特殊的修改Duration规则
-	    for (RunTimeBuff buff : getCurrentTeam().getBuffs()) {
-            for (BuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+	    for (BuffRuntime buff : getCurrentTeam().getBuffs()) {
+            for (BuffEffect buffEffect : buff.getPrototype().getBuffEffects()) {
                 if (buffEffect instanceof ScoreComboBuffEffect) {
                     if (answerType == AnswerType.CORRECT) {
                         // 本身每回合所有buff会减1层。为了使答对后最终加1层，则在此处加2层
@@ -191,9 +194,9 @@ public class BaseMatch {
         }
 	    
 	    // 所有buff减少一层，然后清理已经没有层数的buff
-        Iterator<RunTimeBuff> iterator = getCurrentTeam().getBuffs().iterator();
+        Iterator<BuffRuntime> iterator = getCurrentTeam().getBuffs().iterator();
         while(iterator.hasNext()) {
-            RunTimeBuff buff = iterator.next();
+            BuffRuntime buff = iterator.next();
             buff.minusOneDurationAndCheckMaxDuration();
             if (buff.getDuration() <= 0) {
                 iterator.remove();
@@ -209,12 +212,16 @@ public class BaseMatch {
         return sessionId;
     }
 
-    public List<Team> getTeams() {
-        return teams;
+    public List<TeamRuntime> getTeams() {
+        return teamRuntimes;
     }
 
-    public Team getCurrentTeam() {
-        return currentTeam;
+    public TeamRuntime getCurrentTeam() {
+        if (currentTeamIndex >= 0) {
+            return teamRuntimes.get(currentTeamIndex);
+        } else {
+            return null;
+        }
     }
 
     public Question getCurrentQuestion() {
@@ -258,16 +265,18 @@ public class BaseMatch {
         dto.setId(this.getSessionId());
         dto.setQuestion(this.getCurrentQuestion() != null ? this.getCurrentQuestion().toQuestionDTO() : null);
         dto.setCurrentTeamIndex(this.getCurrentTeamIndex());
+        dto.setCurrentTeamRuntimeInfo(getCurrentTeam() != null ? getCurrentTeam().toTeamRuntimeInfoDTO() : null);
         dto.setAnswerResultEvent(answerResultEvent);
         dto.setSkillResultEvent(skillResultEvent);
         dto.setStartMatchEvent(startMatchEvent);
         dto.setSwitchTeamEvent(switchTeamEvent);
         dto.setSwitchQuestionEvent(switchQuestionEvent);
         dto.setFinishEvent(finishEvent);
-        List<TeamRuntimeInfoDTO> teamRuntimeInfos = new ArrayList<>(this.teams.size());
-        this.teams.forEach(team -> teamRuntimeInfos.add(team.toTeamRuntimeInfoDTO()));
+        List<TeamRuntimeInfoDTO> teamRuntimeInfos = new ArrayList<>(this.teamRuntimes.size());
+        this.teamRuntimes.forEach(team -> teamRuntimeInfos.add(team.toTeamRuntimeInfoDTO()));
         dto.setTeamRuntimeInfos(teamRuntimeInfos);
         dto.setState(state);
+        dto.setActionAdvices(MatchStateUtils.getValidClientActions(state));
         return dto;
     }
 
@@ -275,12 +284,10 @@ public class BaseMatch {
         this.currentQuestion = currentQuestion;
     }
 
-    public void setCurrentTeam(Team currentTeam) {
-        this.currentTeam = currentTeam;
-    }
 
-    public void setCurrentTeamIndex(int currentTeamIndex) {
+    public void setCurrentTeam(int currentTeamIndex) {
         this.currentTeamIndex = currentTeamIndex;
+        
     }
 
     public AnswerRecorder getRecorder() {

@@ -5,6 +5,6 @@ package com.zaca.stillstanding.gui;
  */
 public interface ISecondEventReceiver {
     
-    void whenReceive();
+    void whenReceiveSecondClock();
 
 }

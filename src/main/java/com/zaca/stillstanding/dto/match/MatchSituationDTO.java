@@ -5,6 +5,7 @@ package com.zaca.stillstanding.dto.match;
  */
 
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zaca.stillstanding.dto.event.AnswerResultEvent;
@@ -23,9 +24,11 @@ import lombok.Data;
 public class MatchSituationDTO {
     String id;
     QuestionDTO question;
+    TeamRuntimeInfoDTO currentTeamRuntimeInfo;
     int currentTeamIndex;
     List<TeamRuntimeInfoDTO> teamRuntimeInfos;
     MatchState state;
+    Set<ClientActionType> actionAdvices;
     
     AnswerResultEvent answerResultEvent;
     SkillResultEvent skillResultEvent;

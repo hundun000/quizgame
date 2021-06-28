@@ -8,7 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaca.stillstanding.core.skill.SkillConstData;
 import com.zaca.stillstanding.core.team.HealthType;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.event.AnswerResultEvent;
 import com.zaca.stillstanding.dto.event.EventType;
 import com.zaca.stillstanding.dto.event.FinishEvent;
@@ -38,15 +38,15 @@ public class MatchEventFactory {
         return false;
     }
     
-    public static StartMatchEvent getTypeStartMatch(List<Team> teams){
+    public static StartMatchEvent getTypeStartMatch(List<TeamRuntime> teamRuntimes){
         StartMatchEvent event = new StartMatchEvent();
         event.setType(EventType.START_MATCH);
         List<TeamConstInfoDTO> teamConstInfoDTOs = new ArrayList<>();
         List<RoleConstInfoDTO> roleConstInfoDTOs = new ArrayList<>();
-        for (Team team : teams) {
-            teamConstInfoDTOs.add(team.toTeamDTO());
-            if (team.getRole() != null) {
-                roleConstInfoDTOs.add(team.getRole().toRoleConstInfoDTO());
+        for (TeamRuntime teamRuntime : teamRuntimes) {
+            teamConstInfoDTOs.add(teamRuntime.getPrototype().toTeamConstInfoDTO());
+            if (teamRuntime.getRoleRuntime() != null) {
+                roleConstInfoDTOs.add(teamRuntime.getRoleRuntime().getPrototype().toRoleConstInfoDTO());
             }
         }
         event.setTeamConstInfos(teamConstInfoDTOs);
@@ -54,7 +54,7 @@ public class MatchEventFactory {
         return event;
     }
     
-    public static SwitchTeamEvent getTypeSwitchTeam(Team lastTeam, Team currentTeam) {
+    public static SwitchTeamEvent getTypeSwitchTeam(TeamRuntime lastTeam, TeamRuntime currentTeam) {
         SwitchTeamEvent event = new SwitchTeamEvent();
         event.setType(EventType.SWITCH_TEAM);
         event.setFromTeamName(lastTeam.getName());

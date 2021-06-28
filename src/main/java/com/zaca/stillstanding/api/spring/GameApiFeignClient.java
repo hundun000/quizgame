@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import com.zaca.stillstanding.api.StillstandingApiFeignConfiguration;
+import com.zaca.stillstanding.api.StillStandingApiFeignConfiguration;
 
 import feign.Response;
 
@@ -16,12 +16,12 @@ import feign.Response;
 
 
 @FeignClient(
-        name = "stillstandingApiService",
+        name = "gameApiFeignClient",
         url = "http://localhost:10100/api/game",
-        configuration = StillstandingApiFeignConfiguration.class
+        configuration = StillStandingApiFeignConfiguration.class
 )
 @Component
-public interface StillstandingApiFeignClient extends StillstandingApi {
+public interface GameApiFeignClient extends IGameApi {
     
     
     @RequestMapping(

@@ -12,7 +12,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.zaca.stillstanding.core.question.TagManager;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamPrototype;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.service.TeamService;
@@ -30,15 +31,15 @@ public class QuestionTest {
 		Collection<String> tags = new ArrayList<>();
 		tags.add("动画");
 		teamService.setBanTagsForTeam(testTeamName, (List<String>) tags);
-		Team team = teamService.getTeam(testTeamName);
+		TeamPrototype teamRuntime = teamService.getTeam(testTeamName);
 		
 		tags = new HashSet<>();
 		tags.add("动画");
 		tags.add("fz");
-		assertEquals(false, team.isNotBan((Set<String>) tags));
+		assertEquals(false, teamRuntime.isNotBan((Set<String>) tags));
 	
 		tags.remove("动画");
-		assertEquals(true, team.isNotBan((Set<String>) tags));
+		assertEquals(true, teamRuntime.isNotBan((Set<String>) tags));
 		
 	}
 

@@ -2,7 +2,7 @@ package com.zaca.stillstanding.core.match.strategy;
 
 import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.team.HealthType;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.event.SwitchTeamEvent;
 import com.zaca.stillstanding.service.BuffService;
 import com.zaca.stillstanding.service.QuestionService;
@@ -34,7 +34,7 @@ public class MainStrategy extends BaseMatchStrategy {
         /*
          * 每一题换队（被调用一定换）
          */
-        Team lastTeam = parent.getCurrentTeam();
+        TeamRuntime lastTeam = parent.getCurrentTeam();
         switchToNextTeam();
         return MatchEventFactory.getTypeSwitchTeam(lastTeam, parent.getCurrentTeam());
     }

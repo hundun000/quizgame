@@ -1,9 +1,12 @@
 package com.zaca.stillstanding.service;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.zaca.stillstanding.core.SessionDataPackage;
 import com.zaca.stillstanding.core.question.Question;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.question.ResourceType;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.tool.QuestionTool;
@@ -34,22 +37,22 @@ public class QuestionService {
 	Map<String, Question> questionPool = new HashMap<>();
 
 	
-	public Question getNewQuestionForTeam(String sessionId, Team team, boolean removeToDirty) throws StillStandingException {
+	public Question getNewQuestionForTeam(String sessionId, TeamRuntime teamRuntime, boolean removeToDirty) throws StillStandingException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
   
 	    Question question;
-		boolean hitPick = hitRandom.nextDouble() < team.getHitPickRate();
+		boolean hitPick = hitRandom.nextDouble() < teamRuntime.getHitPickRate();
 		if (hitPick) {
-		    question = getFirstPickQuestionIndex(sessionId, team);
-			team.resetHitPickRate();
+		    question = getFirstPickQuestionIndex(sessionId, teamRuntime);
+			teamRuntime.resetHitPickRate();
 			logger.debug("FirstPickQuestionIndex");
 		} else {
-		    question = getFirstNotBanQuestionIndex(sessionId, team);
-			team.increaseHitPickRate();
+		    question = getFirstNotBanQuestionIndex(sessionId, teamRuntime);
+			teamRuntime.increaseHitPickRate();
 			logger.debug("FirstNotBanQuestionIndex");
 		}
 		if (question == null) {
-		    question = getFirstQuestionIgnorePickBan(sessionId, team);
+		    question = getFirstQuestionIgnorePickBan(sessionId, teamRuntime);
 		}
 		logger.info("questionDTO = {}", question.toQuestionDTO());
 		
@@ -65,7 +68,7 @@ public class QuestionService {
 	}
 	
 	
-	private Question getFirstQuestionIgnorePickBan(String sessionId, Team team) throws StillStandingException {
+	private Question getFirstQuestionIgnorePickBan(String sessionId, TeamRuntime teamRuntime) throws StillStandingException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
         Question question = null;
         int i = 0;  
@@ -79,7 +82,7 @@ public class QuestionService {
     }
 
 
-    private Question getFirstPickQuestionIndex(String sessionId, Team team) throws StillStandingException {
+    private Question getFirstPickQuestionIndex(String sessionId, TeamRuntime teamRuntime) throws StillStandingException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
@@ -87,7 +90,7 @@ public class QuestionService {
 		    String questionId = sessionDataPackage.getQuestionIds().get(i);
             question = questionPool.get(questionId); 
 			
-			if (!team.isPickAndNotBan(question.getTags())) {
+			if (!teamRuntime.getPrototype().isPickAndNotBan(question.getTags())) {
 				question = null;
 				i++;
 				continue;
@@ -106,7 +109,7 @@ public class QuestionService {
 		return question;
 	}
 	
-	private Question getFirstNotBanQuestionIndex(String sessionId, Team team) throws StillStandingException {
+	private Question getFirstNotBanQuestionIndex(String sessionId, TeamRuntime teamRuntime) throws StillStandingException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
@@ -114,7 +117,7 @@ public class QuestionService {
 			String questionId = sessionDataPackage.getQuestionIds().get(i);
 			question = questionPool.get(questionId); 
 			
-			if (!team.isNotBan(question.getTags())) {
+			if (!teamRuntime.getPrototype().isNotBan(question.getTags())) {
 				question = null;
 				i++;
 				continue;
@@ -144,9 +147,11 @@ public class QuestionService {
         return questionPackages.get(questionPackageName);
     }
     
-//    public Set<String> getTags(String sessionId) {
-//        SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
-//        return sessionDataPackage.getTags();
-//    }
+    public Set<String> getTags(String questionPackageName) throws StillStandingException {
+        List<Question> questions = getQuestions(questionPackageName);
+        Set<String> tags = new HashSet<>();
+        questions.forEach(question -> tags.addAll(question.getTags()));
+        return tags;
+    }
 
 }

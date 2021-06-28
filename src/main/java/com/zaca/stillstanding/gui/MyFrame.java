@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 
 import javax.swing.JButton;
@@ -16,8 +17,10 @@ import javax.swing.border.EmptyBorder;
 
 import com.zaca.stillstanding.core.match.BaseMatch;
 import com.zaca.stillstanding.core.question.Question;
+import com.zaca.stillstanding.dto.match.ClientActionType;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
 import com.zaca.stillstanding.dto.match.MatchSituationDTO;
+import com.zaca.stillstanding.dto.match.MatchStrategyType;
 import com.zaca.stillstanding.exception.StillStandingException;
 import com.zaca.stillstanding.service.GameService;
 
@@ -38,9 +41,10 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
     MatchSituationDTO matchSituationDTO;
     
     private JPanel contentPane;
-    private JTextField input;
+    
     private JTextArea matchSituationOutput;
-    private JTextArea viewOutput; 
+    private JTextArea questionTextArea; 
+    private JTextArea teamTextArea; 
     private JButton createAndStartButton;
     private JButton nextQuestionButton;
     private JButton answerAButton;
@@ -65,7 +69,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setBounds(100, 100, 832, 923);
+        setBounds(100, 100, 800, 900);
         
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -73,17 +77,22 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         contentPane.setLayout(null);
         
         matchSituationOutput = new JTextArea();
-        matchSituationOutput.setBounds(22, 55, 403, 551);
+        matchSituationOutput.setBounds(452, 25, 347, 627);
         matchSituationOutput.setLineWrap(true);
         contentPane.add(matchSituationOutput);
         
-        input = new JTextField();
-        input.setBounds(22, 623, 403, 29);
-        contentPane.add(input);
-        input.setColumns(10);
+        questionTextArea = new JTextArea();
+        questionTextArea.setBounds(10, 50, 400, 200);
+        questionTextArea.setLineWrap(true);
+        contentPane.add(questionTextArea);
+        
+        teamTextArea = new JTextArea();
+        teamTextArea.setBounds(10, 300, 400, 200);
+        teamTextArea.setLineWrap(true);
+        contentPane.add(teamTextArea);
         
         createAndStartButton = new JButton("createAndStart");
-        createAndStartButton.setBounds(10, 660, 50, 29);
+        createAndStartButton.setBounds(10, 660, 100, 29);
         createAndStartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,7 +106,7 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         contentPane.add(createAndStartButton);
         
         nextQuestionButton = new JButton("nextQuestion");
-        nextQuestionButton.setBounds(70, 660, 50, 29);
+        nextQuestionButton.setBounds(120, 660, 100, 29);
         nextQuestionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,18 +121,66 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         contentPane.add(nextQuestionButton);
         
         answerAButton = new JButton("A");
-        answerAButton.setBounds(130, 660, 30, 29);
+        answerAButton.setBounds(10, 690, 50, 29);
         answerAButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                try {
+                    matchSituationDTO = gameService.teamAnswer(matchId, "A");
+                    updateByNewMatchSituation();
+                } catch (StillStandingException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
-        contentPane.add(nextQuestionButton);
+        contentPane.add(answerAButton);
+
+        answerBButton = new JButton("B");
+        answerBButton.setBounds(70, 690, 50, 29);
+        answerBButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    matchSituationDTO = gameService.teamAnswer(matchId, "B");
+                    updateByNewMatchSituation();
+                } catch (StillStandingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        contentPane.add(answerBButton);
         
-        viewOutput = new JTextArea();
-        viewOutput.setBounds(452, 25, 347, 627);
-        contentPane.add(viewOutput);
+        answerCButton = new JButton("C");
+        answerCButton.setBounds(130, 690, 50, 29);
+        answerCButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    matchSituationDTO = gameService.teamAnswer(matchId, "C");
+                    updateByNewMatchSituation();
+                } catch (StillStandingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        contentPane.add(answerCButton);
+        
+        answerDButton = new JButton("D");
+        answerDButton.setBounds(190, 690, 50, 29);
+        answerDButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    matchSituationDTO = gameService.teamAnswer(matchId, "D");
+                    updateByNewMatchSituation();
+                } catch (StillStandingException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+        contentPane.add(answerDButton);
+        
+        
         
         lblTime = new JLabel("Time:");
         lblTime.setBounds(22, 23, 108, 29);
@@ -132,15 +189,16 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         secondTimer = new Timer();
         secondTimer.schedule(new SecondTimerTask(this), 1000, 1000);
         
-        input.addKeyListener(new MyKeyAdapter());
+        
     }
     
     private void createAndStartMatch() throws Exception {
         MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
         matchConfigDTO.setTeamNames(Arrays.asList("游客"));
         matchConfigDTO.setQuestionPackageName("questions");
+        matchConfigDTO.setMatchStrategyType(MatchStrategyType.ENDLESS);
         
-        matchSituationDTO = gameService.createEndlessMatch(matchConfigDTO);
+        matchSituationDTO = gameService.createMatch(matchConfigDTO);
         this.matchId = matchSituationDTO.getId();
         
         matchSituationDTO = gameService.startMatch(matchId);
@@ -152,9 +210,17 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
         
         matchSituationOutput.setText(matchSituationDTO.toString());
         
+        if (matchSituationDTO.getQuestion() != null) {
+            questionTextArea.setText(matchSituationDTO.getQuestion().toString());
+        }
+        
+        
+        teamTextArea.setText(matchSituationDTO.getCurrentTeamRuntimeInfo().toString());
+
+        
         if (matchSituationDTO.getSwitchQuestionEvent() != null) {
             int newTimeCount = matchSituationDTO.getSwitchQuestionEvent().getTime();
-            
+
             timerCount = newTimeCount;
             lblTime.setText(String.valueOf(timerCount));
         }
@@ -163,37 +229,35 @@ public class MyFrame extends JFrame implements ISecondEventReceiver{
             timerCount = 0;
             lblTime.setText(String.valueOf(timerCount));
         }
-
+        
+        if (matchSituationDTO.getActionAdvices().contains(ClientActionType.ANSWER)) {
+            answerAButton.setEnabled(true);
+            answerBButton.setEnabled(true);
+            answerCButton.setEnabled(true);
+            answerDButton.setEnabled(true);
+        } else {
+            answerAButton.setEnabled(false);
+            answerBButton.setEnabled(false);
+            answerCButton.setEnabled(false);
+            answerDButton.setEnabled(false);
+        }
+        
+        if (matchSituationDTO.getActionAdvices().contains(ClientActionType.NEXT_QUESTION)) {
+            nextQuestionButton.setEnabled(true);
+        } else {
+            nextQuestionButton.setEnabled(false);
+        }
+        
+        if (matchSituationDTO.getActionAdvices().contains(ClientActionType.START_MATCH)) {
+            createAndStartButton.setEnabled(true);
+        } else {
+            createAndStartButton.setEnabled(false);
+        }
     }
-    
-
-    
-    class MyKeyAdapter extends KeyAdapter {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode()==KeyEvent.VK_ENTER){
-               String command = input.getText();
-               input.setText("");
-               
-
-               try {
-                   matchSituationDTO = gameService.commandLineControl(matchId, command);
-                   updateByNewMatchSituation();
-               } catch (StillStandingException e1) {
-                   e1.printStackTrace();
-               }
-
-
-
-            }
-          }
-    }
-    
 
 
     @Override
-    public void whenReceive() {
+    public void whenReceiveSecondClock() {
 
             if (timerCount > 0) {
                 lblTime.setForeground(Color.BLACK);

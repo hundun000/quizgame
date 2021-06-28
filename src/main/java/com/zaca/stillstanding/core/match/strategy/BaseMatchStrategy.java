@@ -6,18 +6,18 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zaca.stillstanding.core.buff.BuffEffect;
-import com.zaca.stillstanding.core.buff.RunTimeBuff;
-import com.zaca.stillstanding.core.buff.ScoreComboBuffEffect;
-import com.zaca.stillstanding.core.buff.ScoreScaleBuffEffect;
+import com.zaca.stillstanding.core.buff.BuffRuntime;
+import com.zaca.stillstanding.core.buff.effect.BuffEffect;
+import com.zaca.stillstanding.core.buff.effect.ScoreComboBuffEffect;
+import com.zaca.stillstanding.core.buff.effect.ScoreScaleBuffEffect;
 import com.zaca.stillstanding.core.event.MatchEventFactory;
 import com.zaca.stillstanding.core.match.BaseMatch;
-import com.zaca.stillstanding.core.role.RoleConstData;
+import com.zaca.stillstanding.core.role.RolePrototype;
 import com.zaca.stillstanding.core.skill.SkillConstData;
 import com.zaca.stillstanding.core.skill.effect.AddBuffSkillEffect;
 import com.zaca.stillstanding.core.skill.effect.ISkillEffect;
 import com.zaca.stillstanding.core.team.HealthType;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.event.AnswerResultEvent;
 import com.zaca.stillstanding.dto.event.FinishEvent;
 import com.zaca.stillstanding.dto.event.SkillResultEvent;
@@ -35,18 +35,13 @@ import com.zaca.stillstanding.service.TeamService;
  * @author hundun
  * Created on 2021/05/11
  */
-@Component
 public abstract class BaseMatchStrategy {
     
     BaseMatch parent;
     
-    @Autowired
     protected QuestionService questionService;
-    @Autowired
     protected TeamService teamService;
-    @Autowired
     protected RoleSkillService roleSkillService;
-    @Autowired
     protected BuffService buffService;
     
     protected final HealthType healthType;
@@ -102,8 +97,8 @@ public abstract class BaseMatchStrategy {
      */
     protected int calculateAddScoreSumOffsetByBuffs(AnswerType answerType, int baseScore) {
         int sumOffset = 0;
-        for (RunTimeBuff buff : parent.getCurrentTeam().getBuffs()) {
-            for (BuffEffect buffEffect : buff.getModel().getBuffEffects()) {
+        for (BuffRuntime buff : parent.getCurrentTeam().getBuffs()) {
+            for (BuffEffect buffEffect : buff.getPrototype().getBuffEffects()) {
                 if (buffEffect instanceof ScoreScaleBuffEffect) {
                     ScoreScaleBuffEffect scoreScaleBuffEffect = (ScoreScaleBuffEffect) buffEffect;
                     sumOffset += scoreScaleBuffEffect.getScoreOffset(baseScore);
@@ -138,8 +133,8 @@ public abstract class BaseMatchStrategy {
     
     public FinishEvent checkFinishEvent() {
         boolean anyDie = false;
-        for (Team team : parent.getTeams()) {
-            if (!team.isAlive()) {
+        for (TeamRuntime teamRuntime : parent.getTeams()) {
+            if (!teamRuntime.isAlive()) {
                 anyDie = true;
                 break;
             }
@@ -155,23 +150,23 @@ public abstract class BaseMatchStrategy {
     }
     
     public void switchToNextTeam() {
-        int nextTeamIndex;
+        int checkingIndex = parent.getCurrentTeamIndex();
         int tryTimes = 0;
+        
         do {
             tryTimes++;
             if (tryTimes > parent.getTeams().size()) {
                 throw new RuntimeException("试图在所有队伍死亡情况下换队");
             }
             
-            nextTeamIndex = parent.getCurrentTeamIndex() + 1;
-            if (nextTeamIndex == parent.getTeams().size()) {
-                nextTeamIndex = 0;
+            checkingIndex++;
+            if (checkingIndex == parent.getTeams().size()) {
+                checkingIndex = 0;
             }
             
-            parent.setCurrentTeam(parent.getTeams().get(nextTeamIndex));
-        } while (!parent.getCurrentTeam().isAlive());
+        } while (!parent.getTeams().get(checkingIndex).isAlive());
         
-        parent.setCurrentTeamIndex(nextTeamIndex);
+        parent.setCurrentTeam(checkingIndex);
         
     }
     
@@ -179,17 +174,17 @@ public abstract class BaseMatchStrategy {
     
     public SkillResultEvent generalUseSkill(String skillName) throws StillStandingException {
         SkillResultEvent newEvents; 
-        RoleConstData role = roleSkillService.getRole(parent.getCurrentTeam().getRoleName());
+        RolePrototype role = roleSkillService.getRole(parent.getCurrentTeam().getRoleName());
         SkillConstData skill = role.getSkill(skillName);
         
-        boolean success = parent.getCurrentTeam().getRoleRunTimeData().useOnce(skillName);
+        boolean success = parent.getCurrentTeam().getRoleRuntime().useOnce(skillName);
         if (success) {
             newEvents = getSkillSuccessMatchEvent(parent.getCurrentTeam(), skill);
             
             for (ISkillEffect skillEffect : skill.getBackendEffects()) {
                 if (skillEffect instanceof AddBuffSkillEffect) {
                     AddBuffSkillEffect addBuffSkillEffect = (AddBuffSkillEffect) skillEffect;
-                    RunTimeBuff buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
+                    BuffRuntime buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
                     parent.getCurrentTeam().addBuff(buff);
                 }
             }
@@ -203,9 +198,9 @@ public abstract class BaseMatchStrategy {
     
     
     
-    private SkillResultEvent getSkillSuccessMatchEvent(Team team, SkillConstData skill) throws StillStandingException {
-        int skillRemainTime = team.getRoleRunTimeData().getSkillRemainTimes().get(skill.getName());
-        return MatchEventFactory.getTypeSkillSuccess(team.getName(), team.getRoleName(), skill, skillRemainTime);
+    private SkillResultEvent getSkillSuccessMatchEvent(TeamRuntime teamRuntime, SkillConstData skill) throws StillStandingException {
+        int skillRemainTime = teamRuntime.getRoleRuntime().getSkillRemainTimes().get(skill.getName());
+        return MatchEventFactory.getTypeSkillSuccess(teamRuntime.getName(), teamRuntime.getRoleName(), skill, skillRemainTime);
     }
 
     public void initMatch(BaseMatch baseMatch) {

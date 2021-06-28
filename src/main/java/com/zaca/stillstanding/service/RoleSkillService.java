@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.core.role.RoleConstData;
+import com.zaca.stillstanding.core.role.RolePrototype;
 import com.zaca.stillstanding.core.skill.BaseSkillFactory;
 import com.zaca.stillstanding.core.skill.SkillSlot;
 
@@ -17,12 +17,12 @@ import com.zaca.stillstanding.core.skill.SkillSlot;
 @Service
 public class RoleSkillService {
     
-    Map<String, RoleConstData> roles = new HashMap<>();
+    Map<String, RolePrototype> roles = new HashMap<>();
     
     
     public RoleSkillService() {
         
-        registerRole(new RoleConstData("ZACA娘", "主人公。",
+        registerRole(new RolePrototype("ZACA娘", "主人公。",
                 new SkillSlot(BaseSkillFactory.getSkill("5050"), 2),
                 new SkillSlot(BaseSkillFactory.getSkill("求助"), 2),
                 new SkillSlot(BaseSkillFactory.getSkill("跳过"), 2),
@@ -33,13 +33,13 @@ public class RoleSkillService {
     }
 
     
-    private void registerRole(RoleConstData role) {
+    private void registerRole(RolePrototype role) {
         roles.put(role.getName(), role);
     }
 
     
 
-    public RoleConstData getRole(String name) {
+    public RolePrototype getRole(String name) {
         return roles.get(name);
     }
     
@@ -47,7 +47,7 @@ public class RoleSkillService {
         return roles.containsKey(name);
     }
     
-    public Collection<RoleConstData> listRoles() {
+    public Collection<RolePrototype> listRoles() {
         return roles.values();
     }
 }

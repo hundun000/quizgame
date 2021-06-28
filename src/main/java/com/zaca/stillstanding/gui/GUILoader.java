@@ -20,10 +20,9 @@ public class GUILoader implements CommandLineRunner{
     @Value("${using-GUI}")
     boolean usingGUI;
     
-    @Value("${using-small-frame}")
-    boolean usingSmallFrame;
+    boolean usingSmallFrame = true;
     int SMALL_WIDTH = 460;
-    int BIG_WIDTH = 723;
+    int BIG_WIDTH = 850;
     
     
     

@@ -1,4 +1,4 @@
-package com.zaca.stillstanding.core.buff;
+package com.zaca.stillstanding.core.buff.effect;
 /**
  * @author hundun
  * Created on 2020/05/25

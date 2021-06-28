@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 
 import feign.Logger;
 
-public class StillstandingApiFeignConfiguration {
+public class StillStandingApiFeignConfiguration {
 
     @Bean
     Logger.Level level() {

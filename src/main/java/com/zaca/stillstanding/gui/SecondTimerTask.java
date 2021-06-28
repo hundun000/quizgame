@@ -16,7 +16,7 @@ public class SecondTimerTask extends TimerTask {
     
     @Override
     public void run() {
-        receiver.whenReceive();
+        receiver.whenReceiveSecondClock();
     }
 
 }

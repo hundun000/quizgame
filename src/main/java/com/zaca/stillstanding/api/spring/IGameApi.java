@@ -16,31 +16,16 @@ import com.zaca.stillstanding.dto.team.TeamConstInfoDTO;
  * @author hundun
  * Created on 2021/05/10
  */
-public interface StillstandingApi {
+public interface IGameApi {
 
     @RequestMapping(
-            value = "/createEndlessMatch", 
+            value = "/createMatch", 
             method = RequestMethod.POST
             )
-    ApiResult<MatchSituationDTO> createEndlessMatch(
+    ApiResult<MatchSituationDTO> createMatch(
             @RequestBody MatchConfigDTO matchConfigDTO
             );
     
-    @RequestMapping(
-            value = "/createPreMatch", 
-            method = RequestMethod.POST
-            )
-    ApiResult<MatchSituationDTO> createPreMatch(
-            @RequestBody MatchConfigDTO matchConfigDTO
-            );
-    
-    @RequestMapping(
-            value = "/createMainMatch", 
-            method = RequestMethod.POST
-            )
-    ApiResult<MatchSituationDTO> createMainMatch(
-            @RequestBody MatchConfigDTO matchConfigDTO
-            );
     
     @RequestMapping(
             value = "/start", 
@@ -71,17 +56,5 @@ public interface StillstandingApi {
             @RequestParam(value = "skillName") String skillName
             );
     
-    @RequestMapping(
-            value = "/listTeams", 
-            method = RequestMethod.GET
-            )
-    ApiResult<List<TeamConstInfoDTO>> listTeams(
-            
-            );
     
-    
-    @RequestMapping(value="/updateTeam", method=RequestMethod.POST)
-    ApiResult<List<TeamConstInfoDTO>> updateTeam(
-            @RequestBody TeamConstInfoDTO teamConstInfoDTO
-            );
 }

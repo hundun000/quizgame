@@ -21,8 +21,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaca.stillstanding.api.spring.StillstandingApi;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.api.spring.IGameApi;
+import com.zaca.stillstanding.core.team.TeamPrototype;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.ApiResult;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
 import com.zaca.stillstanding.dto.match.MatchSituationDTO;
@@ -40,7 +41,7 @@ import com.zaca.stillstanding.tool.FileTool;
  */
 @RestController
 @RequestMapping("/api/game")
-public class GameController implements StillstandingApi {
+public class GameController implements IGameApi {
     
     ObjectMapper objectMapper = new ObjectMapper();
     
@@ -62,13 +63,13 @@ public class GameController implements StillstandingApi {
     TeamService teamService;
 
     @Override
-    public ApiResult<MatchSituationDTO> createMainMatch(
+    public ApiResult<MatchSituationDTO> createMatch(
             MatchConfigDTO matchConfigDTO
             ) {
         logger.info("===== /createPreMatch {} =====", matchConfigDTO);
 
         try {
-            MatchSituationDTO matchSituationDTO = gameService.createMainMatch(matchConfigDTO);
+            MatchSituationDTO matchSituationDTO = gameService.createMatch(matchConfigDTO);
             return new ApiResult<>(matchSituationDTO);
         } catch (StillStandingException e) {
             e.printStackTrace();
@@ -76,35 +77,9 @@ public class GameController implements StillstandingApi {
         }
     }
     
-    @Override
-    public ApiResult<MatchSituationDTO> createPreMatch(
-            MatchConfigDTO matchConfigDTO
-            ) {
-        logger.info("===== /createPreMatch {} =====", matchConfigDTO);
-
-        try {
-            MatchSituationDTO matchSituationDTO = gameService.createPreMatch(matchConfigDTO);
-            return new ApiResult<>(matchSituationDTO);
-        } catch (StillStandingException e) {
-            e.printStackTrace();
-            return new ApiResult<>(e.getMessage(), e.getRetcode());
-        }
-    }
     
-    @Override
-    public ApiResult<MatchSituationDTO> createEndlessMatch(
-            MatchConfigDTO matchConfigDTO
-            ) {
-        logger.info("===== /createEndlessMatch {} =====", matchConfigDTO);
-        try {
-            MatchSituationDTO matchSituationDTO = gameService.createEndlessMatch(matchConfigDTO);
-            return new ApiResult<>(matchSituationDTO);
-        } catch (StillStandingException e) {
-            e.printStackTrace();
-            return new ApiResult<>(e.getMessage(), e.getRetcode());
-        }
-        
-    }
+    
+    
     
     
     @Override
@@ -191,36 +166,6 @@ public class GameController implements StillstandingApi {
         }
     }
 
-    @Override
-    public ApiResult<List<TeamConstInfoDTO>> listTeams() {
-        logger.info("===== listTeams =====");
-        
-            Collection<Team> teams = teamService.listTeams();
-            List<TeamConstInfoDTO> teamConstInfoDTOs = new ArrayList<>();
-            teams.forEach(team -> teamConstInfoDTOs.add(team.toTeamDTO()));
-            return new ApiResult<>(teamConstInfoDTOs);
-        
-    }
     
-    @Override
-    public ApiResult<List<TeamConstInfoDTO>> updateTeam(
-            TeamConstInfoDTO teamConstInfoDTO
-            ) {
-        logger.info("===== updateTeam {} =====", teamConstInfoDTO);
-        // TODO 中途失败回滚
-        
-        try {
-            if (!teamService.existTeam(teamConstInfoDTO.getName())) {
-                teamService.creatTeam(teamConstInfoDTO.getName());
-            }
-            teamService.setPickTagsForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getPickTags());
-            teamService.setBanTagsForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getBanTags());
-            teamService.setRoleForTeam(teamConstInfoDTO.getName(), teamConstInfoDTO.getRoleName());
-        } catch (StillStandingException e) {
-            e.printStackTrace();
-            return new ApiResult<>(e.getMessage(), e.getRetcode());
-        }
-        return listTeams();
-    }
     
 }

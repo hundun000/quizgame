@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 
 import com.zaca.stillstanding.core.question.Question;
 import com.zaca.stillstanding.core.question.TagManager;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
+import com.zaca.stillstanding.dto.match.MatchStrategyType;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.QuestionFormatException;
@@ -51,23 +52,7 @@ public class SimpleQuestionTest {
     
     @Autowired
     GameService gameService;
-    
-	String  testTeamName = "砍口垒同好组";
-	
-	
-    private void prepare() throws IOException, StillStandingException {
-        teamService.creatTeam(testTeamName);
-        
-        
-        List<String> pickTagNames = new ArrayList<>();
-        pickTagNames.add("单机游戏");
-        teamService.setPickTagsForTeam(testTeamName, pickTagNames);
-        
-        List<String> banTagNames = new ArrayList<>();
-        banTagNames.add("动画");
-        teamService.setBanTagsForTeam(testTeamName, banTagNames);
-	}
-	
+
 	
 	@Test
 	public void test() throws IOException, StillStandingException {
@@ -76,15 +61,18 @@ public class SimpleQuestionTest {
 		
         // request_0
 		MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
-		matchConfigDTO.setTeamNames(Arrays.asList(testTeamName));
+		matchConfigDTO.setTeamNames(Arrays.asList(TeamService.DEMO_TEAM_NAME));
 		matchConfigDTO.setQuestionPackageName(QuestionTool.TEST_PACKAGE_NAME);
-		String sessionId = gameService.createEndlessMatch(matchConfigDTO).getId();
+		matchConfigDTO.setMatchStrategyType(MatchStrategyType.ENDLESS);
+		String sessionId = gameService.createMatch(matchConfigDTO).getId();
 		
 		// request_1
         gameService.startMatch(sessionId);
         
-        
         // request_2
+        gameService.nextQustion(sessionId);
+        
+        // request_3
 		gameService.teamAnswer(sessionId, "A");
 	}
 

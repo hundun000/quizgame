@@ -17,8 +17,9 @@ import com.zaca.stillstanding.core.match.MatchRecord;
 import com.zaca.stillstanding.core.match.strategy.BaseMatchStrategy;
 import com.zaca.stillstanding.core.match.strategy.EndlessStrategy;
 import com.zaca.stillstanding.core.match.strategy.MainStrategy;
+import com.zaca.stillstanding.core.match.strategy.MatchStrategyFactory;
 import com.zaca.stillstanding.core.match.strategy.PreStrategy;
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.dto.match.MatchConfigDTO;
 import com.zaca.stillstanding.dto.match.MatchSituationDTO;
 import com.zaca.stillstanding.exception.StillStandingException;
@@ -43,6 +44,8 @@ public class GameService {
     @Autowired
     private BuffService buffService;
 
+    @Autowired
+    private MatchStrategyFactory matchStrategyFactory;
     
     @Autowired
     private SessionService sessionService;
@@ -71,60 +74,33 @@ public class GameService {
         
         teamService.quickRegisterTeam("砍口垒同好组", Arrays.asList("单机游戏"), Arrays.asList("动画"), "ZACA娘");
         teamService.quickRegisterTeam("方舟同好组", Arrays.asList("动画"), Arrays.asList("单机游戏"), "ZACA娘");
-        teamService.quickRegisterTeam("游客", Arrays.asList(), Arrays.asList(), null);
+        teamService.quickRegisterTeam(TeamService.DEMO_TEAM_NAME, Arrays.asList(), Arrays.asList(), null);
     }
     
-    public MatchSituationDTO createEndlessMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
+    public MatchSituationDTO createMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
         logger.info("createEndlessMatch by {}", matchConfigDTO);
         
-        EndlessStrategy strategy = new EndlessStrategy(questionService, teamService, roleSkillService, buffService);
+        BaseMatchStrategy strategy = matchStrategyFactory.getMatchStrategy(matchConfigDTO.getMatchStrategyType());
         
-        BaseMatch match = createMatch(strategy, matchConfigDTO);
-        
-        logger.info("match created, id = {}", match.getSessionId());
-        MatchSituationDTO matchSituationDTO = match.toMatchSituationDTO();
-        return matchSituationDTO;
-    }
-    
-    
-    private BaseMatch createMatch(BaseMatchStrategy strategy, MatchConfigDTO matchConfigDTO) throws StillStandingException {
         SessionDataPackage sessionDataPackage = sessionService.createSession(matchConfigDTO.getQuestionPackageName());
         
         BaseMatch match = new BaseMatch(sessionDataPackage.getSessionId(), strategy);
-        List<Team> teams = new ArrayList<>();
+        List<TeamRuntime> teamRuntimes = new ArrayList<>();
         for (String teamName : matchConfigDTO.getTeamNames()) {
-            teams.add(teamService.getTeam(teamName));
+            teamRuntimes.add(new TeamRuntime(teamService.getTeam(teamName)));
         }
-        match.initTeams(teams);
+        match.initTeams(teamRuntimes);
         
         sessionDataPackage.setMatch(match);
         
-        return match;
-    }
-    
-    public MatchSituationDTO createPreMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
-        logger.info("createPreMatch by {}", matchConfigDTO);
-        
-        PreStrategy strategy = new PreStrategy(questionService, teamService, roleSkillService, buffService);
-        
-        BaseMatch match = createMatch(strategy, matchConfigDTO);
         logger.info("match created, id = {}", match.getSessionId());
-        
         MatchSituationDTO matchSituationDTO = match.toMatchSituationDTO();
         return matchSituationDTO;
     }
     
-    public MatchSituationDTO createMainMatch(MatchConfigDTO matchConfigDTO) throws StillStandingException {
-        logger.info("createPreMatch by {}", matchConfigDTO);
-        
-        MainStrategy strategy = new MainStrategy(questionService, teamService, roleSkillService, buffService);
-        
-        BaseMatch match = createMatch(strategy, matchConfigDTO);
-        logger.info("match created, id = {}", match.getSessionId());
-        
-        MatchSituationDTO matchSituationDTO = match.toMatchSituationDTO();
-        return matchSituationDTO;
-    }
+
+    
+
     
     public MatchSituationDTO startMatch(String sessionId) throws StillStandingException {
         logger.info("start match:{}", sessionId);
@@ -170,33 +146,8 @@ public class GameService {
         MatchSituationDTO matchSituationDTO = match.toMatchSituationDTO();
         return matchSituationDTO;
     }
+
     
-    public List<MatchRecord> getMatchRecords() {
-        return new ArrayList<>(matchRecords.values());
-    }
     
-    public MatchRecord getOneMatchRecord(String id) {
-        return matchRecords.get(id);
-    }
-    
-    public MatchSituationDTO commandLineControl(String sessionId, String line) throws StillStandingException {
-        List<String> args = Arrays.asList(line.split(" "));
-        
-        String action = args.get(0);
-        String answerText;
-        
-        switch (action) {
-        case "ans":
-        case "answer":
-            answerText = args.get(1);
-            return teamAnswer(sessionId, answerText);
-        case "next":
-            return nextQustion(sessionId);
-        default:
-            break;
-        }
-        return null;
-        
-    }
 
 }

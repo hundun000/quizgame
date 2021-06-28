@@ -7,18 +7,20 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.zaca.stillstanding.core.team.Team;
+import com.zaca.stillstanding.core.team.TeamPrototype;
+import com.zaca.stillstanding.core.team.TeamRuntime;
 import com.zaca.stillstanding.exception.ConflictException;
 import com.zaca.stillstanding.exception.NotFoundException;
 import com.zaca.stillstanding.exception.StillStandingException;
 
 @Service
 public class TeamService {
+    public static String DEMO_TEAM_NAME = "游客";
     
     @Autowired
     RoleSkillService roleSkillServic;
     
-	private Map<String, Team> teams = new HashMap<>();
+	private Map<String, TeamPrototype> teamPrototypes = new HashMap<>();
 	
 	public void quickRegisterTeam(String teamName, List<String> pickTagNames, List<String> banTagNames, String roleName) throws StillStandingException {
         creatTeam(teamName); 
@@ -32,17 +34,17 @@ public class TeamService {
 	
 	public void creatTeam(String teamName) throws ConflictException {
 		if (existTeam(teamName)) {
-			throw new ConflictException(Team.class.getSimpleName(), teamName);
+			throw new ConflictException(TeamRuntime.class.getSimpleName(), teamName);
 		}
-		Team team = new Team(teamName);
-		teams.put(teamName, team);
+		TeamPrototype teamRuntime = new TeamPrototype(teamName);
+		teamPrototypes.put(teamName, teamRuntime);
 	}
 	
-	public void updateTeam(Team team) throws NotFoundException {
-	    if (!existTeam(team.getName())) {
-            throw new NotFoundException(Team.class.getSimpleName(), team.getName());
+	public void updateTeam(TeamPrototype teamPrototype) throws NotFoundException {
+	    if (!existTeam(teamPrototype.getName())) {
+            throw new NotFoundException(TeamRuntime.class.getSimpleName(), teamPrototype.getName());
         }
-	    teams.put(team.getName(), team);
+	    teamPrototypes.put(teamPrototype.getName(), teamPrototype);
     }
 	
 	
@@ -53,46 +55,46 @@ public class TeamService {
 		setTagsForTeam(teamName, tagNames, false);
 	}
 	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPick) throws NotFoundException {
-		Team team = getTeam(teamName);
+	    TeamPrototype teamRuntime = getTeam(teamName);
 //		for (String tagName:tagNames) {
 //			if (!TagManager.tagExsist(tagName)) {
 //				throw new NotFoundException("Tag", tagName);
 //			}
 //		}
 		if (isPick) {
-			team.setPickTags(tagNames);
+			teamRuntime.setPickTags(tagNames);
 		} else {
-			team.setBanTags(tagNames);
+			teamRuntime.setBanTags(tagNames);
 		}
 	}
 	
 	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
         if (roleName != null) {
-            Team team = getTeam(teamName);
+            TeamPrototype teamRuntime = getTeam(teamName);
             
             if (!roleSkillServic.existRole(roleName)) {
                 throw new NotFoundException("Role", roleName);
             }
             
-            team.setRole(roleSkillServic.getRole(roleName));
+            teamRuntime.setRolePrototype(roleSkillServic.getRole(roleName));
         }
     }
 	
 	
-	public Team getTeam(String name) throws NotFoundException {
+	public TeamPrototype getTeam(String name) throws NotFoundException {
 
 		if (!existTeam(name)) {
-			throw new NotFoundException(Team.class.getSimpleName(), name);
+			throw new NotFoundException(TeamRuntime.class.getSimpleName(), name);
 		}
-		return teams.get(name);
+		return teamPrototypes.get(name);
 	}
 	
-	public Collection<Team> listTeams() {
-        return teams.values();
+	public Collection<TeamPrototype> listTeams() {
+        return teamPrototypes.values();
     }
 	
 	public boolean existTeam(String name) {
-        return teams.containsKey(name);
+        return teamPrototypes.containsKey(name);
     }
 
 }

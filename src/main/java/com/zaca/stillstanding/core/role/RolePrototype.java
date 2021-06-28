@@ -7,20 +7,21 @@ import java.util.List;
 import com.zaca.stillstanding.core.skill.SkillConstData;
 import com.zaca.stillstanding.core.skill.SkillSlot;
 import com.zaca.stillstanding.dto.role.RoleConstInfoDTO;
+import com.zaca.stillstanding.dto.role.RoleRuntimeInfoDTO;
 import com.zaca.stillstanding.exception.StillStandingException;
 
 /**
  * @author hundun
  * Created on 2019/10/08
  */
-public class RoleConstData {
+public class RolePrototype {
     
     private final String name;
     private final String description;
     private List<SkillSlot> skillSlots;
     
     
-    public RoleConstData(String name, String description, SkillSlot... skillSlots) {
+    public RolePrototype(String name, String description, SkillSlot... skillSlots) {
         this.name = name;
         this.description = description;
         this.skillSlots = Arrays.asList(skillSlots);
@@ -48,14 +49,15 @@ public class RoleConstData {
         throw new StillStandingException(this.getName() + "里没有技能：" + skillName, -1);
     }
     
+    
     public RoleConstInfoDTO toRoleConstInfoDTO() {
         RoleConstInfoDTO dto = new RoleConstInfoDTO();
-        dto.setName(this.name);
-        dto.setDescription(this.description);
-        List<String> skillNames = new ArrayList<>(this.skillSlots.size());
-        List<String> skillDescriptions = new ArrayList<>(this.skillSlots.size());
-        List<Integer> skillFullCounts = new ArrayList<>(this.skillSlots.size());
-        for (SkillSlot skillSlot : skillSlots) {
+        dto.setName(this.getName());
+        dto.setDescription(this.getDescription());
+        List<String> skillNames = new ArrayList<>(this.getSkillSlots().size());
+        List<String> skillDescriptions = new ArrayList<>(this.getSkillSlots().size());
+        List<Integer> skillFullCounts = new ArrayList<>(this.getSkillSlots().size());
+        for (SkillSlot skillSlot : this.getSkillSlots()) {
             skillNames.add(skillSlot.getSkill().getName());
             skillDescriptions.add(skillSlot.getSkill().getDescription());
             skillFullCounts.add(skillSlot.getFullCount());
@@ -65,5 +67,6 @@ public class RoleConstData {
         dto.setSkillFullCounts(skillFullCounts);
         return dto;
     }
+
 
 }
