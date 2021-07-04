@@ -28,9 +28,9 @@ import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.team.TeamPrototype;
 import hundun.quizgame.core.model.team.TeamRuntime;
 import hundun.quizgame.core.service.GameService;
+import hundun.quizgame.core.service.QuestionLoaderService;
 import hundun.quizgame.core.service.QuestionService;
 import hundun.quizgame.core.service.TeamService;
-import hundun.quizgame.core.tool.QuestionTool;
 import hundun.quizgame.server.api.spring.IGameApi;
 import hundun.quizgame.server.utils.FileTool;
 
@@ -45,7 +45,8 @@ public class GameController implements IGameApi {
     
     ObjectMapper objectMapper = new ObjectMapper();
     
-    
+    @Autowired
+    QuestionLoaderService questionLoaderService;
     
     public GameController() {
         
@@ -137,7 +138,7 @@ public class GameController implements IGameApi {
             ) {
         logger.info("===== /pictures {} =====", id);
         String fileName = id;
-        String filePathName = QuestionTool.RESOURCE_ICON_FOLDER + id;
+        String filePathName = questionLoaderService.RESOURCE_ICON_FOLDER + id;
 
         File file = new File(filePathName);
         if (!file.exists()) {

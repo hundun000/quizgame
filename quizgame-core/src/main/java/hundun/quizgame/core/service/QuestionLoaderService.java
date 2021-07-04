@@ -1,4 +1,4 @@
-package hundun.quizgame.core.tool;
+package hundun.quizgame.core.service;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,22 +12,31 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.stereotype.Service;
+
 import hundun.quizgame.core.dto.question.ResourceType;
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.question.Question;
 import hundun.quizgame.core.model.question.TagManager;
 
-public class QuestionTool {
+@Service
+public class QuestionLoaderService {
 	
-    public static final String RESOURCE_ICON_FOLDER = "./data/pictures/";
-	private static String DATA_FOLDER = "data/";
+    public File RESOURCE_ICON_FOLDER;
+	private File DATA_FOLDER;
 	public static String BUSINESS_PACKAGE_NAME = "questions";
 	public static String PRELEASE_PACKAGE_NAME = "questions_small";
 	public static String TEST_PACKAGE_NAME = "questions_test";
 	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";
 	
-	private static List<Question> LoadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
+	
+	public void lateInitFolder(File DATA_FOLDER, File RESOURCE_ICON_FOLDER) {
+        this.DATA_FOLDER = DATA_FOLDER;
+        this.RESOURCE_ICON_FOLDER = RESOURCE_ICON_FOLDER;
+    }
+	
+	private List<Question> loadQuestionsFromFile(File file, Set<String> tagNames) throws IOException, QuestionFormatException {
 		Path path = Paths.get(file.getPath());
         List<String> lines = Files.readAllLines(path);  
         try {
@@ -44,7 +53,7 @@ public class QuestionTool {
 	 * @param replacement
 	 * @return
 	 */
-	public static String replaceFileNamesInFolder(String folderPath, String regex, String replacement){
+	public String replaceFileNamesInFolder(String folderPath, String regex, String replacement){
 		int renameNum = 0;
 		File folder = new File(folderPath);
 		File[] files = folder.listFiles();
@@ -60,9 +69,9 @@ public class QuestionTool {
 	}
 	
 	
-	public static List<Question> LoadAllQuestions(String packageName) throws QuizgameException {
+	public List<Question> loadAllQuestions(String packageName) throws QuizgameException {
 		List<Question> questions = new LinkedList<>();
-		File mainFolder = new File(DATA_FOLDER + packageName);
+		File mainFolder = new File(DATA_FOLDER.getAbsolutePath() + File.separator + packageName);
 		try {
 		    LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
         } catch (IOException e) {
@@ -71,7 +80,7 @@ public class QuestionTool {
 		return questions;
 	}
 	
-	public static String obfuscateFolder(String originFolderPath, String outputFolderPath, Set<String> parentTagNames) {
+	public String obfuscateFolder(String originFolderPath, String outputFolderPath, Set<String> parentTagNames) {
 	    String error = "";
 	    
 	    File originFolder = new File(originFolderPath);
@@ -101,7 +110,7 @@ public class QuestionTool {
                 newParentTagNames.add(thisTagName);
                 List<Question> questions;
                 try {
-                    questions = LoadQuestionsFromFile(file, newParentTagNames);
+                    questions = loadQuestionsFromFile(file, newParentTagNames);
                     parseQuestionsToFile(questions, outputFilePath, true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -113,7 +122,7 @@ public class QuestionTool {
         return error;
     }
 	
-	public static List<Question> LoadQuestionsFromFolder(File folder, Set<String> parentTagNames, List<Question> questions) throws IOException, QuestionFormatException {
+	public List<Question> LoadQuestionsFromFolder(File folder, Set<String> parentTagNames, List<Question> questions) throws IOException, QuestionFormatException {
 		File[] files = folder.listFiles();
 		for (File file:files) {
 			String thisTagName;
@@ -126,7 +135,7 @@ public class QuestionTool {
 			} else {
 				thisTagName = file.getName().substring(0, file.getName().indexOf("."));
 				newParentTagNames.add(thisTagName);
-				questions.addAll(LoadQuestionsFromFile(file, newParentTagNames));
+				questions.addAll(loadQuestionsFromFile(file, newParentTagNames));
 			}
 			TagManager.addTag(thisTagName);
 		}
@@ -151,7 +160,7 @@ public class QuestionTool {
 	 * @return
 	 * @throws QuestionFormatException
 	 */
-	private static List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
+	private List<Question> parseTextToQuestions(List<String> lines, Set<String> tagNames) throws QuestionFormatException { int size = lines.size();
 		String numText = lines.get(0);
 		
 		if (numText.startsWith(UTF8_BOM)) {
@@ -200,7 +209,7 @@ public class QuestionTool {
 				Question question = new Question(stem, optionA, optionB, optionC, optionD, answer, resourceText, tagNames);
 				
 				if (question.getResource().getData() != null) {
-				    String filePathName = RESOURCE_ICON_FOLDER + question.getResource().getData();
+				    String filePathName = RESOURCE_ICON_FOLDER.getAbsolutePath() + File.separator + question.getResource().getData();
 			        File file = new File(filePathName);
 			        if (!file.exists()) {
 			            question.getResource().setType(ResourceType.IMAGE);

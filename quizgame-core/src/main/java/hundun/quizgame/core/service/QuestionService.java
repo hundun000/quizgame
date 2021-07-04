@@ -15,7 +15,6 @@ import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
 import hundun.quizgame.core.model.question.Question;
 import hundun.quizgame.core.model.team.TeamRuntime;
-import hundun.quizgame.core.tool.QuestionTool;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -25,6 +24,9 @@ public class QuestionService {
     @Autowired
     SessionService sessionService;
 
+    @Autowired
+    QuestionLoaderService questionLoaderService;
+    
 	private Random hitRandom = new Random(1);
 	private Random insertQuestionRandom = new Random(1);
 	
@@ -137,7 +139,7 @@ public class QuestionService {
 
     public List<Question> getQuestions(String questionPackageName) throws QuizgameException {
         if (!questionPackages.containsKey(questionPackageName)) {
-            List<Question> questions = QuestionTool.LoadAllQuestions(questionPackageName);
+            List<Question> questions = questionLoaderService.loadAllQuestions(questionPackageName);
             questionPackages.put(questionPackageName, questions);
             questions.forEach(item -> questionPool.put(item.getId(), item));
         }

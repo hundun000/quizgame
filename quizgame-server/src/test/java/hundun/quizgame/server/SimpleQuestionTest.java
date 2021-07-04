@@ -28,10 +28,10 @@ import hundun.quizgame.core.model.question.Question;
 import hundun.quizgame.core.model.question.TagManager;
 import hundun.quizgame.core.model.team.TeamRuntime;
 import hundun.quizgame.core.service.GameService;
+import hundun.quizgame.core.service.QuestionLoaderService;
 import hundun.quizgame.core.service.QuestionService;
 import hundun.quizgame.core.service.SessionService;
 import hundun.quizgame.core.service.TeamService;
-import hundun.quizgame.core.tool.QuestionTool;
 
 /**
  *
@@ -63,7 +63,7 @@ public class SimpleQuestionTest {
         // request_0
 		MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
 		matchConfigDTO.setTeamNames(Arrays.asList(TeamService.DEMO_TEAM_NAME));
-		matchConfigDTO.setQuestionPackageName(QuestionTool.TEST_PACKAGE_NAME);
+		matchConfigDTO.setQuestionPackageName(QuestionLoaderService.TEST_PACKAGE_NAME);
 		matchConfigDTO.setMatchStrategyType(MatchStrategyType.ENDLESS);
 		String sessionId = gameService.createMatch(matchConfigDTO).getId();
 		
