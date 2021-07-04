@@ -1,1 +1,2 @@
-rootProject.name = 'stillstanding'
+rootProject.name = 'quizgame-all'
+include 'quizgame-core', 'quizgame-server'

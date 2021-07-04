@@ -148,7 +148,7 @@ response:
     "payload": {
         "id": "0",
         "question": {
-            "id": "com.zaca.stillstanding.core.question.Question@1dc2eca0",
+            "id": "1dc2eca0",
             "stem": "TV动画《甲贺忍法帖》中，阳炎被谁斩获？",
             "options": [
                 "药师寺天膳",

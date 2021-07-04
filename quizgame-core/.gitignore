@@ -2,6 +2,11 @@
 /build/
 !gradle/wrapper/gradle-wrapper.jar
 
+
+### custom ###
+/data/questions
+/data/questions*
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

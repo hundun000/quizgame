@@ -1,0 +1,8 @@
+server:
+    port: 10100
+
+
+
+logging:
+    level:
+        hundun.quizgame: "DEBUG"
