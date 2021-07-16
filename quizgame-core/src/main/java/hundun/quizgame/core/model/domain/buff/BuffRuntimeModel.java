@@ -11,7 +11,7 @@ import lombok.Getter;
  * Created on 2020/05/20
  */
 
-public class BuffModel {
+public class BuffRuntimeModel {
     @Getter
     private final BuffPrototype prototype;
     @Getter
@@ -20,7 +20,7 @@ public class BuffModel {
     @Getter
     private IBuffStrategy buffStrategy;
     
-    public BuffModel(BuffPrototype prototype, int duration) {
+    public BuffRuntimeModel(BuffPrototype prototype, int duration) {
         this.prototype = prototype;
         this.duration = duration;
         

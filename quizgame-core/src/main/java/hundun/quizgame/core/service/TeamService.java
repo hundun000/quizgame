@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.RolePrototype;
 import hundun.quizgame.core.prototype.TeamPrototype;
 
@@ -38,7 +38,7 @@ public class TeamService {
 	
 	public void updateTeam(TeamPrototype teamPrototype) throws NotFoundException {
 	    if (!existTeam(teamPrototype.getName())) {
-            throw new NotFoundException(TeamModel.class.getSimpleName(), teamPrototype.getName());
+            throw new NotFoundException(TeamRuntimeModel.class.getSimpleName(), teamPrototype.getName());
         }
 	    teamPrototypes.put(teamPrototype.getName(), teamPrototype);
     }
@@ -50,7 +50,7 @@ public class TeamService {
 	public TeamPrototype getTeam(String name) throws NotFoundException {
 
 		if (!existTeam(name)) {
-			throw new NotFoundException(TeamModel.class.getSimpleName(), name);
+			throw new NotFoundException(TeamRuntimeModel.class.getSimpleName(), name);
 		}
 		return teamPrototypes.get(name);
 	}

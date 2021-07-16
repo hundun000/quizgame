@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.TeamPrototype;
 import hundun.quizgame.core.prototype.match.MatchConfig;
 import hundun.quizgame.core.service.GameService;

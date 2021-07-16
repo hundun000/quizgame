@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import hundun.quizgame.core.exception.NotFoundException;
-import hundun.quizgame.core.model.domain.buff.BuffModel;
+import hundun.quizgame.core.model.domain.buff.BuffRuntimeModel;
 import hundun.quizgame.core.prototype.buff.BuffPrototype;
 
 
@@ -29,11 +29,11 @@ public class BuffService {
     }
     
     
-    public BuffModel generateRunTimeBuff(String buffPrototypeName, int duration) throws NotFoundException {
+    public BuffRuntimeModel generateRunTimeBuff(String buffPrototypeName, int duration) throws NotFoundException {
         if (!buffPrototypes.containsKey(buffPrototypeName)) {
             throw new NotFoundException("Buff", buffPrototypeName);
         }
-        return new BuffModel(buffPrototypes.get(buffPrototypeName), duration);
+        return new BuffRuntimeModel(buffPrototypes.get(buffPrototypeName), duration);
     }
     
     public Collection<BuffPrototype> listBuffModels() {

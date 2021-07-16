@@ -8,7 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import hundun.quizgame.core.model.domain.SkillSlotRuntimeModel;
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.RolePrototype;
 import hundun.quizgame.core.prototype.TeamPrototype;
 import hundun.quizgame.core.prototype.event.AnswerResultEvent;
@@ -38,18 +38,18 @@ public class MatchEventFactory {
         return false;
     }
     
-    public static StartMatchEvent getTypeStartMatch(List<TeamModel> teamModels){
+    public static StartMatchEvent getTypeStartMatch(List<TeamRuntimeModel> teamRuntimeModels){
         StartMatchEvent event = new StartMatchEvent();
         event.setType(EventType.START_MATCH);
         List<TeamPrototype> teamPrototypes = new ArrayList<>();
-        for (TeamModel teamModel : teamModels) {
-            teamPrototypes.add(teamModel.getPrototype());
+        for (TeamRuntimeModel teamRuntimeModel : teamRuntimeModels) {
+            teamPrototypes.add(teamRuntimeModel.getPrototype());
         }
         event.setTeamPrototypes(teamPrototypes);
         return event;
     }
     
-    public static SwitchTeamEvent getTypeSwitchTeam(TeamModel lastTeam, TeamModel currentTeam) {
+    public static SwitchTeamEvent getTypeSwitchTeam(TeamRuntimeModel lastTeam, TeamRuntimeModel currentTeam) {
         SwitchTeamEvent event = new SwitchTeamEvent();
         event.setType(EventType.SWITCH_TEAM);
         event.setFromTeamName(lastTeam.getName());

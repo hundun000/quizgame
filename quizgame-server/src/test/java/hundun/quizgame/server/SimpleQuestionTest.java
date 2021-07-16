@@ -23,7 +23,7 @@ import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.Question;
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.match.MatchConfig;
 import hundun.quizgame.core.prototype.match.MatchStrategyType;
 import hundun.quizgame.core.service.BuiltinDataConfiguration;

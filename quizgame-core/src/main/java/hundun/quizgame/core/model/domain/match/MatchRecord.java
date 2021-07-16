@@ -14,7 +14,7 @@ public class MatchRecord {
     
     public MatchRecord(BaseMatch match) {
         this.matchId = match.getSessionId();
-        match.teamModels.forEach(team -> scores.put(team.getName(), team.getMatchScore()));
+        match.teamRuntimeModels.forEach(team -> scores.put(team.getName(), team.getMatchScore()));
     }
     
     public String getMatchId() {

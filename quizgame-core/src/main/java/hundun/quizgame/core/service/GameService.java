@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.model.domain.match.BaseMatch;
 import hundun.quizgame.core.model.domain.match.MatchRecord;
 import hundun.quizgame.core.model.domain.match.strategy.BaseMatchStrategy;
@@ -59,11 +59,11 @@ public class GameService {
         SessionDataPackage sessionDataPackage = sessionService.createSession(matchConfig.getQuestionPackageName());
         
         BaseMatch match = new BaseMatch(sessionDataPackage.getSessionId(), strategy);
-        List<TeamModel> teamModels = new ArrayList<>();
+        List<TeamRuntimeModel> teamRuntimeModels = new ArrayList<>();
         for (String teamName : matchConfig.getTeamNames()) {
-            teamModels.add(new TeamModel(teamService.getTeam(teamName)));
+            teamRuntimeModels.add(new TeamRuntimeModel(teamService.getTeam(teamName)));
         }
-        match.initTeams(teamModels);
+        match.initTeams(teamRuntimeModels);
         
         sessionDataPackage.setMatch(match);
         

@@ -1,6 +1,6 @@
 package hundun.quizgame.core.model.domain.match.strategy;
 
-import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.event.SwitchTeamEvent;
 import hundun.quizgame.core.prototype.match.HealthType;
 import hundun.quizgame.core.service.BuffService;
@@ -34,7 +34,7 @@ public class MainStrategy extends BaseMatchStrategy {
         /*
          * 每一题换队（被调用一定换）
          */
-        TeamModel lastTeam = parent.getCurrentTeam();
+        TeamRuntimeModel lastTeam = parent.getCurrentTeam();
         switchToNextTeam();
         return MatchEventFactory.getTypeSwitchTeam(lastTeam, parent.getCurrentTeam());
     }

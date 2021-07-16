@@ -5,8 +5,8 @@ import java.util.Map;
 
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.SkillSlotRuntimeModel;
-import hundun.quizgame.core.model.domain.TeamModel;
-import hundun.quizgame.core.model.domain.buff.BuffModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
+import hundun.quizgame.core.model.domain.buff.BuffRuntimeModel;
 import hundun.quizgame.core.model.domain.buff.CombBuffStrategy;
 import hundun.quizgame.core.model.domain.match.BaseMatch;
 import hundun.quizgame.core.prototype.buff.BuffStrategyType;
@@ -90,7 +90,7 @@ public abstract class BaseMatchStrategy {
      */
     protected int calculateScoreAdditionByBuffs(AnswerType answerType, int baseScoreAddition) {
         int modifiedScoreAddition = 0;
-        for (BuffModel buff : parent.getCurrentTeam().getBuffs()) {
+        for (BuffRuntimeModel buff : parent.getCurrentTeam().getBuffs()) {
             modifiedScoreAddition = buff.getBuffStrategy().modifyScore(baseScoreAddition, buff.getDuration());
         }
         return modifiedScoreAddition;
@@ -118,8 +118,8 @@ public abstract class BaseMatchStrategy {
     
     public FinishEvent checkFinishEvent() {
         boolean anyDie = false;
-        for (TeamModel teamModel : parent.getTeams()) {
-            if (!teamModel.isAlive()) {
+        for (TeamRuntimeModel teamRuntimeModel : parent.getTeams()) {
+            if (!teamRuntimeModel.isAlive()) {
                 anyDie = true;
                 break;
             }
@@ -159,7 +159,7 @@ public abstract class BaseMatchStrategy {
     
     
     
-    public SkillResultEvent generalUseSkill(TeamModel team, String skillName) throws QuizgameException {
+    public SkillResultEvent generalUseSkill(TeamRuntimeModel team, String skillName) throws QuizgameException {
         SkillResultEvent newEvents; 
         
         SkillSlotRuntimeModel skillSlotRuntimeModel = parent.getCurrentTeam().getSkillSlotRuntime(skillName);
@@ -170,7 +170,7 @@ public abstract class BaseMatchStrategy {
                     
             for (AddBuffSkillEffect skillEffect : skillSlotRuntimeModel.getPrototype().getBackendEffects()) {
                 AddBuffSkillEffect addBuffSkillEffect = skillEffect;
-                BuffModel buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
+                BuffRuntimeModel buff = buffService.generateRunTimeBuff(addBuffSkillEffect.getBuffName(), addBuffSkillEffect.getDuration());
                 parent.getCurrentTeam().addBuff(buff);
             }
             

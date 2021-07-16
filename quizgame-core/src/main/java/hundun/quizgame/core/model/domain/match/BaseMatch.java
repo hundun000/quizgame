@@ -8,8 +8,8 @@ import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.StateException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.Question;
-import hundun.quizgame.core.model.domain.TeamModel;
-import hundun.quizgame.core.model.domain.buff.BuffModel;
+import hundun.quizgame.core.model.domain.TeamRuntimeModel;
+import hundun.quizgame.core.model.domain.buff.BuffRuntimeModel;
 import hundun.quizgame.core.model.domain.buff.CombBuffStrategy;
 import hundun.quizgame.core.model.domain.match.strategy.BaseMatchStrategy;
 import hundun.quizgame.core.prototype.event.AnswerResultEvent;
@@ -32,7 +32,7 @@ public class BaseMatch {
     MatchState state;
     protected final String sessionId;
 
-	protected List<TeamModel> teamModels = new ArrayList<>();
+	protected List<TeamRuntimeModel> teamRuntimeModels = new ArrayList<>();
 	 
 	private int currentTeamIndex;
 	private Question currentQuestion;
@@ -65,9 +65,13 @@ public class BaseMatch {
         strategy.initMatch(this);
     }
 	
-	public void initTeams(List<TeamModel> teamModels) throws NotFoundException {
-		this.teamModels.clear();
-		this.teamModels.addAll(teamModels);
+	public void initTeams(List<TeamRuntimeModel> teamRuntimeModels) throws NotFoundException {
+		this.teamRuntimeModels.clear();
+		this.teamRuntimeModels.addAll(teamRuntimeModels);
+        for (TeamRuntimeModel teamRuntimeModel : teamRuntimeModels) {
+            int currentHealth = strategy.calculateCurrentHealth();
+            teamRuntimeModel.setHealth(currentHealth);
+        }
 		this.setCurrentTeam(-1);
 	}
 	
@@ -78,7 +82,7 @@ public class BaseMatch {
 	    setCurrentTeam(0);
  
 	    eventsClear();
-	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teamModels);
+	    this.startMatchEvent = MatchEventFactory.getTypeStartMatch(this.teamRuntimeModels);
         //events.add(checkSwitchQuestionEvent());
 	    this.state = MatchState.WAIT_GENERATE_QUESTION;
     }
@@ -164,7 +168,7 @@ public class BaseMatch {
 	
 	private void updateBuffsDuration(AnswerType answerType) {
 	    // 某些BuffEffect有特殊的修改Duration规则
-	    for (BuffModel buff : getCurrentTeam().getBuffs()) {
+	    for (BuffRuntimeModel buff : getCurrentTeam().getBuffs()) {
             if (buff.getBuffStrategy() != null) {
                 
                 if (answerType == AnswerType.CORRECT) {
@@ -178,9 +182,9 @@ public class BaseMatch {
         }
 	    
 	    // 所有buff减少一层，然后清理已经没有层数的buff
-        Iterator<BuffModel> iterator = getCurrentTeam().getBuffs().iterator();
+        Iterator<BuffRuntimeModel> iterator = getCurrentTeam().getBuffs().iterator();
         while(iterator.hasNext()) {
-            BuffModel buff = iterator.next();
+            BuffRuntimeModel buff = iterator.next();
             buff.minusOneDurationAndCheckMaxDuration();
             if (buff.getDuration() <= 0) {
                 iterator.remove();
@@ -196,13 +200,13 @@ public class BaseMatch {
         return sessionId;
     }
 
-    public List<TeamModel> getTeams() {
-        return teamModels;
+    public List<TeamRuntimeModel> getTeams() {
+        return teamRuntimeModels;
     }
 
-    public TeamModel getCurrentTeam() {
+    public TeamRuntimeModel getCurrentTeam() {
         if (currentTeamIndex >= 0) {
-            return teamModels.get(currentTeamIndex);
+            return teamRuntimeModels.get(currentTeamIndex);
         } else {
             return null;
         }
@@ -256,8 +260,8 @@ public class BaseMatch {
         dto.setSwitchTeamEvent(switchTeamEvent);
         dto.setSwitchQuestionEvent(switchQuestionEvent);
         dto.setFinishEvent(finishEvent);
-        List<TeamRuntimeView> teamRuntimeInfos = new ArrayList<>(this.teamModels.size());
-        this.teamModels.forEach(team -> teamRuntimeInfos.add(team.toTeamRuntimeInfoDTO()));
+        List<TeamRuntimeView> teamRuntimeInfos = new ArrayList<>(this.teamRuntimeModels.size());
+        this.teamRuntimeModels.forEach(team -> teamRuntimeInfos.add(team.toTeamRuntimeInfoDTO()));
         dto.setTeamRuntimeInfos(teamRuntimeInfos);
         dto.setState(state);
         dto.setActionAdvices(MatchStateUtils.getValidClientActions(state));

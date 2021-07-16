@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.Set;
 
 import hundun.quizgame.core.exception.NotFoundException;
-import hundun.quizgame.core.model.domain.buff.BuffModel;
+import hundun.quizgame.core.model.domain.buff.BuffRuntimeModel;
 import hundun.quizgame.core.prototype.TeamPrototype;
 import hundun.quizgame.core.view.buff.BuffRuntimeView;
 import hundun.quizgame.core.view.team.TeamRuntimeView;
 import lombok.Getter;
 
 
-public class TeamModel {
+public class TeamRuntimeModel {
     
     private static double DEFAULT_HIT_PICK_RATE = 0.2;
     private static double HIT_PICK_RATE_INCREASE_STEP = 0.05;
@@ -24,14 +24,14 @@ public class TeamModel {
 	private int matchScore;
 	private int health;
 	
-	private List<BuffModel> buffs = new ArrayList<>();
+	private List<BuffRuntimeModel> buffs = new ArrayList<>();
 	@Getter
 	private double hitPickRate;
 	
 	
-	public TeamModel(TeamPrototype prototype) {
+	public TeamRuntimeModel(TeamPrototype prototype) {
 		this.prototype = prototype;
-		int currentHealth = 1;
+		int currentHealth = -1;
 	    this.matchScore = 0;
         setHealth(currentHealth);
         if (prototype.getRolePrototype() != null) {
@@ -77,7 +77,7 @@ public class TeamModel {
         return matchScore;
     }
     
-    public List<BuffModel> getBuffs() {
+    public List<BuffRuntimeModel> getBuffs() {
         return buffs;
     }
     
@@ -86,8 +86,8 @@ public class TeamModel {
     }
 
 	
-	public void addBuff(BuffModel newBuff) {
-        for (BuffModel buff : buffs) {
+	public void addBuff(BuffRuntimeModel newBuff) {
+        for (BuffRuntimeModel buff : buffs) {
             if (buff.getPrototype().getName().equals(newBuff.getPrototype().getName())) {
                 buff.addDuration(newBuff.getDuration());
                 return;
