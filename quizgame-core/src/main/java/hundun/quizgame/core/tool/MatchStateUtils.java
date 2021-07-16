@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import hundun.quizgame.core.dto.match.ClientActionType;
-import hundun.quizgame.core.dto.match.MatchState;
+import hundun.quizgame.core.prototype.match.ClientActionType;
+import hundun.quizgame.core.prototype.match.MatchState;
 
 /**
  * @author hundun

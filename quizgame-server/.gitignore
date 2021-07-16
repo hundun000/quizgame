@@ -4,8 +4,8 @@
 
 
 ### custom ###
-/data/questions
-
+data/packages
+!data/packages/questions_small
 
 ### IntelliJ IDEA ###
 .idea

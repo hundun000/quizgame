@@ -20,17 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import hundun.quizgame.core.dto.ApiResult;
-import hundun.quizgame.core.dto.match.MatchConfigDTO;
-import hundun.quizgame.core.dto.match.MatchSituationDTO;
-import hundun.quizgame.core.dto.team.TeamConstInfoDTO;
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.team.TeamPrototype;
-import hundun.quizgame.core.model.team.TeamRuntime;
+import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.prototype.TeamPrototype;
+import hundun.quizgame.core.prototype.match.MatchConfig;
 import hundun.quizgame.core.service.GameService;
 import hundun.quizgame.core.service.QuestionLoaderService;
 import hundun.quizgame.core.service.QuestionService;
 import hundun.quizgame.core.service.TeamService;
+import hundun.quizgame.core.view.ApiResult;
+import hundun.quizgame.core.view.match.MatchSituationView;
 import hundun.quizgame.server.api.spring.IGameApi;
 import hundun.quizgame.server.utils.FileTool;
 
@@ -64,14 +63,14 @@ public class GameController implements IGameApi {
     TeamService teamService;
 
     @Override
-    public ApiResult<MatchSituationDTO> createMatch(
-            MatchConfigDTO matchConfigDTO
+    public ApiResult<MatchSituationView> createMatch(
+            MatchConfig matchConfig
             ) {
-        logger.info("===== /createPreMatch {} =====", matchConfigDTO);
+        logger.info("===== /createPreMatch {} =====", matchConfig);
 
         try {
-            MatchSituationDTO matchSituationDTO = gameService.createMatch(matchConfigDTO);
-            return new ApiResult<>(matchSituationDTO);
+            MatchSituationView matchSituationView = gameService.createMatch(matchConfig);
+            return new ApiResult<>(matchSituationView);
         } catch (QuizgameException e) {
             e.printStackTrace();
             return new ApiResult<>(e.getMessage(), e.getRetcode());
@@ -84,14 +83,14 @@ public class GameController implements IGameApi {
     
     
     @Override
-    public ApiResult<MatchSituationDTO> start(
+    public ApiResult<MatchSituationView> start(
             String sessionId
             ) {
         logger.info("===== /start {}=====", sessionId);
         
         try {
-            MatchSituationDTO matchSituationDTO = gameService.startMatch(sessionId);
-            return new ApiResult<>(matchSituationDTO);
+            MatchSituationView matchSituationView = gameService.startMatch(sessionId);
+            return new ApiResult<>(matchSituationView);
         } catch (QuizgameException e) {
             e.printStackTrace();
             return new ApiResult<>(e.getMessage(), e.getRetcode());
@@ -101,14 +100,14 @@ public class GameController implements IGameApi {
     
     
     @Override
-    public ApiResult<MatchSituationDTO> teamAnswer(
+    public ApiResult<MatchSituationView> teamAnswer(
             String sessionId,
             String answer
             ) {
         logger.info("===== /answer {} {} =====", sessionId, answer);
         try {
-            MatchSituationDTO matchSituationDTO = gameService.teamAnswer(sessionId, answer);
-            return new ApiResult<>(matchSituationDTO);
+            MatchSituationView matchSituationView = gameService.teamAnswer(sessionId, answer);
+            return new ApiResult<>(matchSituationView);
         } catch (QuizgameException e) {
             e.printStackTrace();
             return new ApiResult<>(e.getMessage(), e.getRetcode());
@@ -117,14 +116,14 @@ public class GameController implements IGameApi {
     
 
     @Override
-    public ApiResult<MatchSituationDTO> teamUseSkill(
+    public ApiResult<MatchSituationView> teamUseSkill(
             String sessionId,
             String skillName
             ) {
         logger.info("===== /use-skill {} {} =====", sessionId, skillName);
         try {
-            MatchSituationDTO matchSituationDTO = gameService.teamUseSkill(sessionId, skillName);
-            return new ApiResult<>(matchSituationDTO);
+            MatchSituationView matchSituationView = gameService.teamUseSkill(sessionId, skillName);
+            return new ApiResult<>(matchSituationView);
         } catch (QuizgameException e) {
             e.printStackTrace();
             return new ApiResult<>(e.getMessage(), e.getRetcode());
@@ -155,12 +154,12 @@ public class GameController implements IGameApi {
     }
 
     @Override
-    public ApiResult<MatchSituationDTO> nextQustion(String sessionId) {
+    public ApiResult<MatchSituationView> nextQustion(String sessionId) {
         logger.info("===== /nextQustion {}=====", sessionId);
         
         try {
-            MatchSituationDTO matchSituationDTO = gameService.nextQustion(sessionId);
-            return new ApiResult<>(matchSituationDTO);
+            MatchSituationView matchSituationView = gameService.nextQustion(sessionId);
+            return new ApiResult<>(matchSituationView);
         } catch (QuizgameException e) {
             e.printStackTrace();
             return new ApiResult<>(e.getMessage(), e.getRetcode());

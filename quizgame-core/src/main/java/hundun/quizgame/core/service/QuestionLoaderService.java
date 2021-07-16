@@ -14,25 +14,24 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import hundun.quizgame.core.dto.question.ResourceType;
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.question.Question;
-import hundun.quizgame.core.model.question.TagManager;
+import hundun.quizgame.core.model.domain.Question;
+import hundun.quizgame.core.prototype.question.ResourceType;
 
 @Service
 public class QuestionLoaderService {
 	
     public File RESOURCE_ICON_FOLDER;
-	private File DATA_FOLDER;
+	private File PACKAGES_FOLDER;
 	public static String BUSINESS_PACKAGE_NAME = "questions";
 	public static String PRELEASE_PACKAGE_NAME = "questions_small";
 	public static String TEST_PACKAGE_NAME = "questions_test";
 	public static String TEST_SMALL_PACKAGE_NAME = "questions_test_small";
 	
 	
-	public void lateInitFolder(File DATA_FOLDER, File RESOURCE_ICON_FOLDER) {
-        this.DATA_FOLDER = DATA_FOLDER;
+	public void lateInitFolder(File PACKAGES_FOLDER, File RESOURCE_ICON_FOLDER) {
+        this.PACKAGES_FOLDER = PACKAGES_FOLDER;
         this.RESOURCE_ICON_FOLDER = RESOURCE_ICON_FOLDER;
     }
 	
@@ -71,7 +70,7 @@ public class QuestionLoaderService {
 	
 	public List<Question> loadAllQuestions(String packageName) throws QuizgameException {
 		List<Question> questions = new LinkedList<>();
-		File mainFolder = new File(DATA_FOLDER.getAbsolutePath() + File.separator + packageName);
+		File mainFolder = new File(PACKAGES_FOLDER.getAbsolutePath() + File.separator + packageName);
 		try {
 		    LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);
         } catch (IOException e) {
@@ -137,7 +136,6 @@ public class QuestionLoaderService {
 				newParentTagNames.add(thisTagName);
 				questions.addAll(loadQuestionsFromFile(file, newParentTagNames));
 			}
-			TagManager.addTag(thisTagName);
 		}
 		return questions;
 	}

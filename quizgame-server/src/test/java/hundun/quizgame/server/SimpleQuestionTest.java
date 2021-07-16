@@ -18,15 +18,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.InitBinder;
 
-import hundun.quizgame.core.dto.match.MatchConfigDTO;
-import hundun.quizgame.core.dto.match.MatchStrategyType;
 import hundun.quizgame.core.exception.ConflictException;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.question.Question;
-import hundun.quizgame.core.model.question.TagManager;
-import hundun.quizgame.core.model.team.TeamRuntime;
+import hundun.quizgame.core.model.domain.Question;
+import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.prototype.match.MatchConfig;
+import hundun.quizgame.core.prototype.match.MatchStrategyType;
+import hundun.quizgame.core.service.BuiltinDataConfiguration;
 import hundun.quizgame.core.service.GameService;
 import hundun.quizgame.core.service.QuestionLoaderService;
 import hundun.quizgame.core.service.QuestionService;
@@ -61,11 +61,11 @@ public class SimpleQuestionTest {
 		
 		
         // request_0
-		MatchConfigDTO matchConfigDTO = new MatchConfigDTO();
-		matchConfigDTO.setTeamNames(Arrays.asList(TeamService.DEMO_TEAM_NAME));
-		matchConfigDTO.setQuestionPackageName(QuestionLoaderService.TEST_PACKAGE_NAME);
-		matchConfigDTO.setMatchStrategyType(MatchStrategyType.ENDLESS);
-		String sessionId = gameService.createMatch(matchConfigDTO).getId();
+		MatchConfig matchConfig = new MatchConfig();
+		matchConfig.setTeamNames(Arrays.asList(BuiltinDataConfiguration.DEMO_LIST_TEAM_NAME_0));
+		matchConfig.setQuestionPackageName(QuestionLoaderService.TEST_PACKAGE_NAME);
+		matchConfig.setMatchStrategyType(MatchStrategyType.ENDLESS);
+		String sessionId = gameService.createMatch(matchConfig).getId();
 		
 		// request_1
         gameService.startMatch(sessionId);

@@ -5,10 +5,10 @@ import java.util.List;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import hundun.quizgame.core.dto.ApiResult;
-import hundun.quizgame.core.dto.match.MatchConfigDTO;
-import hundun.quizgame.core.dto.match.MatchSituationDTO;
-import hundun.quizgame.core.dto.team.TeamConstInfoDTO;
+import hundun.quizgame.core.prototype.TeamPrototype;
+import hundun.quizgame.core.prototype.match.MatchConfig;
+import hundun.quizgame.core.view.ApiResult;
+import hundun.quizgame.core.view.match.MatchSituationView;
 
 /**
  * @author hundun
@@ -18,53 +18,53 @@ public interface QuizgameApi {
     
     @RequestLine("POST /createEndlessMatch")
     @Headers("Content-Type: application/json")
-    ApiResult<MatchSituationDTO> createEndlessMatch(
-            MatchConfigDTO matchConfigDTO
+    ApiResult<MatchSituationView> createEndlessMatch(
+            MatchConfig matchConfig
             );
     
     @RequestLine("POST /createPreMatch")
     @Headers("Content-Type: application/json")
-    ApiResult<MatchSituationDTO> createPreMatch(
-            MatchConfigDTO matchConfigDTO
+    ApiResult<MatchSituationView> createPreMatch(
+            MatchConfig matchConfig
             );
     
     @RequestLine("POST /createMainMatch")
     @Headers("Content-Type: application/json")
-    ApiResult<MatchSituationDTO> createMainMatch(
-            MatchConfigDTO matchConfigDTO
+    ApiResult<MatchSituationView> createMainMatch(
+            MatchConfig matchConfig
             );
             
     
     @RequestLine("POST /start?sessionId={sessionId}")
-    ApiResult<MatchSituationDTO> start(
+    ApiResult<MatchSituationView> start(
             @Param("sessionId") String sessionId
             );
     
     @RequestLine("POST /nextQustion?sessionId={sessionId}")
-    ApiResult<MatchSituationDTO> nextQustion(
+    ApiResult<MatchSituationView> nextQustion(
             @Param("sessionId") String sessionId
             );
     
     @RequestLine("POST /answer?sessionId={sessionId}&answer={answer}")
-    ApiResult<MatchSituationDTO> teamAnswer(
+    ApiResult<MatchSituationView> teamAnswer(
             @Param("sessionId") String sessionId,
             @Param("answer") String answer
             );
     
     @RequestLine("POST /use-skill?sessionId={sessionId}&skillName={skillName}")
-    ApiResult<MatchSituationDTO> teamUseSkill(
+    ApiResult<MatchSituationView> teamUseSkill(
             @Param("sessionId") String sessionId,
             @Param("skillName") String skillName
             );
     
     @RequestLine("GET /listTeams")
-    ApiResult<List<TeamConstInfoDTO>> listTeams(
+    ApiResult<List<TeamPrototype>> listTeams(
             
             );
     
     @RequestLine("POST /updateTeam")
     @Headers("Content-Type: application/json")
-    ApiResult<List<TeamConstInfoDTO>> updateTeam(
-            TeamConstInfoDTO teamConstInfoDTO
+    ApiResult<List<TeamPrototype>> updateTeam(
+            TeamPrototype teamPrototypeSimpleView
             );
 }

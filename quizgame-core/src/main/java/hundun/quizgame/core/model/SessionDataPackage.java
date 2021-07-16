@@ -3,8 +3,8 @@ package hundun.quizgame.core.model;
 import java.util.List;
 import java.util.Set;
 
-import hundun.quizgame.core.model.match.BaseMatch;
-import hundun.quizgame.core.model.question.Question;
+import hundun.quizgame.core.model.domain.Question;
+import hundun.quizgame.core.model.domain.match.BaseMatch;
 import lombok.Data;
 
 /**

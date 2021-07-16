@@ -41,6 +41,12 @@ allprojects {
     }
 }
 
+project(":quizgame-gui") {
+    dependencies {
+        implementation project(":quizgame-core")
+    }
+}
+
 project(":quizgame-core") {
 
     

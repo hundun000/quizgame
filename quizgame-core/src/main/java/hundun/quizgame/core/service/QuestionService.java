@@ -10,11 +10,11 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hundun.quizgame.core.dto.question.ResourceType;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
-import hundun.quizgame.core.model.question.Question;
-import hundun.quizgame.core.model.team.TeamRuntime;
+import hundun.quizgame.core.model.domain.Question;
+import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.prototype.question.ResourceType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,27 +31,28 @@ public class QuestionService {
 	private Random insertQuestionRandom = new Random(1);
 	
 	
+	private Set<String> tags = new HashSet<>();
 	
 	Map<String, List<Question>> questionPackages = new HashMap<>();
 	Map<String, Question> questionPool = new HashMap<>();
 
 	
-	public Question getNewQuestionForTeam(String sessionId, TeamRuntime teamRuntime, boolean removeToDirty) throws QuizgameException {
+	public Question getNewQuestionForTeam(String sessionId, TeamModel teamModel, boolean removeToDirty) throws QuizgameException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
   
 	    Question question;
-		boolean hitPick = hitRandom.nextDouble() < teamRuntime.getHitPickRate();
+		boolean hitPick = hitRandom.nextDouble() < teamModel.getHitPickRate();
 		if (hitPick) {
-		    question = getFirstPickQuestionIndex(sessionId, teamRuntime);
-			teamRuntime.resetHitPickRate();
+		    question = getFirstPickQuestionIndex(sessionId, teamModel);
+			teamModel.resetHitPickRate();
 			log.debug("FirstPickQuestionIndex");
 		} else {
-		    question = getFirstNotBanQuestionIndex(sessionId, teamRuntime);
-			teamRuntime.increaseHitPickRate();
+		    question = getFirstNotBanQuestionIndex(sessionId, teamModel);
+			teamModel.increaseHitPickRate();
 			log.debug("FirstNotBanQuestionIndex");
 		}
 		if (question == null) {
-		    question = getFirstQuestionIgnorePickBan(sessionId, teamRuntime);
+		    question = getFirstQuestionIgnorePickBan(sessionId, teamModel);
 		}
 		log.info("questionDTO = {}", question.toQuestionDTO());
 		
@@ -67,7 +68,7 @@ public class QuestionService {
 	}
 	
 	
-	private Question getFirstQuestionIgnorePickBan(String sessionId, TeamRuntime teamRuntime) throws QuizgameException {
+	private Question getFirstQuestionIgnorePickBan(String sessionId, TeamModel teamModel) throws QuizgameException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
         Question question = null;
         int i = 0;  
@@ -81,7 +82,7 @@ public class QuestionService {
     }
 
 
-    private Question getFirstPickQuestionIndex(String sessionId, TeamRuntime teamRuntime) throws QuizgameException {
+    private Question getFirstPickQuestionIndex(String sessionId, TeamModel teamModel) throws QuizgameException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
@@ -89,7 +90,7 @@ public class QuestionService {
 		    String questionId = sessionDataPackage.getQuestionIds().get(i);
             question = questionPool.get(questionId); 
 			
-			if (!teamRuntime.getPrototype().isPickAndNotBan(question.getTags())) {
+			if (!teamModel.isPickAndNotBan(question.getTags())) {
 				question = null;
 				i++;
 				continue;
@@ -108,7 +109,7 @@ public class QuestionService {
 		return question;
 	}
 	
-	private Question getFirstNotBanQuestionIndex(String sessionId, TeamRuntime teamRuntime) throws QuizgameException {
+	private Question getFirstNotBanQuestionIndex(String sessionId, TeamModel teamModel) throws QuizgameException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);
 		Question question = null;
 		int i = 0;	
@@ -116,7 +117,7 @@ public class QuestionService {
 			String questionId = sessionDataPackage.getQuestionIds().get(i);
 			question = questionPool.get(questionId); 
 			
-			if (!teamRuntime.getPrototype().isNotBan(question.getTags())) {
+			if (!teamModel.isNotBan(question.getTags())) {
 				question = null;
 				i++;
 				continue;
@@ -151,6 +152,18 @@ public class QuestionService {
         Set<String> tags = new HashSet<>();
         questions.forEach(question -> tags.addAll(question.getTags()));
         return tags;
+    }
+    
+    public void addTag(String tag) {
+        tags.add(tag);
+    }
+    
+    public Set<String> getTags() {
+        return tags;
+    }
+    
+    public boolean tagExsist(String tag) {
+        return tags.contains(tag);
     }
 
 }

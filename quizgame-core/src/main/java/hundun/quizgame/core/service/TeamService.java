@@ -1,5 +1,6 @@
 package hundun.quizgame.core.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -7,90 +8,55 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hundun.quizgame.core.exception.ConflictException;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
-import hundun.quizgame.core.model.team.TeamPrototype;
-import hundun.quizgame.core.model.team.TeamRuntime;
+import hundun.quizgame.core.model.domain.TeamModel;
+import hundun.quizgame.core.prototype.RolePrototype;
+import hundun.quizgame.core.prototype.TeamPrototype;
 
 @Service
 public class TeamService {
-    public static String DEMO_TEAM_NAME = "游客";
+    
     
     @Autowired
     RoleSkillService roleSkillServic;
     
 	private Map<String, TeamPrototype> teamPrototypes = new HashMap<>();
 	
-	public void quickRegisterTeam(String teamName, List<String> pickTagNames, List<String> banTagNames, String roleName) throws QuizgameException {
-        creatTeam(teamName); 
-
-        setPickTagsForTeam(teamName, pickTagNames);
-
-        setBanTagsForTeam(teamName, banTagNames);
+	public void registerTeam(String teamName, List<String> pickTagNames, List<String> banTagNames, String roleName) throws QuizgameException {
         
-        setRoleForTeam(teamName, roleName);
+	    RolePrototype rolePrototype = roleName != null ? roleSkillServic.getRole(roleName) : null;
+
+	    TeamPrototype teamPrototype = new TeamPrototype(teamName, pickTagNames, banTagNames, rolePrototype);
+	    
+	    
+	    teamPrototypes.put(teamName, teamPrototype); 
+
+
     }
-	
-	public void creatTeam(String teamName) throws ConflictException {
-		if (existTeam(teamName)) {
-			throw new ConflictException(TeamRuntime.class.getSimpleName(), teamName);
-		}
-		TeamPrototype teamRuntime = new TeamPrototype(teamName);
-		teamPrototypes.put(teamName, teamRuntime);
-	}
+
 	
 	public void updateTeam(TeamPrototype teamPrototype) throws NotFoundException {
 	    if (!existTeam(teamPrototype.getName())) {
-            throw new NotFoundException(TeamRuntime.class.getSimpleName(), teamPrototype.getName());
+            throw new NotFoundException(TeamModel.class.getSimpleName(), teamPrototype.getName());
         }
 	    teamPrototypes.put(teamPrototype.getName(), teamPrototype);
     }
 	
 	
-	public void setPickTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
-		setTagsForTeam(teamName, tagNames, true);
-	}
-	public void setBanTagsForTeam(String teamName, List<String> tagNames) throws NotFoundException {
-		setTagsForTeam(teamName, tagNames, false);
-	}
-	private void setTagsForTeam(String teamName, List<String> tagNames, boolean isPick) throws NotFoundException {
-	    TeamPrototype teamRuntime = getTeam(teamName);
-//		for (String tagName:tagNames) {
-//			if (!TagManager.tagExsist(tagName)) {
-//				throw new NotFoundException("Tag", tagName);
-//			}
-//		}
-		if (isPick) {
-			teamRuntime.setPickTags(tagNames);
-		} else {
-			teamRuntime.setBanTags(tagNames);
-		}
-	}
 	
-	public void setRoleForTeam(String teamName, String roleName) throws NotFoundException {
-        if (roleName != null) {
-            TeamPrototype teamRuntime = getTeam(teamName);
-            
-            if (!roleSkillServic.existRole(roleName)) {
-                throw new NotFoundException("Role", roleName);
-            }
-            
-            teamRuntime.setRolePrototype(roleSkillServic.getRole(roleName));
-        }
-    }
 	
 	
 	public TeamPrototype getTeam(String name) throws NotFoundException {
 
 		if (!existTeam(name)) {
-			throw new NotFoundException(TeamRuntime.class.getSimpleName(), name);
+			throw new NotFoundException(TeamModel.class.getSimpleName(), name);
 		}
 		return teamPrototypes.get(name);
 	}
 	
-	public Collection<TeamPrototype> listTeams() {
-        return teamPrototypes.values();
+	public List<TeamPrototype> listTeams() {
+        return new ArrayList<>(teamPrototypes.values());
     }
 	
 	public boolean existTeam(String name) {

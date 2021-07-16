@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
-import hundun.quizgame.core.model.question.Question;
+import hundun.quizgame.core.model.domain.Question;
 
 /**
  * @author hundun
