@@ -22,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QuizCoreContext {
     
-    private static QuizCoreContext INSTANCE;
-    
     public TeamService teamService;
     public QuestionService questionService;
     public RoleSkillService roleSkillService;
@@ -43,7 +41,7 @@ public class QuizCoreContext {
 //        this.questionLoaderService = quizCoreContext.questionLoaderService;
 //    }
     
-    private QuizCoreContext() {
+    public QuizCoreContext() {
         this.teamService = new TeamService();
         this.questionService = new QuestionService();
         this.roleSkillService = new RoleSkillService();
@@ -54,28 +52,24 @@ public class QuizCoreContext {
         this.gameService = new GameService();
         
         this.builtinDataConfiguration = new BuiltinDataConfiguration();
+        
+        init();
     }
     
-    public static QuizCoreContext getInstance() {
-        if (INSTANCE == null) {
-            init();
-        }
-        return INSTANCE;
-    }
+
     
-    private static void init () {
-        INSTANCE = new QuizCoreContext();
+    private void init() {
         
         StringBuilder namesBuilder = new StringBuilder();
         
         List<IQuizCoreComponent> components = new ArrayList<>();
         
-        Class<?> clazz = INSTANCE.getClass();   
+        Class<?> clazz = this.getClass();   
         Field[] fields = clazz.getDeclaredFields();   
         for (Field field : fields) {
             if (IQuizCoreComponent.class.isAssignableFrom(field.getType())) {
                 try {
-                    IQuizCoreComponent bean = (IQuizCoreComponent) field.get(INSTANCE);
+                    IQuizCoreComponent bean = (IQuizCoreComponent) field.get(this);
                     components.add(bean);
                     namesBuilder.append(bean.getClass().getSimpleName()).append(", ");
                 } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -88,7 +82,7 @@ public class QuizCoreContext {
         
         for (IQuizCoreComponent component : components) {
             try {
-                component.wire(INSTANCE);
+                component.wire(this);
             } catch (Exception e) {
                 log.error("component error: ", e);
             }
