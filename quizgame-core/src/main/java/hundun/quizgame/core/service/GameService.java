@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
 import hundun.quizgame.core.model.domain.TeamRuntimeModel;
@@ -24,23 +23,10 @@ import lombok.extern.slf4j.Slf4j;
  * Created on 2019/03/19
  */
 @Slf4j
-@Service
-public class GameService {
+public class GameService implements IQuizCoreComponent {
 
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
     private TeamService teamService;
-    @Autowired
-    private RoleSkillService roleSkillService;
-    
-    @Autowired
-    private BuffService buffService;
-
-    @Autowired
     private MatchStrategyFactory matchStrategyFactory;
-    
-    @Autowired
     private SessionService sessionService;
     
     LinkedHashMap<String, MatchRecord> matchRecords = new LinkedHashMap<>();
@@ -48,7 +34,13 @@ public class GameService {
     public GameService() {
     	
     }
-
+    
+    @Override
+    public void wire(QuizCoreContext quizCoreContext) {
+        this.teamService = quizCoreContext.teamService;
+        this.matchStrategyFactory = quizCoreContext.matchStrategyFactory;
+        this.sessionService = quizCoreContext.sessionService;
+    }
     
     
     public MatchSituationView createMatch(MatchConfig matchConfig) throws QuizgameException {
@@ -120,6 +112,10 @@ public class GameService {
         MatchSituationView matchSituationView = match.toMatchSituationView();
         return matchSituationView;
     }
+
+
+
+    
 
     
     

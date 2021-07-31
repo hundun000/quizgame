@@ -3,7 +3,6 @@ package hundun.quizgame.core.service;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.stereotype.Service;
 
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.model.domain.buff.BuffRuntimeModel;
@@ -14,7 +13,6 @@ import hundun.quizgame.core.prototype.buff.BuffPrototype;
  * @author hundun
  * Created on 2020/05/25
  */
-@Service
 public class BuffService {
     
     private  Map<String, BuffPrototype> buffPrototypes = new HashMap<>();

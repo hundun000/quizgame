@@ -4,8 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
 import hundun.quizgame.core.prototype.RolePrototype;
 import hundun.quizgame.core.prototype.skill.SkillSlotPrototype;
 
@@ -13,7 +12,6 @@ import hundun.quizgame.core.prototype.skill.SkillSlotPrototype;
  * @author hundun
  * Created on 2019/10/14
  */
-@Service
 public class RoleSkillService {
     
     Map<String, RolePrototype> roles = new HashMap<>();

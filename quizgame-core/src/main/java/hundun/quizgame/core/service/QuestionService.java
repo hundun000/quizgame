@@ -7,9 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
 import hundun.quizgame.core.model.domain.Question;
@@ -18,13 +17,10 @@ import hundun.quizgame.core.prototype.question.ResourceType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service
-public class QuestionService {
+public class QuestionService implements IQuizCoreComponent {
     
-    @Autowired
     SessionService sessionService;
 
-    @Autowired
     QuestionLoaderService questionLoaderService;
     
 	private Random hitRandom = new Random(1);
@@ -36,6 +32,11 @@ public class QuestionService {
 	Map<String, List<Question>> questionPackages = new HashMap<>();
 	Map<String, Question> questionPool = new HashMap<>();
 
+	public void wire(QuizCoreContext quizCoreContext) {
+        this.sessionService = quizCoreContext.sessionService;
+        this.questionLoaderService = quizCoreContext.questionLoaderService;
+    }
+	
 	
 	public Question getNewQuestionForTeam(String sessionId, TeamRuntimeModel teamRuntimeModel, boolean removeToDirty) throws QuizgameException {
 	    SessionDataPackage sessionDataPackage = sessionService.getSessionDataPackage(sessionId);

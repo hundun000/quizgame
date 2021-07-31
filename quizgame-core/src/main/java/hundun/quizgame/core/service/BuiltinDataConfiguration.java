@@ -3,11 +3,8 @@ package hundun.quizgame.core.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.buff.CombBuffStrategy;
 import hundun.quizgame.core.prototype.RolePrototype;
@@ -22,21 +19,21 @@ import lombok.extern.slf4j.Slf4j;
  * Created on 2021/07/17
  */
 @Slf4j
-@Configuration
-public class BuiltinDataConfiguration {
+public class BuiltinDataConfiguration implements IQuizCoreComponent {
     public static String DEMO_LIST_TEAM_NAME_0 = "游客";
     public static String DEMO_LIST_TEAM_NAME_1 = "游客1";
     public static String DEMO_LIST_TEAM_NAME_2 = "游客2";
     
-    @Autowired
-    private QuestionService questionService;
-    @Autowired
     private TeamService teamService;
-    @Autowired
     private RoleSkillService roleSkillService;
-    
-    @Autowired
     private BuffService buffService;
+    
+    @Override
+    public void wire(QuizCoreContext quizCoreContext) {
+        this.teamService = quizCoreContext.teamService;
+        this.roleSkillService = quizCoreContext.roleSkillService;
+        this.buffService = quizCoreContext.buffService;
+    }
     
     private void initTestData() throws QuizgameException {
 
@@ -44,8 +41,8 @@ public class BuiltinDataConfiguration {
         teamService.registerTeam("方舟同好组", Arrays.asList("动画"), Arrays.asList("单机游戏"), "ZACA娘");
     }
     
-    @PostConstruct
-    public void initBuiltinData() {
+    @Override
+    public void postWired() {
         
         try {
             initTestData();

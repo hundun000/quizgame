@@ -52,9 +52,9 @@ project(":quizgame-core") {
     
 
     dependencies {
-        implementation("org.springframework:spring-web:${springCoreVersion}")
-        implementation("org.springframework:spring-context:${springCoreVersion}")
-        implementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
+        //implementation("org.springframework:spring-web:${springCoreVersion}")
+        //implementation("org.springframework:spring-context:${springCoreVersion}")
+        //implementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
         
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.5'
         

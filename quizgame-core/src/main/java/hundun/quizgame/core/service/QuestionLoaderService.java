@@ -12,14 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
-
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.Question;
 import hundun.quizgame.core.prototype.question.ResourceType;
 
-@Service
 public class QuestionLoaderService {
 	
     public File RESOURCE_ICON_FOLDER;
@@ -69,7 +66,11 @@ public class QuestionLoaderService {
 	
 	
 	public List<Question> loadAllQuestions(String packageName) throws QuizgameException {
-		List<Question> questions = new LinkedList<>();
+		if (PACKAGES_FOLDER == null) {
+		    throw new QuizgameException("PACKAGES_FOLDER未指定", 1);
+		}
+	    
+	    List<Question> questions = new LinkedList<>();
 		File mainFolder = new File(PACKAGES_FOLDER.getAbsolutePath() + File.separator + packageName);
 		try {
 		    LoadQuestionsFromFolder(mainFolder, new HashSet<>(), questions);

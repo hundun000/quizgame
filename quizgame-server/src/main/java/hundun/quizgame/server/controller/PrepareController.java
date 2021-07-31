@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.prototype.RolePrototype;
 import hundun.quizgame.core.prototype.TeamPrototype;
@@ -29,17 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/prepare")
 public class PrepareController implements IPrepareApi {
     
-    @Autowired
-    QuestionService questionService;
+    private QuestionService questionService = QuizCoreContext.getInstance().questionService;
     
-    @Autowired
-    GameService gameService;
+    private TeamService teamService = QuizCoreContext.getInstance().teamService;
     
-    @Autowired
-    TeamService teamService;
-    
-    @Autowired
-    RoleSkillService roleSkillService;
+    private RoleSkillService roleSkillService = QuizCoreContext.getInstance().roleSkillService;
     
     @Override
     public ApiResult<List<TeamPrototype>> listTeams() {

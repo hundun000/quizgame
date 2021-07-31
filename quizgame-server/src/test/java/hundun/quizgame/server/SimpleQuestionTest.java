@@ -18,12 +18,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.annotation.InitBinder;
 
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.ConflictException;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuestionFormatException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.Question;
 import hundun.quizgame.core.model.domain.TeamRuntimeModel;
+import hundun.quizgame.core.prototype.match.AnswerType;
 import hundun.quizgame.core.prototype.match.MatchConfig;
 import hundun.quizgame.core.prototype.match.MatchStrategyType;
 import hundun.quizgame.core.service.BuiltinDataConfiguration;
@@ -32,6 +34,8 @@ import hundun.quizgame.core.service.QuestionLoaderService;
 import hundun.quizgame.core.service.QuestionService;
 import hundun.quizgame.core.service.SessionService;
 import hundun.quizgame.core.service.TeamService;
+import hundun.quizgame.core.tool.TextHelper;
+import hundun.quizgame.core.view.match.MatchSituationView;
 
 /**
  *
@@ -42,23 +46,19 @@ import hundun.quizgame.core.service.TeamService;
 @SpringBootTest
 public class SimpleQuestionTest {
 	
-    @Autowired
-	QuestionService questionService;
+	QuestionService questionService = QuizCoreContext.getInstance().questionService;
     
-    @Autowired
-	TeamService teamService;
+	TeamService teamService = QuizCoreContext.getInstance().teamService;
     
-    @Autowired
-    SessionService sessionService;
+    SessionService sessionService = QuizCoreContext.getInstance().sessionService;
     
-    @Autowired
-    GameService gameService;
+    GameService gameService = QuizCoreContext.getInstance().gameService;
 
 	
 	@Test
 	public void test() throws IOException, QuizgameException {
 		
-		
+		MatchSituationView matchSituation;
 		
         // request_0
 		MatchConfig matchConfig = new MatchConfig();
@@ -71,10 +71,13 @@ public class SimpleQuestionTest {
         gameService.startMatch(sessionId);
         
         // request_2
-        gameService.nextQustion(sessionId);
+        matchSituation = gameService.nextQustion(sessionId);
         
         // request_3
-		gameService.teamAnswer(sessionId, "A");
+        String correctAnswer = TextHelper.intToAnswerText(matchSituation.getQuestion().getAnswer());
+        matchSituation = gameService.teamAnswer(sessionId, correctAnswer);
+        assertEquals(AnswerType.CORRECT, matchSituation.getAnswerResultEvent().getResult());
+        assertEquals(1, matchSituation.getAnswerResultEvent().getAddScore());
 	}
 
 

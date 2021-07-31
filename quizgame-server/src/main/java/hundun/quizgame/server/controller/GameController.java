@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.TeamPrototype;
@@ -44,8 +45,10 @@ public class GameController implements IGameApi {
     
     ObjectMapper objectMapper = new ObjectMapper();
     
-    @Autowired
-    QuestionLoaderService questionLoaderService;
+    private QuestionLoaderService questionLoaderService = QuizCoreContext.getInstance().questionLoaderService;
+    
+    private GameService gameService = QuizCoreContext.getInstance().gameService;
+
     
     public GameController() {
         
@@ -53,14 +56,7 @@ public class GameController implements IGameApi {
     
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
     
-    @Autowired
-    QuestionService questionService;
     
-    @Autowired
-    GameService gameService;
-    
-    @Autowired
-    TeamService teamService;
 
     @Override
     public ApiResult<MatchSituationView> createMatch(

@@ -65,22 +65,20 @@ public abstract class BaseMatchStrategy {
      * @param answerType 
      */
     public AnswerResultEvent addScoreAndCountHealth(AnswerType answerType) {
-        /*
-         * 固定加1分
-         */
-        int addScore = 0;
+        
+        int score = 0;
         if (answerType == AnswerType.CORRECT) {
-            addScore = DEFAULT_CORRECT_ANSWER_SCORE;
-            addScore = calculateScoreAdditionByBuffs(answerType, addScore);
+            score = DEFAULT_CORRECT_ANSWER_SCORE;
+            score += calculateScoreAdditionByBuffs(answerType, score);
         }
-        parent.getCurrentTeam().addScore(addScore);
+        parent.getCurrentTeam().addScore(score);
         
         int currentHealth = calculateCurrentHealth();
         
         parent.getCurrentTeam().setHealth(currentHealth);
         
         
-        return MatchEventFactory.getTypeAnswerResult(answerType, addScore, parent.getCurrentTeam().getName());
+        return MatchEventFactory.getTypeAnswerResult(answerType, score, parent.getCurrentTeam().getName());
     }
 
     /**

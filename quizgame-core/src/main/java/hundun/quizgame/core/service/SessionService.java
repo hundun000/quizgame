@@ -10,9 +10,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.SessionDataPackage;
@@ -22,17 +21,20 @@ import hundun.quizgame.core.model.domain.Question;
  * @author hundun
  * Created on 2021/05/10
  */
-@Service
-public class SessionService {
+public class SessionService implements IQuizCoreComponent {
     
     private static int currentId;
     
-    @Autowired
     QuestionService questionService;
     
     Map<String, SessionDataPackage> dataPackages = new HashMap<>();
     
     private Random shuffleRandom = new Random(System.currentTimeMillis());
+    
+    @Override
+    public void wire(QuizCoreContext quizCoreContext) {
+        this.questionService = quizCoreContext.questionService;
+    }
     
     public SessionDataPackage createSession(String questionPackageName) throws QuizgameException {
         

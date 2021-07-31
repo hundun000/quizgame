@@ -5,27 +5,30 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.model.domain.TeamRuntimeModel;
 import hundun.quizgame.core.prototype.RolePrototype;
 import hundun.quizgame.core.prototype.TeamPrototype;
 
-@Service
-public class TeamService {
+public class TeamService implements IQuizCoreComponent {
     
     
-    @Autowired
-    RoleSkillService roleSkillServic;
+    RoleSkillService roleSkillService;
     
 	private Map<String, TeamPrototype> teamPrototypes = new HashMap<>();
 	
+	@Override
+	public void wire(QuizCoreContext quizCoreContext) {
+        this.roleSkillService = quizCoreContext.roleSkillService;
+    }
+	
 	public void registerTeam(String teamName, List<String> pickTagNames, List<String> banTagNames, String roleName) throws QuizgameException {
         
-	    RolePrototype rolePrototype = roleName != null ? roleSkillServic.getRole(roleName) : null;
+	    RolePrototype rolePrototype = roleName != null ? roleSkillService.getRole(roleName) : null;
 
 	    TeamPrototype teamPrototype = new TeamPrototype(teamName, pickTagNames, banTagNames, rolePrototype);
 	    

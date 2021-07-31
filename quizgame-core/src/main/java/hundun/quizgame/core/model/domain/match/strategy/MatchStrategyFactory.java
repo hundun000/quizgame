@@ -1,8 +1,7 @@
 package hundun.quizgame.core.model.domain.match.strategy;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
+import hundun.quizgame.core.context.IQuizCoreComponent;
+import hundun.quizgame.core.context.QuizCoreContext;
 import hundun.quizgame.core.exception.NotFoundException;
 import hundun.quizgame.core.exception.QuizgameException;
 import hundun.quizgame.core.prototype.match.MatchStrategyType;
@@ -15,17 +14,20 @@ import hundun.quizgame.core.service.TeamService;
  * @author hundun
  * Created on 2021/06/28
  */
-@Component
-public class MatchStrategyFactory {
+public class MatchStrategyFactory implements IQuizCoreComponent {
     
-    @Autowired
     private QuestionService questionService;
-    @Autowired
     private TeamService teamService;
-    @Autowired
     private RoleSkillService roleSkillService;
-    @Autowired
     private BuffService buffService;
+    
+    @Override
+    public void wire(QuizCoreContext quizCoreContext) {
+        this.teamService = quizCoreContext.teamService;
+        this.questionService = quizCoreContext.questionService;
+        this.roleSkillService = quizCoreContext.roleSkillService;
+        this.buffService = quizCoreContext.buffService;
+    }
     
     public BaseMatchStrategy getMatchStrategy(MatchStrategyType type) throws QuizgameException {
         switch (type) {
