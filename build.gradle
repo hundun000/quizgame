@@ -52,8 +52,6 @@ project(":quizgame-core") {
     
 
     dependencies {
-        implementation("org.springframework:spring-web:${springCoreVersion}")
-        implementation("org.springframework:spring-context:${springCoreVersion}")
         implementation("javax.annotation:javax.annotation-api:${javaxAnnotationVersion}")
         
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.5'
@@ -65,22 +63,4 @@ project(":quizgame-core") {
     }
 }
 
-project(":quizgame-server") {
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'io.spring.dependency-management'
-    
-    dependencies {
-        implementation project(":quizgame-core")
-    
-        implementation ("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-        implementation ("org.springframework.cloud:spring-cloud-starter-openfeign:${springCloudVersion}")
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        
-        
-        
-        compileOnly 'org.projectlombok:lombok:1.18.12'
-        annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    }
-    
-}
 

@@ -1,4 +1,8 @@
-# 概述
+# Archived
+
+core迭代和新的前端形式，已转到[libgdx-quizgame项目](https://github.com/hundun000/libgdx-quizgame)
+
+# 简介
 
 一个答题游戏（一站到底）的核心及其使用案例。
 
